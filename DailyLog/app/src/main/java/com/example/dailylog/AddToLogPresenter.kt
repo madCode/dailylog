@@ -2,16 +2,16 @@ package com.example.dailylog
 
 import android.content.Context
 
-class AddToLogPresenter(private var context: Context, private var fileHelper: FileHelper) {
+class AddToLogPresenter(private var context: Context) {
     fun readFile(): CharSequence? {
-        return fileHelper.readFile(context)
+        return FileHelper.readFile(context)
     }
 
     fun clearFile() {
-        fileHelper.clearFile(context)
+        FileHelper.clearFile(context)
     }
 
     fun saveToFile(log: String): Boolean {
-        return fileHelper.saveToFile(context, log)
+        return FileHelper.saveToFile(context, log)
     }
 }
