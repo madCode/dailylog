@@ -12,7 +12,7 @@
         android:id="@+id/shortcutTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/shortcuts"
+        android:text="@string/shortcutsTitle"
         app:layout_constraintBottom_toTopOf="@id/shortcutList"
         app:layout_constraintStart_toStartOf="parent"
         android:textSize="24sp"
