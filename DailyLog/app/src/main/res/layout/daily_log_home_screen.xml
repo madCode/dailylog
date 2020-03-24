@@ -23,5 +23,15 @@
         app:layout_constraintTop_toBottomOf="@id/categories"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/addToLog"/>
+    <Button
+        android:id="@+id/addToLog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/addToLogButton"
+        app:layout_constraintTop_toBottomOf="@id/shortcuts"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

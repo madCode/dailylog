@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/addToLogView"
+    tools:context=".AddToLogView">
+
+    <TextView
+        android:id="@+id/previousLogsTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/previous_logs"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="10dp" />
+
+    <TextView
+        android:id="@+id/previousLogs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:maxLines="10"
+        android:minLines="5"
+        android:scrollbars="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/previousLogsTitle"
+        tools:text="This is text for a log."
+        android:layout_margin="10dp"
+        android:padding="5dp"
+        android:theme="@style/styledText"
+        android:gravity="bottom"
+        />
+
+    <ImageButton
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_refresh_24px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnRead"
+        app:layout_constraintEnd_toEndOf="@id/previousLogs"
+        app:layout_constraintBottom_toBottomOf="@id/previousLogs"
+        android:contentDescription="@string/refresh" />
+
+    <ImageButton
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_delete_outline_24px"
+        android:layout_marginBottom="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/clear"
+        android:id="@+id/btnClear"
+        app:layout_constraintEnd_toEndOf="@id/previousLogs"
+        app:layout_constraintBottom_toTopOf="@id/btnRead"/>
+
+    <TextView
+        android:id="@+id/todayLogTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/today"
+        app:layout_constraintTop_toBottomOf="@id/previousLogs"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="10dp" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/styledText"
+        android:background="@drawable/textview_border"
+        android:maxLines="10"
+        android:minLines="5"
+        android:id="@+id/todayLog"
+        app:layout_constraintTop_toBottomOf="@id/todayLogTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        android:hint="@string/write_something_to_save"
+        android:layout_margin="10dp"
+        android:padding="5dp"
+        android:gravity="top"
+        />
+
+    <ImageButton
+        android:src="@drawable/ic_save_24px"
+        android:background="@android:color/transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:contentDescription="@string/save"
+        android:id="@+id/btnSave"
+        app:layout_constraintEnd_toEndOf="@id/todayLog"
+        app:layout_constraintBottom_toBottomOf="@id/todayLog"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/categoryShortcuts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

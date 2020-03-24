@@ -23,5 +23,11 @@ class DailyLogHomeScreenActivity : AppCompatActivity()  {
             val intent = Intent(this, KeyboardShortcutSettingsActivity::class.java)
             startActivity(intent)
         }
+
+        val logButton = findViewById<Button>(R.id.addToLog)
+        logButton.setOnClickListener{
+            val intent = Intent(this, AddToLogActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
