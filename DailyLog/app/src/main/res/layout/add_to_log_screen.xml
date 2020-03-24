@@ -64,20 +64,21 @@
         android:layout_margin="10dp" />
 
     <EditText
+        android:id="@+id/todayLog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/styledText"
+        android:layout_margin="10dp"
         android:background="@drawable/textview_border"
+        android:hint="@string/write_something_to_save"
         android:maxLines="10"
         android:minLines="5"
-        android:id="@+id/todayLog"
-        app:layout_constraintTop_toBottomOf="@id/todayLogTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        android:hint="@string/write_something_to_save"
-        android:layout_margin="10dp"
         android:padding="5dp"
+        android:theme="@style/styledText"
         android:gravity="top"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/todayLogTitle"
+        android:importantForAutofill="no"
+        android:inputType="textMultiLine" />
 
     <ImageButton
         android:src="@drawable/ic_save_24px"
@@ -93,9 +94,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/categoryShortcuts"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginBottom="5dp"
-        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
