@@ -8,10 +8,10 @@
     <string name="clear">Delete Contents of File</string>
     <string name="gym">Gym</string>
     <string name="dinner">Dinner</string>
-    <string name="categories">Categories:</string>
+    <string name="categoriesTitle">Categories:</string>
     <string name="addACategory">add a category</string>
     <string name="preference_file_key">SharedPreferences</string>
-    <string name="shortcuts">Global Keyboard Shortcuts:</string>
+    <string name="shortcutsTitle">Global Keyboard Shortcuts:</string>
     <string name="addAShortcut">add a shortcut</string>
     <string name="go_back_to_categories_screen">Go back to categories screen</string>
     <string name="categories_button">Go to Categories Screen</string>
