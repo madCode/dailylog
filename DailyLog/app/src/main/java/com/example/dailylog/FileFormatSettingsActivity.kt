@@ -13,7 +13,7 @@ class FileFormatSettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.file_format_settings)
-        view = FileFormatSettingsView(getDateTimeFormat(), getDefaultDateTimeFormat(),
+        view = FileFormatSettingsView(getDateTimeFormat(),
             getFilenameFormat(), findViewById<ConstraintLayout>(R.id.fileSettingsLayout),
             applicationContext, resources
         )
@@ -25,17 +25,13 @@ class FileFormatSettingsActivity : AppCompatActivity() {
         view.render()
     }
 
-    private fun getDefaultDateTimeFormat(): String {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) "yyyy-MM-dd HH:mm:ss.SSS" else "dd-MMM-yyyy"
-    }
-
     private fun getDateTimeFormat(): String? {
         val preferences =
             application.getSharedPreferences(
                 application.applicationContext.getString(R.string.preference_file_key),
                 Context.MODE_PRIVATE
             )
-        return preferences.getString("dateFormat", getDefaultDateTimeFormat())
+        return preferences.getString(Constants.DATE_TIME_PREF_KEY, Constants.DATE_TIME_DEFAULT_FORMAT)
     }
 
     private fun setDateTimeFormat(format: String) {

@@ -10,7 +10,7 @@ import android.widget.TextView.OnEditorActionListener
 import android.widget.Toast
 
 
-class FileFormatSettingsView(private var dateTimeFormat: String?, private var defaultFormat: String, private var filenameFormat: String?, private var view: View, private var context: Context, private var resources: Resources) {
+class FileFormatSettingsView(private var dateTimeFormat: String?, private var filenameFormat: String?, private var view: View, private var context: Context, private var resources: Resources) {
     private var presenter: FileFormatSettingsPresenter? = null
 
     fun setPresenter(presenter: FileFormatSettingsPresenter) {
@@ -25,7 +25,7 @@ class FileFormatSettingsView(private var dateTimeFormat: String?, private var de
     private fun renderDateFormatRow() {
         val dateFormatEditText = view.findViewById<TextView>(R.id.dateFormat)
         dateFormatEditText.text = dateTimeFormat
-        dateFormatEditText.hint = context.resources.getString(R.string.defaultStringPlaceholder, defaultFormat)
+        dateFormatEditText.hint = context.resources.getString(R.string.defaultStringPlaceholder, Constants.DATE_TIME_DEFAULT_FORMAT)
         dateFormatEditText.setOnEditorActionListener(OnEditorActionListener { v, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val saved = this.presenter?.saveDateTimeFormat(v.text.toString())
@@ -44,7 +44,7 @@ class FileFormatSettingsView(private var dateTimeFormat: String?, private var de
     private fun renderFileNameRow() {
         val fileNameEditText = view.findViewById<TextView>(R.id.fileNameEditText)
         fileNameEditText.text = filenameFormat
-        fileNameEditText.hint = context.resources.getString(R.string.defaultStringPlaceholder, "yyyy")
+        fileNameEditText.hint = context.resources.getString(R.string.defaultStringPlaceholder, Constants.FILENAME_DEFAULT_FORMAT)
         fileNameEditText.setOnEditorActionListener(OnEditorActionListener { v, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val saved = this.presenter?.saveFilenameFormat(v.text.toString())

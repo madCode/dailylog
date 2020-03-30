@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter
 
 object FileHelper {
     val TAG = "FileHelper"
-    private var fileNameFormat: String = "yyyy"
+    private var fileNameFormat: String = Constants.FILENAME_DEFAULT_FORMAT
     private var fileName: String? = "data.txt"
 
     fun setUpHelper(application: Application) {
@@ -31,7 +31,7 @@ object FileHelper {
                 application.applicationContext.getString(R.string.preference_file_key),
                 MODE_PRIVATE
             )
-        return preferences.getString("filenameFormat", "yyyy") ?: "yyyy"
+        return preferences.getString(Constants.FILENAME_PREF_KEY, Constants.FILENAME_DEFAULT_FORMAT) ?: Constants.FILENAME_DEFAULT_FORMAT
     }
 
     fun readFile(context: Context): String? {
