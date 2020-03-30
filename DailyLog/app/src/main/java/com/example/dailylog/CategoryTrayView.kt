@@ -12,7 +12,7 @@ class CategoryTrayView(override var context: Context,
                        private var inputView: EditText,
                        override var otherTray: ShortcutTrayView?): ShortcutTrayView {
 
-    override var showNextButton = false
+    override var showNextButton = true
     override var showPrevButton= false
 
     override fun getShortcutClickListener(shortcut: String): View.OnClickListener {

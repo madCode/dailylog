@@ -3,9 +3,12 @@ package com.example.dailylog
 import android.content.Context
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import kotlin.collections.ArrayList
+
 
 interface ShortcutTrayView {
     var context: Context
@@ -20,11 +23,13 @@ interface ShortcutTrayView {
         otherTray?.clearTray()
 
         val set = ConstraintSet()
-        val buttonList: ArrayList<Button> = ArrayList()
+        val buttonList: ArrayList<View> = ArrayList()
 
         var prevId = ConstraintSet.PARENT_ID
         if (showPrevButton) {
-            buttonList.add(createToggleButton(R.drawable.ic_arrow_back_ios_24px))
+            val button = createToggleButton(R.drawable.ic_arrow_back_ios_24px)
+            buttonList.add(button)
+            constraintLayout.addView(button)
         }
         shortcuts.shortcutList.forEach {
             val button = createShortcutButton(context, it, getShortcutClickListener(it))
@@ -32,12 +37,14 @@ interface ShortcutTrayView {
             constraintLayout.addView(button)
         }
         if (showNextButton) {
-            buttonList.add(createToggleButton(R.drawable.ic_chevron_right_24px))
+            val button = createToggleButton(R.drawable.ic_chevron_right_24px)
+            buttonList.add(button)
+            constraintLayout.addView(button)
         }
         set.clone(constraintLayout)
         for (i in 0 until buttonList.size) {
             val button = buttonList[i]
-            val nextId: Int = if (i >= shortcuts.shortcutList.size - 1) {
+            val nextId: Int = if (i >= buttonList.size - 1) {
                 ConstraintSet.PARENT_ID
             } else {
                 buttonList[i+1].id
@@ -54,14 +61,14 @@ interface ShortcutTrayView {
         constraintLayout.removeAllViews()
     }
 
-    private fun createToggleButton(iconResource: Int): Button {
-        val button = Button(context)
+    private fun createToggleButton(iconResource: Int): ImageButton {
+        val button = ImageButton(context)
         val params: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
         button.layoutParams = params
-        button.setBackgroundResource(iconResource)
+        button.setImageResource(iconResource)
         button.setOnClickListener{
             if (otherTray != null) {
                 clearTray()

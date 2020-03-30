@@ -12,7 +12,7 @@ class KeyboardShortcutsTrayView(override var context: Context,
                                 override var otherTray: ShortcutTrayView?): ShortcutTrayView {
 
     override var showNextButton = false
-    override var showPrevButton= false
+    override var showPrevButton= true
 
     override fun getShortcutClickListener(shortcut: String): View.OnClickListener {
         return View.OnClickListener {
