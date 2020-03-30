@@ -1,12 +1,14 @@
 package com.example.dailylog
 
 import android.content.Context
+import android.graphics.Color
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContextCompat
 import kotlin.collections.ArrayList
 
 
@@ -65,10 +67,11 @@ interface ShortcutTrayView {
         val button = ImageButton(context)
         val params: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
+            LinearLayout.LayoutParams.MATCH_PARENT
         )
         button.layoutParams = params
         button.setImageResource(iconResource)
+        button.setBackgroundResource(Color.TRANSPARENT)
         button.setOnClickListener{
             if (otherTray != null) {
                 clearTray()
