@@ -16,4 +16,6 @@
     <string name="go_back_to_categories_screen">Go back to categories screen</string>
     <string name="categories_button">Go to Categories Screen</string>
     <string name="shortcuts_button">Go to Shortcuts Screen</string>
+    <string name="shortcutsDescription">Shortcuts are automatically printed with spaces around them. For example \"w/\" will be printed as \"w/ \".</string>
+    <string name="categoriesDescription">Categories are automatically printed with curly braces after them. For example \"lunch\" will be printed as \"lunch{ }\".</string>
 </resources>

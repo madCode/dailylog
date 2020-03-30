@@ -95,6 +95,10 @@ class ShortcutListView(private var view: View) : ShortcutListPresenter.View  {
     override fun setTitle(title: Int) {
         val shortcutTitle = view.findViewById<TextView>(R.id.shortcutTitle)
         shortcutTitle.setText(title)
+    }
 
+    override fun setDescription(descriptionResId: Int) {
+        val shortcutTitle = view.findViewById<TextView>(R.id.shortcutDescription)
+        shortcutTitle.setText(descriptionResId)
     }
 }
