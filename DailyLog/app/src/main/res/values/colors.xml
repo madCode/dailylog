@@ -23,6 +23,7 @@
     <color name="primaryDark">#be8abf</color>
     <color name="primaryLight">#fea5ad</color>
     <color name="accent">#f8c3af</color>
+    <color name="accentDark">#C19584</color>
     <color name="primaryText">#212121</color>
     <color name="secondaryText">#757575</color>
     <color name="icons">#FFFFFF</color>

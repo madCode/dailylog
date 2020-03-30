@@ -11,7 +11,11 @@ class AddToLogActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.add_to_log_screen)
-        view = AddToLogView(findViewById<ConstraintLayout>(R.id.addToLogView), applicationContext)
+        val categoryShortcuts = ShortcutList("categories")
+        categoryShortcuts.loadShortcuts(application)
+        val globalShortcuts = ShortcutList("global_shortcuts")
+        globalShortcuts.loadShortcuts(application)
+        view = AddToLogView(findViewById<ConstraintLayout>(R.id.addToLogView), applicationContext, categoryShortcuts, globalShortcuts)
         presenter = AddToLogPresenter(applicationContext)
         view.render(presenter)
     }
