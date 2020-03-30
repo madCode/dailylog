@@ -25,6 +25,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".AddToLogActivity" />
+        <activity android:name=".FileFormatSettingsActivity" />
 
         <meta-data
             android:name="preloaded_fonts"

@@ -19,4 +19,8 @@
     <string name="shortcutsDescription">Shortcuts are automatically printed with spaces around them. For example \"w/\" will be printed as \"w/ \".</string>
     <string name="categoriesDescription">Categories are automatically printed with curly braces after them. For example \"lunch\" will be printed as \"lunch{ }\".</string>
     <string name="addToLogButton">Go to Log Screen</string>
+    <string name="file_format_settings_title">File Settings</string>
+    <string name="dateFormatTitle">Date Format</string>
+    <string name="defaultStringPlaceholder">Default: %1$s</string>
+    <string name="fileNameTitle">Filename Format</string>
 </resources>
