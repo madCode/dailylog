@@ -14,10 +14,10 @@
     </style>
     <style name="styledTitle">
         <item name="android:textColor">@color/primaryText</item>
-        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:fontFamily">@font/pacifico</item>
+        <item name="android:textSize">20sp</item>
     </style>
     <style name="textButton">
-        <item name="android:background">@android:color/transparent</item>
         <item name="android:textColor">@color/primaryText</item>
         <item name="android:fontFamily">sans-serif-light</item>
     </style>

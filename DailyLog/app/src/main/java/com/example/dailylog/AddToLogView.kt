@@ -7,14 +7,19 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.constraintlayout.solver.widgets.ConstraintWidgetGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 
-class AddToLogView(private var view: View, private var context: Context) {
+class AddToLogView(private var view: View, private var context: Context, private var categoryShortcutList: ShortcutList, private var globalShortcutList: ShortcutList) {
     private var btnRead: ImageButton? = null
     private var btnSave: ImageButton? = null
     private var btnClear: ImageButton? = null
     private lateinit var todayLog: EditText
     private lateinit var previousLogs: TextView
     private lateinit var presenter: AddToLogPresenter
+
+    private lateinit var categoryShortcutTrayView: CategoryTrayView
+    private lateinit var keyboardShortcutsTrayView: KeyboardShortcutsTrayView
 
     fun render(presenter: AddToLogPresenter) {
         this.presenter = presenter
@@ -42,6 +47,17 @@ class AddToLogView(private var view: View, private var context: Context) {
                     .show()
             }
         }
+        setUpTrays()
+        categoryShortcutTrayView.renderTray()
+    }
+
+    private fun setUpTrays() {
+        val trayView = view.findViewById<ConstraintLayout>(R.id.shortcutTray)
+        val inputView = view.findViewById<EditText>(R.id.todayLog)
+        categoryShortcutTrayView = CategoryTrayView(context, trayView, categoryShortcutList, inputView, null)
+        keyboardShortcutsTrayView = KeyboardShortcutsTrayView(context, trayView, globalShortcutList, inputView, categoryShortcutTrayView)
+        categoryShortcutTrayView.otherTray=keyboardShortcutsTrayView
+
     }
 
     private fun loadCurrentLogFile() {
