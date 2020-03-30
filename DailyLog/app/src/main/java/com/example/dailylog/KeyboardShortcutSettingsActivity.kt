@@ -20,7 +20,8 @@ class KeyboardShortcutSettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.generic_keyboard_shortcuts_setup)
         view = ShortcutListView(findViewById<ConstraintLayout>(R.id.genericShortcutLayout))
-        presenter = ShortcutListPresenter(view, R.string.shortcutsTitle, "global_shortcuts", application)
+        presenter = ShortcutListPresenter(view, R.string.shortcutsTitle, R.string.shortcutsDescription,
+            "global_shortcuts", application)
         view.initializeView(presenter)
         view.renderView()
     }

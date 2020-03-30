@@ -13,10 +13,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/shortcutsTitle"
-        app:layout_constraintBottom_toTopOf="@id/shortcutList"
+        app:layout_constraintBottom_toTopOf="@id/shortcutDescription"
         app:layout_constraintStart_toStartOf="parent"
         android:textSize="24sp"
         android:layout_margin="10dp"/>
+
+    <TextView
+        android:id="@+id/shortcutDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/shortcutsDescription"
+        app:layout_constraintBottom_toTopOf="@id/shortcutList"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="12sp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"/>
 
     <LinearLayout
         android:id="@+id/shortcutList"
@@ -40,7 +51,7 @@
         android:inputType="text"
         android:singleLine="true"
         android:imeOptions="actionDone"
-        />
+        android:importantForAutofill="no" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

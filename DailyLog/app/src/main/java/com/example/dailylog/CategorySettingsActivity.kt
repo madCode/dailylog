@@ -13,7 +13,8 @@ class CategorySettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.generic_keyboard_shortcuts_setup)
         view = ShortcutListView(findViewById<ConstraintLayout>(R.id.genericShortcutLayout))
-        presenter = ShortcutListPresenter(view, R.string.categoriesTitle, "categories", application)
+        presenter = ShortcutListPresenter(view, R.string.categoriesTitle,
+            R.string.categoriesDescription, "categories", application)
         view.initializeView(presenter)
         view.renderView()
     }
