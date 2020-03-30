@@ -16,7 +16,10 @@ class AddToLogActivity : AppCompatActivity() {
         val globalShortcuts = ShortcutList("global_shortcuts")
         globalShortcuts.loadShortcuts(application)
         view = AddToLogView(findViewById<ConstraintLayout>(R.id.addToLogView), applicationContext, categoryShortcuts, globalShortcuts)
-        presenter = AddToLogPresenter(applicationContext)
+
+        val fileHelper = FileHelper
+        fileHelper.setUpHelper(application)
+        presenter = AddToLogPresenter(applicationContext, FileHelper)
         view.render(presenter)
     }
 }
