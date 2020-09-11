@@ -7,8 +7,12 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.constraintlayout.solver.widgets.ConstraintWidgetGroup
+import androidx.constraintlayout.widget.ConstraintLayout
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
-class AddToLogView(private var view: View, private var context: Context) {
+class AddToLogView(private var view: View, private var context: Context, private var categoryShortcutList: ShortcutList, private var globalShortcutList: ShortcutList) {
     private var btnRead: ImageButton? = null
     private var btnSave: ImageButton? = null
     private var btnClear: ImageButton? = null
@@ -16,11 +20,15 @@ class AddToLogView(private var view: View, private var context: Context) {
     private lateinit var previousLogs: TextView
     private lateinit var presenter: AddToLogPresenter
 
-    fun render(presenter: AddToLogPresenter) {
+    private lateinit var categoryShortcutTrayView: CategoryTrayView
+    private lateinit var keyboardShortcutsTrayView: KeyboardShortcutsTrayView
+
+    fun render(presenter: AddToLogPresenter, dateTimeFormat: String) {
         this.presenter = presenter
         previousLogs = view.findViewById<TextView>(R.id.previousLogs)
         previousLogs.movementMethod = ScrollingMovementMethod()
         todayLog = view.findViewById<EditText>(R.id.todayLog)
+        addCurrentDateToLog(dateTimeFormat)
         btnRead = view.findViewById<ImageButton>(R.id.btnRead)
         btnRead?.setOnClickListener {
             loadCurrentLogFile()
@@ -42,6 +50,24 @@ class AddToLogView(private var view: View, private var context: Context) {
                     .show()
             }
         }
+        setUpTrays()
+        categoryShortcutTrayView.renderTray()
+    }
+
+    private fun addCurrentDateToLog(dateTimeFormat: String) {
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern(dateTimeFormat)
+        todayLog.text.append(current.format(formatter) + "\t")
+        todayLog.setSelection(todayLog.text.length)
+    }
+
+    private fun setUpTrays() {
+        val trayView = view.findViewById<ConstraintLayout>(R.id.shortcutTray)
+        val inputView = view.findViewById<EditText>(R.id.todayLog)
+        categoryShortcutTrayView = CategoryTrayView(context, trayView, categoryShortcutList, inputView, null)
+        keyboardShortcutsTrayView = KeyboardShortcutsTrayView(context, trayView, globalShortcutList, inputView, categoryShortcutTrayView)
+        categoryShortcutTrayView.otherTray=keyboardShortcutsTrayView
+
     }
 
     private fun loadCurrentLogFile() {

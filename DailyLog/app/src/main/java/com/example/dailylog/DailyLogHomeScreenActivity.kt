@@ -29,5 +29,11 @@ class DailyLogHomeScreenActivity : AppCompatActivity()  {
             val intent = Intent(this, AddToLogActivity::class.java)
             startActivity(intent)
         }
+
+        val fileButton = findViewById<Button>(R.id.fileSettingsButton)
+        fileButton.setOnClickListener{
+            val intent = Intent(this, FileFormatSettingsActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
