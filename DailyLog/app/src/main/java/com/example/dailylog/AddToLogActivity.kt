@@ -20,7 +20,7 @@ class AddToLogActivity : AppCompatActivity() {
 
         val fileHelper = FileHelper
         fileHelper.setUpHelper(application)
-        presenter = AddToLogPresenter(applicationContext, FileHelper)
+        presenter = AddToLogPresenter(applicationContext, fileHelper)
         view.render(presenter, getDateTimeFormat())
     }
 
