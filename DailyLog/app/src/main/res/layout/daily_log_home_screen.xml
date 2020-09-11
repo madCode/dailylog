@@ -33,5 +33,15 @@
         app:layout_constraintTop_toBottomOf="@id/shortcuts"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/fileSettingsButton"/>
+    <Button
+        android:id="@+id/fileSettingsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="go to file settings"
+        app:layout_constraintTop_toBottomOf="@id/addToLog"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
