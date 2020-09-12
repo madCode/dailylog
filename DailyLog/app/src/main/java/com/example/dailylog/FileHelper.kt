@@ -2,7 +2,6 @@ package com.example.dailylog
 
 import android.app.Application
 import android.content.Context
-import android.content.Context.MODE_APPEND
 import android.content.Context.MODE_PRIVATE
 import android.util.Log
 import java.io.*
@@ -16,7 +15,7 @@ import java.time.format.DateTimeFormatter
 object FileHelper {
     val TAG = "FileHelper"
     private var fileNameFormat: String = Constants.FILENAME_DEFAULT_FORMAT
-    private var fileName: String? = "data.txt"
+    private var fileName: String = "data.txt"
 
     fun setUpHelper(application: Application) {
         fileNameFormat = getFilenameFormat(application)
@@ -62,8 +61,8 @@ object FileHelper {
 
     fun saveToFile(context: Context, data: String): Boolean {
         try {
-            val fileStream = context.openFileOutput(fileName, MODE_APPEND)
-            fileStream.write((data + System.getProperty("line.separator")).toByteArray())
+            val fileStream = context.openFileOutput(fileName, MODE_PRIVATE)
+            fileStream.write((data).toByteArray())
             fileStream.close()
             return true
         } catch (ex: FileNotFoundException) {
