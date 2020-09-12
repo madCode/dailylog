@@ -90,4 +90,27 @@ object FileHelper {
         fileStream.close()
         return true
     }
+
+    fun getDateTimeFormat(application: Application): String? {
+        val preferences =
+            application.getSharedPreferences(
+                application.applicationContext.getString(R.string.preference_file_key),
+                Context.MODE_PRIVATE
+            )
+        return preferences.getString(
+            Constants.DATE_TIME_PREF_KEY,
+            Constants.DATE_TIME_DEFAULT_FORMAT
+        )
+    }
+
+    fun setDateTimeFormat(format: String, application: Application) {
+        val preferences =
+            application.getSharedPreferences(
+                application.applicationContext.getString(R.string.preference_file_key),
+                Context.MODE_PRIVATE
+            )
+        val editor = preferences.edit()
+        editor.putString("dateFormat", format)
+        editor.apply()
+    }
 }

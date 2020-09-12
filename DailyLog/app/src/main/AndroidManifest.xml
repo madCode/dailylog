@@ -11,16 +11,16 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".settings.SettingsActivity"
-            android:windowSoftInputMode="adjustPan">
-        </activity>
-        <activity android:name=".randomentry.DailyLogHomeScreenActivity"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".randomentry.RandomEntryActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".log.AddToLogActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".log.AddToLogActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
