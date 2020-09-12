@@ -1,10 +1,11 @@
-package com.example.dailylog
+package com.example.dailylog.filemanager
 
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.example.dailylog.Constants
+import com.example.dailylog.R
 
 class FileFormatSettingsActivity : AppCompatActivity() {
     private lateinit var presenter: FileFormatSettingsPresenter
@@ -31,7 +32,10 @@ class FileFormatSettingsActivity : AppCompatActivity() {
                 application.applicationContext.getString(R.string.preference_file_key),
                 Context.MODE_PRIVATE
             )
-        return preferences.getString(Constants.DATE_TIME_PREF_KEY, Constants.DATE_TIME_DEFAULT_FORMAT)
+        return preferences.getString(
+            Constants.DATE_TIME_PREF_KEY,
+            Constants.DATE_TIME_DEFAULT_FORMAT
+        )
     }
 
     private fun setDateTimeFormat(format: String) {
@@ -50,7 +54,8 @@ class FileFormatSettingsActivity : AppCompatActivity() {
         val preferences =
             application.getSharedPreferences(
                 application.applicationContext.getString(
-                    R.string.preference_file_key), Context.MODE_PRIVATE)
+                    R.string.preference_file_key
+                ), Context.MODE_PRIVATE)
         val editor = preferences.edit()
         editor.putString("filenameFormat", format)
         editor.apply()

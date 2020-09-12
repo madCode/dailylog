@@ -1,11 +1,12 @@
-package com.example.dailylog
+package com.example.dailylog.shortcuts
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.example.dailylog.R
 
 
-class KeyboardShortcutSettingsActivity : AppCompatActivity() {
+class CategorySettingsActivity : AppCompatActivity() {
     private lateinit var presenter: ShortcutListPresenter
     private lateinit var view: ShortcutListView
 
@@ -13,8 +14,8 @@ class KeyboardShortcutSettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.generic_keyboard_shortcuts_setup)
         view = ShortcutListView(findViewById<ConstraintLayout>(R.id.genericShortcutLayout))
-        presenter = ShortcutListPresenter(view, R.string.shortcutsTitle, R.string.shortcutsDescription,
-            "global_shortcuts", application)
+        presenter = ShortcutListPresenter(view, R.string.categoriesTitle,
+            R.string.categoriesDescription, "categories", application)
         view.initializeView(presenter)
         view.renderView()
     }

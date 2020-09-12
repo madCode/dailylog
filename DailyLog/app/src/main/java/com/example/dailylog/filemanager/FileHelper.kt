@@ -1,9 +1,11 @@
-package com.example.dailylog
+package com.example.dailylog.filemanager
 
 import android.app.Application
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.util.Log
+import com.example.dailylog.Constants
+import com.example.dailylog.R
 import java.io.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

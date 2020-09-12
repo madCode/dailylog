@@ -1,4 +1,4 @@
-package com.example.dailylog
+package com.example.dailylog.log
 
 import android.app.Activity
 import android.content.Context
@@ -6,6 +6,10 @@ import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.dailylog.Constants
+import com.example.dailylog.filemanager.FileHelper
+import com.example.dailylog.R
+import com.example.dailylog.shortcuts.ShortcutList
 
 class AddToLogActivity : AppCompatActivity() {
     private lateinit var presenter: AddToLogPresenter
@@ -22,7 +26,7 @@ class AddToLogActivity : AppCompatActivity() {
         view = AddToLogView(logView, applicationContext, categoryShortcuts, globalShortcuts)
 
         val fileHelper = FileHelper
-        fileHelper.setUpHelper(application)
+        FileHelper.setUpHelper(application)
         presenter = AddToLogPresenter(applicationContext, fileHelper)
         view.render(presenter, getDateTimeFormat())
         val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -36,6 +40,7 @@ class AddToLogActivity : AppCompatActivity() {
                 Context.MODE_PRIVATE
             )
         return preferences.getString(
-            Constants.DATE_TIME_PREF_KEY, Constants.DATE_TIME_DEFAULT_FORMAT) ?: Constants.DATE_TIME_DEFAULT_FORMAT
+            Constants.DATE_TIME_PREF_KEY, Constants.DATE_TIME_DEFAULT_FORMAT
+        ) ?: Constants.DATE_TIME_DEFAULT_FORMAT
     }
 }
