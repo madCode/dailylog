@@ -13,7 +13,7 @@
             android:name=".settings.SettingsActivity"
             android:windowSoftInputMode="adjustPan">
         </activity>
-        <activity android:name=".DailyLogHomeScreenActivity"
+        <activity android:name=".randomentry.DailyLogHomeScreenActivity"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

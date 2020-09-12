@@ -3,7 +3,6 @@ package com.example.dailylog.settings
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -12,7 +11,6 @@ import com.example.dailylog.R
 import com.example.dailylog.filemanager.FileFormatSettingsPresenter
 import com.example.dailylog.filemanager.FileFormatSettingsView
 import com.example.dailylog.filemanager.FileHelper
-import com.example.dailylog.log.AddToLogActivity
 import com.example.dailylog.shortcuts.ShortcutListPresenter
 import com.example.dailylog.shortcuts.ShortcutListView
 
@@ -26,8 +24,10 @@ class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_screen)
-        fileSettingsView = FileFormatSettingsView(getDateTimeFormat(),
-            FileHelper.getFilename(application), findViewById<ConstraintLayout>(R.id.fileSettingsLayout),
+        fileSettingsView = FileFormatSettingsView(
+            getDateTimeFormat(),
+            FileHelper.getFilename(application),
+            findViewById<ConstraintLayout>(R.id.fileSettingsLayout),
             applicationContext
         )
         fileSettingsPresenter = FileFormatSettingsPresenter(
@@ -37,8 +37,10 @@ class SettingsActivity : AppCompatActivity() {
         fileSettingsView.setPresenter(fileSettingsPresenter)
         fileSettingsView.render()
         shortcutView = ShortcutListView(findViewById<ConstraintLayout>(R.id.shortcutLayout))
-        shortcutPresenter = ShortcutListPresenter(shortcutView, R.string.shortcutsTitle, R.string.shortcutsDescription,
-            "global_shortcuts", application)
+        shortcutPresenter = ShortcutListPresenter(
+            shortcutView, R.string.shortcutsTitle, R.string.shortcutsDescription,
+            "global_shortcuts", application
+        )
         shortcutView.initializeView(shortcutPresenter)
         shortcutView.renderView()
         selectFile = findViewById(R.id.selectFileButton)
@@ -70,7 +72,10 @@ class SettingsActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == 111 && resultCode == RESULT_OK && data != null) {
-            FileHelper.setFilename(data.data.toString(), application) //The uri with the location of the file
+            FileHelper.setFilename(
+                data.data.toString(),
+                application
+            ) //The uri with the location of the file
         }
     }
 
@@ -88,7 +93,10 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun setDateTimeFormat(format: String) {
         val preferences =
-            application.getSharedPreferences(application.applicationContext.getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+            application.getSharedPreferences(
+                application.applicationContext.getString(R.string.preference_file_key),
+                Context.MODE_PRIVATE
+            )
         val editor = preferences.edit()
         editor.putString("dateFormat", format)
         editor.apply()

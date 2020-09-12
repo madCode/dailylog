@@ -1,9 +1,10 @@
-package com.example.dailylog
+package com.example.dailylog.randomentry
 
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import com.example.dailylog.R
 import com.example.dailylog.log.AddToLogActivity
 import com.example.dailylog.settings.SettingsActivity
 
