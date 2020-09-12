@@ -9,22 +9,21 @@ class ShortcutListPresenter(private var view: ShortcutListView,
     private lateinit var shortcutList: ShortcutList
 
     fun initializePresenter() {
-        this.view = view
-        shortcutList = ShortcutList(preferencesKey)
-        shortcutList.loadShortcuts(application)
+        shortcutList = ShortcutList(preferencesKey, application)
+        shortcutList.loadShortcuts()
         view.setTitle(titleResId)
         view.setDescription(descriptionResId)
         view.renderShortcutList(shortcutList.shortcutList)
     }
 
     fun addShortcut(shortcut: String): Boolean {
-        shortcutList.addShortcut(shortcut, application)
+        shortcutList.addShortcut(shortcut)
         view.renderShortcutList(shortcutList.shortcutList)
         return true
     }
 
     fun removeShortcut(shortcut: String): Boolean {
-        shortcutList.removeShortcut(shortcut, application)
+        shortcutList.removeShortcut(shortcut)
         view.renderShortcutList(shortcutList.shortcutList)
         return true
     }

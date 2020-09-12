@@ -45,7 +45,6 @@ class ShortcutListView(private var view: View) : ShortcutListPresenter.View  {
         removeButton.setBackgroundColor(Color.TRANSPARENT)
         removeButton.setOnClickListener {
             presenter?.removeShortcut(category)
-            category
         }
         removeButton.id = generateViewId()
 

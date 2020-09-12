@@ -4,12 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
-import android.widget.LinearLayout
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 
 class AddToLogActivity : AppCompatActivity() {
     private lateinit var presenter: AddToLogPresenter
@@ -18,10 +14,10 @@ class AddToLogActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.add_to_log_screen)
-        val categoryShortcuts = ShortcutList(Constants.CATEGORIES_LIST_PREF_KEY)
-        categoryShortcuts.loadShortcuts(application)
-        val globalShortcuts = ShortcutList(Constants.SHORTCUTS_LIST_PREF_KEY)
-        globalShortcuts.loadShortcuts(application)
+        val categoryShortcuts = ShortcutList(Constants.CATEGORIES_LIST_PREF_KEY, application)
+        categoryShortcuts.loadShortcuts()
+        val globalShortcuts = ShortcutList(Constants.SHORTCUTS_LIST_PREF_KEY, application)
+        globalShortcuts.loadShortcuts()
         val logView = findViewById<ScrollView>(R.id.addToLogView)
         view = AddToLogView(logView, applicationContext, categoryShortcuts, globalShortcuts)
 
