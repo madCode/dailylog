@@ -1,9 +1,15 @@
 package com.example.dailylog
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
+import android.widget.LinearLayout
+import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 
 class AddToLogActivity : AppCompatActivity() {
     private lateinit var presenter: AddToLogPresenter
@@ -16,12 +22,15 @@ class AddToLogActivity : AppCompatActivity() {
         categoryShortcuts.loadShortcuts(application)
         val globalShortcuts = ShortcutList(Constants.SHORTCUTS_LIST_PREF_KEY)
         globalShortcuts.loadShortcuts(application)
-        view = AddToLogView(findViewById<ConstraintLayout>(R.id.addToLogView), applicationContext, categoryShortcuts, globalShortcuts)
+        val logView = findViewById<ScrollView>(R.id.addToLogView)
+        view = AddToLogView(logView, applicationContext, categoryShortcuts, globalShortcuts)
 
         val fileHelper = FileHelper
         fileHelper.setUpHelper(application)
         presenter = AddToLogPresenter(applicationContext, fileHelper)
         view.render(presenter, getDateTimeFormat())
+        val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
     }
 
     private fun getDateTimeFormat(): String {
