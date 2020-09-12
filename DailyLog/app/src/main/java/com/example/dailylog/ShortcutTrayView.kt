@@ -67,11 +67,11 @@ interface ShortcutTrayView {
         val button = ImageButton(context)
         val params: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
-            LinearLayout.LayoutParams.MATCH_PARENT
+            LinearLayout.LayoutParams.WRAP_CONTENT
         )
         button.layoutParams = params
         button.setImageResource(iconResource)
-        button.setBackgroundResource(Color.TRANSPARENT)
+        button.setBackgroundColor(Color.TRANSPARENT)
         button.setOnClickListener{
             if (otherTray != null) {
                 clearTray()
