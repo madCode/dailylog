@@ -2,14 +2,19 @@ package com.example.dailylog.log
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
 import android.widget.ScrollView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dailylog.Constants
-import com.example.dailylog.filemanager.FileHelper
 import com.example.dailylog.R
+import com.example.dailylog.filemanager.FileHelper
+import com.example.dailylog.settings.SettingsActivity
 import com.example.dailylog.shortcuts.ShortcutList
+
 
 class AddToLogActivity : AppCompatActivity() {
     private lateinit var presenter: AddToLogPresenter
@@ -29,6 +34,23 @@ class AddToLogActivity : AppCompatActivity() {
         view.render(presenter, getDateTimeFormat())
         val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+        setUpActionBar()
+    }
+
+    private fun setUpActionBar() {
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_refresh_24px);// set drawable icon
+        supportActionBar?.setDisplayHomeAsUpEnabled(true);
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun getDateTimeFormat(): String {
