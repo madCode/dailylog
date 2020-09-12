@@ -4,6 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import com.example.dailylog.filemanager.FileFormatSettingsActivity
+import com.example.dailylog.log.AddToLogActivity
+import com.example.dailylog.shortcuts.CategorySettingsActivity
+import com.example.dailylog.shortcuts.KeyboardShortcutSettingsActivity
 
 
 class DailyLogHomeScreenActivity : AppCompatActivity()  {

@@ -1,4 +1,4 @@
-package com.example.dailylog
+package com.example.dailylog.filemanager
 
 import android.os.Build
 import java.text.ParseException

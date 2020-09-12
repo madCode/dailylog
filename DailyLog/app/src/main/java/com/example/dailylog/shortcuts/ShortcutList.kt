@@ -1,7 +1,6 @@
-package com.example.dailylog
+package com.example.dailylog.shortcuts
 
 import android.app.Application
-import android.content.Context
 import androidx.room.Room
 import com.example.dailylog.entities.Shortcut
 import com.example.dailylog.entities.ShortcutDatabase

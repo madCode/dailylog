@@ -1,4 +1,4 @@
-package com.example.dailylog
+package com.example.dailylog.shortcuts
 
 import android.app.Application
 

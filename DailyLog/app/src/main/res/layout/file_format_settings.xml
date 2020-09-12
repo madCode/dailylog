@@ -6,7 +6,7 @@
     android:id="@+id/fileSettingsLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CategorySettingsActivity">
+    tools:context=".shortcuts.CategorySettingsActivity">
 
     <TextView
     android:id="@+id/fileFormatSettingsTitle"

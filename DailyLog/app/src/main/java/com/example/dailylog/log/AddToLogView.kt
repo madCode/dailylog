@@ -1,15 +1,16 @@
-package com.example.dailylog
+package com.example.dailylog.log
 
-import android.app.Activity
 import android.content.Context
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat.getSystemService
+import com.example.dailylog.shortcuts.CategoryTrayView
+import com.example.dailylog.shortcuts.KeyboardShortcutsTrayView
+import com.example.dailylog.R
+import com.example.dailylog.shortcuts.ShortcutList
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 

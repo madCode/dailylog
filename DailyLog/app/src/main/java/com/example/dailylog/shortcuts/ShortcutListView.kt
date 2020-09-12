@@ -1,4 +1,4 @@
-package com.example.dailylog
+package com.example.dailylog.shortcuts
 
 import android.graphics.Color
 import android.view.View
@@ -8,9 +8,10 @@ import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.*
+import com.example.dailylog.R
 
 
-class ShortcutListView(private var view: View) : ShortcutListPresenter.View  {
+class ShortcutListView(private var view: View) : ShortcutListPresenter.View {
     private lateinit var label: EditText
     private lateinit var text: EditText
     private lateinit var cursor: EditText

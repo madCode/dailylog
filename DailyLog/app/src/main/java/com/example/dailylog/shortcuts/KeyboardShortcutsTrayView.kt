@@ -1,7 +1,6 @@
-package com.example.dailylog
+package com.example.dailylog.shortcuts
 
 import android.content.Context
-import android.view.View
 import android.widget.EditText
 import androidx.constraintlayout.widget.ConstraintLayout
 

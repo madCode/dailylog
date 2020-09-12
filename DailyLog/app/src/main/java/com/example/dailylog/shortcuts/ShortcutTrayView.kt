@@ -1,4 +1,4 @@
-package com.example.dailylog
+package com.example.dailylog.shortcuts
 
 import android.content.Context
 import android.graphics.Color
@@ -9,7 +9,7 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.content.ContextCompat
+import com.example.dailylog.R
 import com.example.dailylog.entities.Shortcut
 import kotlin.collections.ArrayList
 
