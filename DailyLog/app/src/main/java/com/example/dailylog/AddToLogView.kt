@@ -49,8 +49,9 @@ class AddToLogView(
                 Toast.makeText(context, "Saved to file", Toast.LENGTH_SHORT).show()
                 todayLog.text.clear()
                 loadCurrentLogFile()
+                todayLog.setSelection(todayLog.text.length)
             } else {
-                Toast.makeText(context, "Error save file!!!", Toast.LENGTH_SHORT)
+                Toast.makeText(context, "Error saving file!!!", Toast.LENGTH_SHORT)
                     .show()
             }
         }
