@@ -13,10 +13,6 @@
             android:name=".settings.SettingsActivity"
             android:windowSoftInputMode="adjustPan">
         </activity>
-        <activity
-            android:name=".shortcuts.ShortcutSettingsActivity"
-            android:windowSoftInputMode="adjustPan">
-        </activity>
         <activity android:name=".DailyLogHomeScreenActivity"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -25,7 +21,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".log.AddToLogActivity" />
-        <activity android:name=".filemanager.FileFormatSettingsActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
