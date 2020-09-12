@@ -4,11 +4,13 @@ import android.content.Context
 import android.graphics.Color
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
+import com.example.dailylog.entities.Shortcut
 import kotlin.collections.ArrayList
 
 
@@ -16,10 +18,10 @@ interface ShortcutTrayView {
     var context: Context
     var constraintLayout: ConstraintLayout
     var shortcuts: ShortcutList
-    fun getShortcutClickListener(shortcut: String):View.OnClickListener
     var otherTray: ShortcutTrayView?
     var showNextButton: Boolean
     var showPrevButton: Boolean
+    var inputView: EditText
 
     fun renderTray() {
         otherTray?.clearTray()
@@ -34,7 +36,7 @@ interface ShortcutTrayView {
             constraintLayout.addView(button)
         }
         shortcuts.shortcutList.forEach {
-            val button = createShortcutButton(context, it, getShortcutClickListener(it))
+            val button = createShortcutButton(context, it)
             buttonList.add(button)
             constraintLayout.addView(button)
         }
@@ -82,17 +84,22 @@ interface ShortcutTrayView {
         return button
     }
 
-    private fun createShortcutButton(context: Context, shortcut: String, shortcutClickListener: View.OnClickListener): Button {
+    private fun createShortcutButton(context: Context, shortcut: Shortcut): Button {
         val button = Button(context)
         val params: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
         button.layoutParams = params
-        button.text = shortcut
+        button.text = shortcut.label
         button.setTextAppearance(R.style.textButton)
         button.setBackgroundResource(R.drawable.button)
-        button.setOnClickListener(shortcutClickListener)
+        button.setOnClickListener{
+            val start: Int = inputView.selectionStart
+            inputView.text.insert(start, shortcut.text)
+            inputView.setSelection(start + shortcut.cursorIndex);
+            otherTray?.renderTray()
+        }
         button.id = View.generateViewId()
         return button
     }

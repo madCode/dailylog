@@ -5,9 +5,9 @@ import androidx.room.*
 @Entity
 data class Shortcut(
     @PrimaryKey val label: String,
-    @ColumnInfo(name = "text") val text: String?,
-    @ColumnInfo(name = "type") val type: String?,
-    @ColumnInfo(name = "cursorIndex") val cursorIndex: Int?
+    @ColumnInfo(name = "text") val text: String,
+    @ColumnInfo(name = "type") val type: String,
+    @ColumnInfo(name = "cursorIndex") val cursorIndex: Int
 )
 
 @Dao

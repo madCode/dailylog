@@ -11,10 +11,14 @@ class ShortcutList constructor(private var shortcutType: String, application: Ap
         application.applicationContext,
         ShortcutDatabase::class.java, "database-name"
     ).allowMainThreadQueries().build()
-    lateinit var shortcutList: MutableSet<String>
+    lateinit var shortcutList: MutableList<Shortcut>
+    lateinit var labelList: MutableSet<String>
 
-    private fun saveShortcutToDB(label: String, text: String, cursorIndex: Int): Boolean {
-        val shortcut = Shortcut(label = label, text = text, type = shortcutType, cursorIndex = cursorIndex)
+    private fun createShortcut(label: String, text: String, cursorIndex: Int): Shortcut {
+        return  Shortcut(label = label, text = text, type = shortcutType, cursorIndex = cursorIndex)
+    }
+
+    private fun saveShortcutToDB(shortcut: Shortcut): Boolean {
         shortcutDB.shortcutDao().insertAll(shortcuts = arrayOf(shortcut))
         return true
     }
@@ -24,31 +28,34 @@ class ShortcutList constructor(private var shortcutType: String, application: Ap
         return true
     }
 
-    private fun getAllShortcuts(): MutableSet<String> {
-        val shortcuts = shortcutDB.shortcutDao().getAllByType(shortcutType)
-        val mutableSet : MutableSet<String> = HashSet()
-        shortcuts.forEach { shortcut -> mutableSet.add(shortcut.label) }
-        return mutableSet
+    private fun getAllShortcuts(): MutableList<Shortcut> {
+        return shortcutDB.shortcutDao().getAllByType(shortcutType).toMutableList()
     }
 
     fun loadShortcuts(): Boolean {
         shortcutList = getAllShortcuts()
+        labelList = HashSet<String>()
+        shortcutList.forEach{
+            labelList.add(it.label)
+        }
         return true
     }
 
-    fun addShortcut(shortcut: String): Boolean {
-        return if (!shortcutList.contains(shortcut)) {
+    fun addShortcut(label: String, text: String, cursorIndex: Int): Boolean {
+        val shortcut = createShortcut(label, text, cursorIndex)
+        return if (!labelList.contains(label)) {
             shortcutList.add(shortcut)
-            saveShortcutToDB(shortcut, "$shortcut{}; ", shortcut.length+1)
+            labelList.add(label)
+            saveShortcutToDB(shortcut)
             true
         } else {
             false
         }
     }
 
-    fun removeShortcut(shortcut: String): Boolean {
-        shortcutList.remove(shortcut)
-        deleteShortcutFromDB(shortcut)
+    fun removeShortcut(label: String): Boolean {
+        labelList.remove(label)
+        deleteShortcutFromDB(label)
         return true
     }
 }

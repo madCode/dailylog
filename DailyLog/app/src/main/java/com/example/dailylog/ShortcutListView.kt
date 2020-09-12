@@ -11,7 +11,9 @@ import androidx.constraintlayout.widget.ConstraintSet.*
 
 
 class ShortcutListView(private var view: View) : ShortcutListPresenter.View  {
-    private lateinit var shortcutInput: EditText
+    private lateinit var label: EditText
+    private lateinit var text: EditText
+    private lateinit var cursor: EditText
     private var presenter: ShortcutListPresenter? = null;
 
     fun initializeView(presenter: ShortcutListPresenter) {
@@ -20,15 +22,32 @@ class ShortcutListView(private var view: View) : ShortcutListPresenter.View  {
 
     fun renderView() {
         presenter!!.initializePresenter()
-        shortcutInput = view.findViewById<EditText>(R.id.addShortcutInput)
-        shortcutInput.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
+        label = view.findViewById(R.id.labelInput)
+        text = view.findViewById(R.id.textInput)
+        cursor = view.findViewById(R.id.cursorInput)
+        text.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                presenter?.addShortcut(shortcutInput.text.toString())
-                shortcutInput.text.clear()
+                if (cursor.text.equals("")) {
+                    cursor.setText((text.text.toString().length -1).toString())
+                }
                 return@OnEditorActionListener true
             }
             false
         })
+        val btnSaveShortcut = view.findViewById<ImageButton>(R.id.btnSaveShortcut)
+        btnSaveShortcut.setOnClickListener{
+            val labelString = label.text.toString()
+            val textString = text.text.toString()
+            val cursorInt = Integer.parseInt(cursor.text.toString())
+            val added = presenter?.addShortcut(labelString, textString, cursorInt)
+            if (added == true) {
+                label.text.clear()
+                text.text.clear()
+                cursor.text.clear()
+            } else {
+                // TODO: show an error and also validate that cursorInt is shorter than textString
+            }
+        }
     }
 
     override fun renderShortcutList(shortcutList: MutableSet<String>) {

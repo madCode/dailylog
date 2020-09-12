@@ -13,18 +13,18 @@ class ShortcutListPresenter(private var view: ShortcutListView,
         shortcutList.loadShortcuts()
         view.setTitle(titleResId)
         view.setDescription(descriptionResId)
-        view.renderShortcutList(shortcutList.shortcutList)
+        view.renderShortcutList(shortcutList.labelList)
     }
 
-    fun addShortcut(shortcut: String): Boolean {
-        shortcutList.addShortcut(shortcut)
-        view.renderShortcutList(shortcutList.shortcutList)
-        return true
+    fun addShortcut(label: String, text: String, cursor: Int): Boolean {
+        val added = shortcutList.addShortcut(label, text, cursor)
+        view.renderShortcutList(shortcutList.labelList)
+        return added
     }
 
     fun removeShortcut(shortcut: String): Boolean {
         shortcutList.removeShortcut(shortcut)
-        view.renderShortcutList(shortcutList.shortcutList)
+        view.renderShortcutList(shortcutList.labelList)
         return true
     }
 
