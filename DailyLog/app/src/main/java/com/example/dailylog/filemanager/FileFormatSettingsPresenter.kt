@@ -33,6 +33,11 @@ class FileFormatSettingsPresenter(var dateTimeSaveFunction: (String) -> Unit, va
         return true
     }
 
+    fun saveFilename(format: String): Boolean {
+        filenameSaveFunction(format)
+        return true
+    }
+
     fun saveFilenameFormat(format: String): Boolean {
         return if (isValidDateTimeFormat(format)) {
             filenameSaveFunction(format)

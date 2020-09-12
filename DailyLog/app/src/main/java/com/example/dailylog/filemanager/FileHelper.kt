@@ -16,23 +16,30 @@ import java.time.format.DateTimeFormatter
 
 object FileHelper {
     val TAG = "FileHelper"
-    private var fileNameFormat: String = Constants.FILENAME_DEFAULT_FORMAT
-    private var fileName: String = "data.txt"
+    private var fileName: String = "data.md"
 
     fun setUpHelper(application: Application) {
-        fileNameFormat = getFilenameFormat(application)
-        val current = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern(fileNameFormat)
-        fileName = current.format(formatter) + ".txt"
+        fileName = getFilename(application)
     }
 
-    fun getFilenameFormat (application: Application): String {
+    fun getFilename (application: Application): String {
         val preferences =
             application.getSharedPreferences(
                 application.applicationContext.getString(R.string.preference_file_key),
                 MODE_PRIVATE
             )
         return preferences.getString(Constants.FILENAME_PREF_KEY, Constants.FILENAME_DEFAULT_FORMAT) ?: Constants.FILENAME_DEFAULT_FORMAT
+    }
+
+    fun setFilename (filename: String, application: Application) {
+        val preferences =
+            application.getSharedPreferences(
+                application.applicationContext.getString(
+                    R.string.preference_file_key
+                ), Context.MODE_PRIVATE)
+        val editor = preferences.edit()
+        editor.putString(Constants.FILENAME_PREF_KEY, filename)
+        editor.apply()
     }
 
     fun readFile(context: Context): String? {
