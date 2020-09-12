@@ -9,7 +9,7 @@ import com.example.dailylog.log.AddToLogActivity
 import com.example.dailylog.settings.SettingsActivity
 
 
-class DailyLogHomeScreenActivity : AppCompatActivity()  {
+class RandomEntryActivity : AppCompatActivity()  {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,12 +18,6 @@ class DailyLogHomeScreenActivity : AppCompatActivity()  {
         val logButton = findViewById<Button>(R.id.addToLog)
         logButton.setOnClickListener{
             val intent = Intent(this, AddToLogActivity::class.java)
-            startActivity(intent)
-        }
-
-        val fileButton = findViewById<Button>(R.id.fileSettingsButton)
-        fileButton.setOnClickListener{
-            val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
         }
     }

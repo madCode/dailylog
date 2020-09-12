@@ -25,13 +25,13 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_screen)
         fileSettingsView = FileFormatSettingsView(
-            getDateTimeFormat(),
+            FileHelper.getDateTimeFormat(application),
             FileHelper.getFilename(application),
             findViewById<ConstraintLayout>(R.id.fileSettingsLayout),
             applicationContext
         )
         fileSettingsPresenter = FileFormatSettingsPresenter(
-            { format: String -> setDateTimeFormat(format) },
+            { format: String -> FileHelper.setDateTimeFormat(format, application) },
             { format: String -> FileHelper.setFilename(format, application) }
         )
         fileSettingsView.setPresenter(fileSettingsPresenter)
@@ -77,28 +77,5 @@ class SettingsActivity : AppCompatActivity() {
                 application
             ) //The uri with the location of the file
         }
-    }
-
-    private fun getDateTimeFormat(): String? {
-        val preferences =
-            application.getSharedPreferences(
-                application.applicationContext.getString(R.string.preference_file_key),
-                Context.MODE_PRIVATE
-            )
-        return preferences.getString(
-            Constants.DATE_TIME_PREF_KEY,
-            Constants.DATE_TIME_DEFAULT_FORMAT
-        )
-    }
-
-    private fun setDateTimeFormat(format: String) {
-        val preferences =
-            application.getSharedPreferences(
-                application.applicationContext.getString(R.string.preference_file_key),
-                Context.MODE_PRIVATE
-            )
-        val editor = preferences.edit()
-        editor.putString("dateFormat", format)
-        editor.apply()
     }
 }
