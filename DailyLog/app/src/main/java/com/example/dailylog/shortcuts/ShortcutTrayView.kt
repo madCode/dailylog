@@ -1,11 +1,9 @@
 package com.example.dailylog.shortcuts
 
 import android.content.Context
-import android.graphics.Color
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -14,34 +12,20 @@ import com.example.dailylog.entities.Shortcut
 import kotlin.collections.ArrayList
 
 
-interface ShortcutTrayView {
-    var context: Context
-    var constraintLayout: ConstraintLayout
-    var shortcuts: ShortcutList
-    var otherTray: ShortcutTrayView?
-    var showNextButton: Boolean
-    var showPrevButton: Boolean
+class ShortcutTrayView(
+    var context: Context,
+    var constraintLayout: ConstraintLayout,
+    var shortcuts: ShortcutList,
     var inputView: EditText
+) {
 
     fun renderTray() {
-        otherTray?.clearTray()
-
         val set = ConstraintSet()
         val buttonList: ArrayList<View> = ArrayList()
 
         var prevId = ConstraintSet.PARENT_ID
-        if (showPrevButton) {
-            val button = createToggleButton(R.drawable.ic_arrow_back_ios_24px)
-            buttonList.add(button)
-            constraintLayout.addView(button)
-        }
         shortcuts.shortcutList.forEach {
             val button = createShortcutButton(context, it)
-            buttonList.add(button)
-            constraintLayout.addView(button)
-        }
-        if (showNextButton) {
-            val button = createToggleButton(R.drawable.ic_chevron_right_24px)
             buttonList.add(button)
             constraintLayout.addView(button)
         }
@@ -51,7 +35,7 @@ interface ShortcutTrayView {
             val nextId: Int = if (i >= buttonList.size - 1) {
                 ConstraintSet.PARENT_ID
             } else {
-                buttonList[i+1].id
+                buttonList[i + 1].id
             }
             set.addToHorizontalChain(button.id, prevId, nextId)
             prevId = button.id
@@ -59,29 +43,6 @@ interface ShortcutTrayView {
 
         set.applyTo(constraintLayout)
 
-    }
-
-    fun clearTray() {
-        constraintLayout.removeAllViews()
-    }
-
-    private fun createToggleButton(iconResource: Int): ImageButton {
-        val button = ImageButton(context)
-        val params: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-        button.layoutParams = params
-        button.setImageResource(iconResource)
-        button.setBackgroundColor(Color.TRANSPARENT)
-        button.setOnClickListener{
-            if (otherTray != null) {
-                clearTray()
-                otherTray?.renderTray()
-            }
-        }
-        button.id = View.generateViewId()
-        return button
     }
 
     private fun createShortcutButton(context: Context, shortcut: Shortcut): Button {
@@ -94,11 +55,10 @@ interface ShortcutTrayView {
         button.text = shortcut.label
         button.setTextAppearance(R.style.textButton)
         button.setBackgroundResource(R.drawable.button)
-        button.setOnClickListener{
+        button.setOnClickListener {
             val start: Int = inputView.selectionStart
             inputView.text.insert(start, shortcut.text)
             inputView.setSelection(start + shortcut.cursorIndex);
-            otherTray?.renderTray()
         }
         button.id = View.generateViewId()
         return button

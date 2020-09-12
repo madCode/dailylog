@@ -28,7 +28,7 @@ class ShortcutList constructor(private var shortcutType: String, application: Ap
     }
 
     private fun getAllShortcuts(): MutableList<Shortcut> {
-        return shortcutDB.shortcutDao().getAllByType(shortcutType).toMutableList()
+        return shortcutDB.shortcutDao().getAll().toMutableList()
     }
 
     fun loadShortcuts(): Boolean {

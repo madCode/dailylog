@@ -18,12 +18,10 @@ class AddToLogActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.add_to_log_screen)
-        val categoryShortcuts = ShortcutList(Constants.CATEGORIES_LIST_PREF_KEY, application)
-        categoryShortcuts.loadShortcuts()
         val globalShortcuts = ShortcutList(Constants.SHORTCUTS_LIST_PREF_KEY, application)
         globalShortcuts.loadShortcuts()
         val logView = findViewById<ScrollView>(R.id.addToLogView)
-        view = AddToLogView(logView, applicationContext, categoryShortcuts, globalShortcuts)
+        view = AddToLogView(logView, applicationContext, globalShortcuts)
 
         val fileHelper = FileHelper
         FileHelper.setUpHelper(application)
