@@ -3,6 +3,7 @@ package com.example.dailylog.settings
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -11,6 +12,7 @@ import com.example.dailylog.R
 import com.example.dailylog.filemanager.FileFormatSettingsPresenter
 import com.example.dailylog.filemanager.FileFormatSettingsView
 import com.example.dailylog.filemanager.FileHelper
+import com.example.dailylog.log.AddToLogActivity
 import com.example.dailylog.shortcuts.ShortcutListPresenter
 import com.example.dailylog.shortcuts.ShortcutListView
 
@@ -41,6 +43,17 @@ class SettingsActivity : AppCompatActivity() {
         shortcutView.renderView()
         selectFile = findViewById(R.id.selectFileButton)
         setUpFileChooser()
+        setUpActionBar()
+    }
+
+    private fun setUpActionBar() {
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back_ios_24px);// set drawable icon
+        supportActionBar?.setDisplayHomeAsUpEnabled(true);
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 
     private fun setUpFileChooser() {
