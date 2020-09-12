@@ -15,12 +15,12 @@ class FileFormatSettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.file_format_settings)
         view = FileFormatSettingsView(getDateTimeFormat(),
-            getFilenameFormat(), findViewById<ConstraintLayout>(R.id.fileSettingsLayout),
-            applicationContext, resources
+            FileHelper.getFilename(application), findViewById<ConstraintLayout>(R.id.fileSettingsLayout),
+            applicationContext
         )
         presenter = FileFormatSettingsPresenter(
             { format: String -> setDateTimeFormat(format) },
-            { format: String -> setFilenameFormat(format) }
+            { format: String -> FileHelper.setFilename(format, application) }
         )
         view.setPresenter(presenter)
         view.render()
@@ -43,21 +43,6 @@ class FileFormatSettingsActivity : AppCompatActivity() {
             application.getSharedPreferences(application.applicationContext.getString(R.string.preference_file_key), Context.MODE_PRIVATE)
         val editor = preferences.edit()
         editor.putString("dateFormat", format)
-        editor.apply()
-    }
-
-    private fun getFilenameFormat(): String? {
-        return FileHelper.getFilenameFormat(application)
-    }
-
-    private fun setFilenameFormat(format: String) {
-        val preferences =
-            application.getSharedPreferences(
-                application.applicationContext.getString(
-                    R.string.preference_file_key
-                ), Context.MODE_PRIVATE)
-        val editor = preferences.edit()
-        editor.putString("filenameFormat", format)
         editor.apply()
     }
 }

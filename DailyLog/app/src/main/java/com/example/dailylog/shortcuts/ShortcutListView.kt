@@ -73,9 +73,9 @@ class ShortcutListView(private var view: View) : ShortcutListPresenter.View {
 
     private fun createShortcutRow(shortcut: String, buttonList: ArrayList<ImageButton>, lastRow: Boolean): ConstraintLayout {
         val row = ConstraintLayout(view.context)
-        if (!lastRow) {
-            row.setBackgroundResource(R.drawable.underline)
-        }
+//        if (!lastRow) {
+        row.setBackgroundResource(R.drawable.underline)
+//        }
 
         val textView = TextView(view.context)
         textView.text = shortcut
