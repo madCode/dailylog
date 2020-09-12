@@ -6,8 +6,7 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dailylog.filemanager.FileFormatSettingsActivity
 import com.example.dailylog.log.AddToLogActivity
-import com.example.dailylog.shortcuts.CategorySettingsActivity
-import com.example.dailylog.shortcuts.KeyboardShortcutSettingsActivity
+import com.example.dailylog.shortcuts.ShortcutSettingsActivity
 
 
 class DailyLogHomeScreenActivity : AppCompatActivity()  {
@@ -16,15 +15,9 @@ class DailyLogHomeScreenActivity : AppCompatActivity()  {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.daily_log_home_screen)
 
-        val catButton = findViewById<Button>(R.id.categories)
-        catButton.setOnClickListener{
-            val intent = Intent(this, CategorySettingsActivity::class.java)
-            startActivity(intent)
-        }
-
         val shortButton = findViewById<Button>(R.id.shortcuts)
         shortButton.setOnClickListener{
-            val intent = Intent(this, KeyboardShortcutSettingsActivity::class.java)
+            val intent = Intent(this, ShortcutSettingsActivity::class.java)
             startActivity(intent)
         }
 

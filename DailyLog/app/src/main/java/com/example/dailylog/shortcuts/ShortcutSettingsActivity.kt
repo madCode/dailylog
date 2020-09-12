@@ -6,7 +6,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.dailylog.R
 
 
-class KeyboardShortcutSettingsActivity : AppCompatActivity() {
+class ShortcutSettingsActivity : AppCompatActivity() {
     private lateinit var presenter: ShortcutListPresenter
     private lateinit var view: ShortcutListView
 

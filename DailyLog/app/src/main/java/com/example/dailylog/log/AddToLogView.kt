@@ -7,10 +7,9 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.example.dailylog.shortcuts.CategoryTrayView
-import com.example.dailylog.shortcuts.KeyboardShortcutsTrayView
 import com.example.dailylog.R
 import com.example.dailylog.shortcuts.ShortcutList
+import com.example.dailylog.shortcuts.ShortcutTrayView
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -18,8 +17,7 @@ import java.time.format.DateTimeFormatter
 class AddToLogView(
     private var view: View,
     private var context: Context,
-    private var categoryShortcutList: ShortcutList,
-    private var globalShortcutList: ShortcutList
+    private var shortcutList: ShortcutList
 ) {
     private var btnRead: ImageButton? = null
     private var btnSave: ImageButton? = null
@@ -27,24 +25,23 @@ class AddToLogView(
     private lateinit var todayLog: EditText
     private lateinit var presenter: AddToLogPresenter
 
-    private lateinit var categoryShortcutTrayView: CategoryTrayView
-    private lateinit var keyboardShortcutsTrayView: KeyboardShortcutsTrayView
+    private lateinit var shortcutTrayView: ShortcutTrayView
 
     fun render(presenter: AddToLogPresenter, dateTimeFormat: String) {
         this.presenter = presenter
-        todayLog = view.findViewById<EditText>(R.id.todayLog)
-        btnRead = view.findViewById<ImageButton>(R.id.btnRead)
+        todayLog = view.findViewById(R.id.todayLog)
+        btnRead = view.findViewById(R.id.btnRead)
         btnRead?.setOnClickListener {
             loadCurrentLogFile()
         }
         loadCurrentLogFile()
         addCurrentDateToLog(dateTimeFormat)
-        btnClear = view.findViewById<ImageButton>(R.id.btnClear)
+        btnClear = view.findViewById(R.id.btnClear)
         btnClear?.setOnClickListener{
             presenter.clearFile()
             loadCurrentLogFile()
         }
-        btnSave = view.findViewById<ImageButton>(R.id.btnSave)
+        btnSave = view.findViewById(R.id.btnSave)
         btnSave?.setOnClickListener {
             if (presenter.saveToFile(todayLog.text.toString())) {
                 Toast.makeText(context, "Saved to file", Toast.LENGTH_SHORT).show()
@@ -57,7 +54,7 @@ class AddToLogView(
             }
         }
         setUpTrays()
-        categoryShortcutTrayView.renderTray()
+        shortcutTrayView.renderTray()
         todayLog.requestFocus()
     }
 
@@ -71,21 +68,12 @@ class AddToLogView(
     private fun setUpTrays() {
         val trayView = view.findViewById<ConstraintLayout>(R.id.shortcutTray)
         val inputView = view.findViewById<EditText>(R.id.todayLog)
-        categoryShortcutTrayView = CategoryTrayView(
+        shortcutTrayView = ShortcutTrayView(
             context,
             trayView,
-            categoryShortcutList,
+            shortcutList,
             inputView,
-            null
         )
-        keyboardShortcutsTrayView = KeyboardShortcutsTrayView(
-            context,
-            trayView,
-            globalShortcutList,
-            inputView,
-            categoryShortcutTrayView
-        )
-        categoryShortcutTrayView.otherTray=keyboardShortcutsTrayView
 
     }
 

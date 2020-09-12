@@ -14,7 +14,7 @@
             android:windowSoftInputMode="adjustPan">
         </activity>
         <activity
-            android:name=".shortcuts.KeyboardShortcutSettingsActivity"
+            android:name=".shortcuts.ShortcutSettingsActivity"
             android:windowSoftInputMode="adjustPan">
         </activity>
         <activity android:name=".DailyLogHomeScreenActivity"
