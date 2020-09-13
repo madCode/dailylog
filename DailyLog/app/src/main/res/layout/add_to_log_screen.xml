@@ -39,6 +39,17 @@
             app:layout_constraintTop_toBottomOf="@id/todayLog" />
 
         <ImageButton
+            android:id="@+id/btnDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/refresh"
+            android:src="@drawable/ic_today_24px"
+            app:layout_constraintBottom_toTopOf="@id/btnRead"
+            app:layout_constraintEnd_toEndOf="@id/todayLog" />
+
+        <ImageButton
             android:id="@+id/btnRead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

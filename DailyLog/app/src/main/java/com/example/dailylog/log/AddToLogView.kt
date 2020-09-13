@@ -22,6 +22,7 @@ class AddToLogView(
     private var btnRead: ImageButton? = null
     private var btnSave: ImageButton? = null
     private var btnClear: ImageButton? = null
+    private var btnDate: ImageButton? = null
     private lateinit var todayLog: EditText
     private lateinit var presenter: AddToLogPresenter
 
@@ -29,13 +30,24 @@ class AddToLogView(
 
     fun render(presenter: AddToLogPresenter, dateTimeFormat: String) {
         this.presenter = presenter
+        setUpButtons(dateTimeFormat)
+        todayLog = view.findViewById(R.id.todayLog)
+        loadCurrentLogFile()
+        setUpTrays()
+        shortcutTrayView.renderTray()
+        todayLog.requestFocus()
+    }
+
+    private fun setUpButtons(dateTimeFormat: String) {
         todayLog = view.findViewById(R.id.todayLog)
         btnRead = view.findViewById(R.id.btnRead)
+        btnDate = view.findViewById(R.id.btnDate)
+        btnDate?.setOnClickListener {
+            addCurrentDateToLog(dateTimeFormat)
+        }
         btnRead?.setOnClickListener {
             loadCurrentLogFile()
         }
-        loadCurrentLogFile()
-        addCurrentDateToLog(dateTimeFormat)
         btnClear = view.findViewById(R.id.btnClear)
         btnClear?.setOnClickListener{
             presenter.clearFile()
@@ -53,16 +65,15 @@ class AddToLogView(
                     .show()
             }
         }
-        setUpTrays()
-        shortcutTrayView.renderTray()
-        todayLog.requestFocus()
-    }
 
+    }
     private fun addCurrentDateToLog(dateTimeFormat: String) {
         val current = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern(dateTimeFormat)
-        todayLog.text.append("\n" + current.format(formatter) + "\t")
-        todayLog.setSelection(todayLog.text.length)
+        val start: Int = todayLog.selectionStart
+        val dateString: String = current.format(formatter)+ "\t"
+        todayLog.text.insert(start, dateString)
+        todayLog.setSelection(start + dateString.length);
     }
 
     private fun setUpTrays() {
