@@ -76,6 +76,7 @@ class SettingsActivity : AppCompatActivity() {
                 data.data.toString(),
                 application
             ) //The uri with the location of the file
+            fileSettingsView.render()
         }
     }
 }

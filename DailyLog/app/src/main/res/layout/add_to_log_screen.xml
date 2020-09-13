@@ -40,45 +40,46 @@
 
         <ImageButton
             android:id="@+id/btnDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/refresh"
-            android:src="@drawable/ic_today_24px"
+            android:scaleType="center"
+            android:src="@drawable/ic_today_black_48dp"
             app:layout_constraintBottom_toTopOf="@id/btnRead"
             app:layout_constraintEnd_toEndOf="@id/todayLog" />
 
         <ImageButton
             android:id="@+id/btnRead"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/refresh"
-            android:src="@drawable/ic_refresh_24px"
+            android:src="@drawable/ic_refresh_black_48dp"
             app:layout_constraintBottom_toTopOf="@id/btnClear"
             app:layout_constraintEnd_toEndOf="@id/todayLog" />
 
         <ImageButton
             android:id="@+id/btnClear"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/clear"
-            android:src="@drawable/ic_delete_outline_24px"
+            android:src="@drawable/ic_delete_outline_black_48dp"
             app:layout_constraintBottom_toTopOf="@id/btnSave"
             app:layout_constraintEnd_toEndOf="@id/todayLog" />
 
         <ImageButton
             android:id="@+id/btnSave"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/save"
-            android:src="@drawable/ic_save_24px"
+            android:src="@drawable/ic_save_black_48dp"
             app:layout_constraintBottom_toBottomOf="@id/todayLog"
             app:layout_constraintEnd_toEndOf="@id/todayLog" />
     </androidx.constraintlayout.widget.ConstraintLayout>
