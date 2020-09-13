@@ -45,7 +45,7 @@ object FileHelper {
     fun readFile(context: Context): String? {
         var line: String? = null
         try {
-            val fileInputStream = context.openFileInput(fileName)
+            val fileInputStream = FileInputStream(File(fileName))
             val inputStreamReader =
                 InputStreamReader(fileInputStream)
             val bufferedReader = BufferedReader(inputStreamReader)
