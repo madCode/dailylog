@@ -1,38 +1,37 @@
 package com.example.dailylog.filemanager
 
-import android.Manifest
-import android.app.Activity
 import android.app.Application
 import android.content.ContentUris
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.example.dailylog.Constants
 import com.example.dailylog.R
 import com.example.dailylog.settings.PermissionChecker
 import java.io.*
-
-private const val STORAGE_PERMISSIONS_REQUEST = 100
 
 /**
  * Adapted from: http://instinctcoder.com/read-and-write-text-file-in-android-studio/
  */
 
 object FileHelper {
-    val TAG = "FileHelper"
-    var fileName: String? = null
+    private const val TAG = "FileHelper"
+    private var fileName: String? = null
 
     fun setUpHelper(application: Application) {
         fileName = getFilename(application)
+        if (fileName == Constants.FILENAME_DEFAULT) {
+            val dir = application.applicationContext.getDir("log_files", MODE_PRIVATE)
+            val file = File(dir, fileName)
+            file.createNewFile()
+            setFilename(file.absolutePath, application)
+            fileName = file.absolutePath
+        }
     }
 
     fun getFilename(application: Application): String {

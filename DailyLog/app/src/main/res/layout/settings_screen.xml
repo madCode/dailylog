@@ -45,6 +45,8 @@
                     android:layout_margin="10dp"
                     android:text="@string/dateFormatTitle"
                     android:textSize="12sp"
+                    app:layout_constraintEnd_toStartOf="@id/dateFormat"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -83,27 +85,31 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <EditText
-                    android:id="@+id/fileNameEditText"
+                <TextView
+                    android:id="@+id/fileName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:autofillHints="no"
-                    android:hint="@string/defaultStringPlaceholder"
-                    android:imeOptions="actionDone"
-                    android:inputType="text"
+                    android:layout_margin="10dp"
+                    android:ellipsize="start"
                     android:textSize="12sp"
+                    app:layout_constrainedWidth="true"
                     app:layout_constraintBottom_toBottomOf="@id/fileNameTitle"
                     app:layout_constraintEnd_toStartOf="@+id/selectFileButton"
-                    app:layout_constraintTop_toTopOf="@id/fileNameTitle" />
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@id/fileNameTitle"
+                    app:layout_constraintTop_toTopOf="@id/fileNameTitle"
+                    tools:text="really really really really long text really really really really long text"
+                    android:singleLine="true" />
 
-                <ImageButton
+                <Button
                     android:id="@+id/selectFileButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/select_file"
-                    app:layout_constraintBottom_toBottomOf="@id/fileNameEditText"
+                    android:layout_margin="10dp"
+                    android:text="@string/select_file"
+                    app:layout_constraintBottom_toBottomOf="@id/fileNameTitle"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/fileNameEditText" />
+                    app:layout_constraintTop_toTopOf="@id/fileNameTitle" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -132,9 +138,9 @@
                 android:id="@+id/shortcutDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
-                android:layout_marginBottom="10dp"
                 android:text="@string/shortcutsDescription"
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="parent"
