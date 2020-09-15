@@ -16,6 +16,7 @@
             android:id="@+id/todayLog"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginBottom="10dp"
             android:background="@android:color/transparent"
             android:gravity="top"
             android:hint="@string/write_something_to_save"
@@ -23,7 +24,6 @@
             android:inputType="textMultiLine"
             android:padding="10dp"
             android:theme="@style/styledText"
-            android:layout_marginBottom="10dp"
             app:layout_constraintBottom_toTopOf="@+id/shortcutTray"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -62,6 +62,7 @@
             app:layout_constraintEnd_toEndOf="@id/todayLog" />
 
         <ImageButton
+            android:visibility="gone"
             android:id="@+id/btnClear"
             android:layout_width="40dp"
             android:layout_height="40dp"
