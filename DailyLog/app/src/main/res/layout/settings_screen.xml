@@ -211,12 +211,12 @@
 
                 <ImageButton
                     android:id="@+id/btnSaveShortcut"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_margin="5dp"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/save"
-                    android:src="@drawable/ic_save_24px"
+                    android:src="@drawable/ic_save_black_48dp"
                     app:layout_constraintBottom_toBottomOf="@+id/cursorInput"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/cursorInput"

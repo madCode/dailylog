@@ -54,28 +54,28 @@ class ShortcutListView(private var view: View) : ShortcutListPresenter.View {
     override fun renderShortcutList(shortcutList: MutableSet<String>) {
         val linearLayout = view.findViewById<LinearLayout>(R.id.shortcutList)
         linearLayout.removeAllViews()
-        shortcutList.forEachIndexed {index, category ->
-            linearLayout.addView(getShortcutRow(category, index == shortcutList.size-1))
+        shortcutList.forEachIndexed {_, category ->
+            linearLayout.addView(getShortcutRow(category))
         }
     }
 
-    private fun getShortcutRow(category: String, lastRow: Boolean): ConstraintLayout {
+    private fun getShortcutRow(category: String): ConstraintLayout {
         val removeButton = ImageButton(view.context)
-        removeButton.setImageResource(R.drawable.ic_delete_outline_24px)
+        removeButton.setImageResource(R.drawable.ic_delete_outline_black_48dp)
+        removeButton.maxWidth = 24
+        removeButton.maxHeight = 24
         removeButton.setBackgroundColor(Color.TRANSPARENT)
         removeButton.setOnClickListener {
             presenter?.removeShortcut(category)
         }
         removeButton.id = generateViewId()
 
-        return createShortcutRow(category, arrayListOf(removeButton), lastRow)
+        return createShortcutRow(category, arrayListOf(removeButton))
     }
 
-    private fun createShortcutRow(shortcut: String, buttonList: ArrayList<ImageButton>, lastRow: Boolean): ConstraintLayout {
+    private fun createShortcutRow(shortcut: String, buttonList: ArrayList<ImageButton>): ConstraintLayout {
         val row = ConstraintLayout(view.context)
-//        if (!lastRow) {
         row.setBackgroundResource(R.drawable.underline)
-//        }
 
         val textView = TextView(view.context)
         textView.text = shortcut

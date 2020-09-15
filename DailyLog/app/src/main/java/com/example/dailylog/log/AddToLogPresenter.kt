@@ -2,17 +2,18 @@ package com.example.dailylog.log
 
 import android.content.Context
 import com.example.dailylog.filemanager.FileHelper
+import com.example.dailylog.settings.PermissionChecker
 
-class AddToLogPresenter(private var context: Context, private var fileHelper: FileHelper) {
+class AddToLogPresenter(private var context: Context, private var fileHelper: FileHelper, private var permissionChecker: PermissionChecker) {
     fun readFile(): CharSequence? {
-        return FileHelper.readFile(context)
+        return fileHelper.readFile(permissionChecker)
     }
 
     fun clearFile() {
-        FileHelper.clearFile(context)
+        fileHelper.clearFile(context)
     }
 
     fun saveToFile(log: String): Boolean {
-        return FileHelper.saveToFile(context, log)
+        return fileHelper.saveToFile(log)
     }
 }

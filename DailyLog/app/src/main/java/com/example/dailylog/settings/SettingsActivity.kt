@@ -1,18 +1,17 @@
 package com.example.dailylog.settings
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.example.dailylog.Constants
 import com.example.dailylog.R
 import com.example.dailylog.filemanager.FileFormatSettingsPresenter
 import com.example.dailylog.filemanager.FileFormatSettingsView
 import com.example.dailylog.filemanager.FileHelper
 import com.example.dailylog.shortcuts.ShortcutListPresenter
 import com.example.dailylog.shortcuts.ShortcutListView
+import java.io.File
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var fileSettingsPresenter: FileFormatSettingsPresenter
@@ -20,19 +19,22 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var shortcutPresenter: ShortcutListPresenter
     private lateinit var shortcutView: ShortcutListView
     private lateinit var selectFile: ImageButton
+    private lateinit var fileHelper: FileHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_screen)
+        fileHelper = FileHelper
+        fileHelper.setUpHelper(application)
         fileSettingsView = FileFormatSettingsView(
-            FileHelper.getDateTimeFormat(application),
-            FileHelper.getFilename(application),
+            fileHelper.getDateTimeFormat(application),
+            fileHelper.getFilename(application),
             findViewById<ConstraintLayout>(R.id.fileSettingsLayout),
             applicationContext
         )
         fileSettingsPresenter = FileFormatSettingsPresenter(
-            { format: String -> FileHelper.setDateTimeFormat(format, application) },
-            { format: String -> FileHelper.setFilename(format, application) }
+            { format: String -> fileHelper.setDateTimeFormat(format, application) },
+            { format: String -> fileHelper.setFilename(format, application) }
         )
         fileSettingsView.setPresenter(fileSettingsPresenter)
         fileSettingsView.render()
@@ -72,11 +74,16 @@ class SettingsActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == 111 && resultCode == RESULT_OK && data != null) {
-            FileHelper.setFilename(
-                data.data.toString(),
-                application
-            ) //The uri with the location of the file
-            fileSettingsView.render()
+            val selectedFileUri = data.data;
+            if (selectedFileUri != null && selectedFileUri.path != null) {
+                //val file = File(selectedFileUri.path)
+                val path = fileHelper.getPathFromUri(applicationContext, selectedFileUri)
+                fileHelper.setFilename(
+                    path,
+                    application
+                ) //The uri with the location of the file
+                fileSettingsView.render()
+            }
         }
     }
 }
