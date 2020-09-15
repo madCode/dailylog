@@ -23,9 +23,9 @@ class AddToLogView(
     private var btnSave: ImageButton? = null
     private var btnClear: ImageButton? = null
     private var btnDate: ImageButton? = null
+    private var cursor: Int = -1
     private lateinit var todayLog: EditText
     private lateinit var presenter: AddToLogPresenter
-
     private lateinit var shortcutTrayView: ShortcutTrayView
 
     fun render(presenter: AddToLogPresenter, dateTimeFormat: String) {
@@ -57,9 +57,7 @@ class AddToLogView(
         btnSave?.setOnClickListener {
             if (presenter.saveToFile(todayLog.text.toString())) {
                 Toast.makeText(context, "Saved to file", Toast.LENGTH_SHORT).show()
-                todayLog.text.clear()
                 loadCurrentLogFile()
-                todayLog.setSelection(todayLog.text.length)
             } else {
                 Toast.makeText(context, "Error saving file!!!", Toast.LENGTH_SHORT)
                     .show()
@@ -89,7 +87,12 @@ class AddToLogView(
     }
 
     private fun loadCurrentLogFile() {
+        cursor = todayLog.selectionStart
         todayLog.setText(presenter.readFile(), TextView.BufferType.EDITABLE);
+        if (cursor == -1) {
+            cursor = todayLog.text.length
+        }
+        todayLog.setSelection(cursor)
     }
 
 }

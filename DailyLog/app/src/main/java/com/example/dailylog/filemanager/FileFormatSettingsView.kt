@@ -1,7 +1,6 @@
 package com.example.dailylog.filemanager
 
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.Color
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -47,26 +46,8 @@ class FileFormatSettingsView(private var dateTimeFormat: String?, private var fi
     }
 
     private fun renderFileNameRow() {
-        val fileNameEditText = view.findViewById<TextView>(R.id.fileNameEditText)
-        fileNameEditText.text = filename
-        fileNameEditText.hint = context.resources.getString(
-            R.string.defaultStringPlaceholder,
-            Constants.FILENAME_DEFAULT
-        )
-        fileNameEditText.setOnEditorActionListener(OnEditorActionListener { v, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val saved = this.presenter?.saveFilename(v.text.toString())
-                if (saved == null || !saved) {
-                    fileNameEditText.setTextColor(Color.RED)
-                    Toast.makeText(context, "Unable to save, try again", Toast.LENGTH_LONG).show()
-                    return@OnEditorActionListener true
-                } else {
-                    Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show()
-                    fileNameEditText.setTextColor(context.getColor(R.color.primaryText))
-                }
-            }
-            false
-        })
+        val fileNameTitle = view.findViewById<TextView>(R.id.fileName)
+        fileNameTitle.text = filename
     }
 
 }

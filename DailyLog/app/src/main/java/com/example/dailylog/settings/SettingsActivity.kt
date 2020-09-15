@@ -2,7 +2,7 @@ package com.example.dailylog.settings
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.ImageButton
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.dailylog.R
@@ -11,14 +11,13 @@ import com.example.dailylog.filemanager.FileFormatSettingsView
 import com.example.dailylog.filemanager.FileHelper
 import com.example.dailylog.shortcuts.ShortcutListPresenter
 import com.example.dailylog.shortcuts.ShortcutListView
-import java.io.File
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var fileSettingsPresenter: FileFormatSettingsPresenter
     private lateinit var fileSettingsView: FileFormatSettingsView
     private lateinit var shortcutPresenter: ShortcutListPresenter
     private lateinit var shortcutView: ShortcutListView
-    private lateinit var selectFile: ImageButton
+    private lateinit var selectFile: Button
     private lateinit var fileHelper: FileHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
