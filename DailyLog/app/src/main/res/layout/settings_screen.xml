@@ -216,6 +216,7 @@
                     android:layout_margin="5dp"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/save"
+                    android:scaleType="centerInside"
                     android:src="@drawable/ic_save_black_48dp"
                     app:layout_constraintBottom_toBottomOf="@+id/cursorInput"
                     app:layout_constraintEnd_toEndOf="parent"
