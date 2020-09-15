@@ -51,7 +51,7 @@ class FileFormatSettingsView(private var dateTimeFormat: String?, private var fi
         fileNameEditText.text = filename
         fileNameEditText.hint = context.resources.getString(
             R.string.defaultStringPlaceholder,
-            Constants.FILENAME_DEFAULT_FORMAT
+            Constants.FILENAME_DEFAULT
         )
         fileNameEditText.setOnEditorActionListener(OnEditorActionListener { v, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {

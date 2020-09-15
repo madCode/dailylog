@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.dailylog.Constants
 import com.example.dailylog.R
 import com.example.dailylog.filemanager.FileHelper
+import com.example.dailylog.settings.PermissionChecker
 import com.example.dailylog.settings.SettingsActivity
 import com.example.dailylog.shortcuts.ShortcutList
 
@@ -18,9 +19,11 @@ import com.example.dailylog.shortcuts.ShortcutList
 class AddToLogActivity : AppCompatActivity() {
     private lateinit var presenter: AddToLogPresenter
     private lateinit var view: AddToLogView
+    private lateinit var permissionChecker: PermissionChecker
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        permissionChecker = PermissionChecker(this)
         setContentView(R.layout.add_to_log_screen)
         val globalShortcuts = ShortcutList(Constants.SHORTCUTS_LIST_PREF_KEY, application)
         globalShortcuts.loadShortcuts()
@@ -28,10 +31,11 @@ class AddToLogActivity : AppCompatActivity() {
         view = AddToLogView(logView, applicationContext, globalShortcuts)
 
         val fileHelper = FileHelper
-        FileHelper.setUpHelper(application)
-        presenter = AddToLogPresenter(applicationContext, fileHelper)
+        fileHelper.setUpHelper(application)
+        presenter = AddToLogPresenter(applicationContext, fileHelper, permissionChecker)
         view.render(presenter, getDateTimeFormat())
-        val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputMethodManager =
+            getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
         setUpActionBar()
     }
