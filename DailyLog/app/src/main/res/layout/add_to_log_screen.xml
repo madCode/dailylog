@@ -77,26 +77,13 @@
         app:layout_constraintBottom_toBottomOf="@id/addToLogScrollView"
         app:layout_constraintEnd_toEndOf="@id/addToLogScrollView" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <GridView
         android:id="@+id/shortcutTray"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:orientation="horizontal"
+        android:layout_height="100dp"
+        android:numColumns="5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/addToLogScrollView"/>
-
-<!--    <GridView-->
-<!--        android:id="@+id/shortcutTray"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:columnWidth="150dp"-->
-<!--        android:numColumns="auto_fit"-->
-<!--        android:horizontalSpacing="15dp"-->
-<!--        android:verticalSpacing="15dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/addToLogView" />-->
+        app:layout_constraintTop_toBottomOf="@id/addToLogScrollView" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -3,10 +3,9 @@ package com.example.dailylog.log
 import android.content.Context
 import android.view.View
 import android.widget.*
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.dailylog.R
 import com.example.dailylog.shortcuts.ShortcutList
-import com.example.dailylog.shortcuts.ShortcutTrayView
+import com.example.dailylog.shortcuts.ShortcutTrayAdapter
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -23,15 +22,13 @@ class AddToLogView(
     private var cursor: Int = -1
     private lateinit var todayLog: EditText
     private lateinit var presenter: AddToLogPresenter
-    private lateinit var shortcutTrayView: ShortcutTrayView
 
     fun render(presenter: AddToLogPresenter, dateTimeFormat: String) {
         this.presenter = presenter
         setUpButtons(dateTimeFormat)
         todayLog = view.findViewById(R.id.todayLog)
         loadCurrentLogFile()
-        setUpTrays()
-        shortcutTrayView.renderTray()
+        setUpShortcuts()
         todayLog.requestFocus()
     }
 
@@ -71,16 +68,11 @@ class AddToLogView(
         todayLog.setSelection(start + dateString.length);
     }
 
-    private fun setUpTrays() {
-        val trayView = view.findViewById<ConstraintLayout>(R.id.shortcutTray)
+    private fun setUpShortcuts() {
         val inputView = view.findViewById<EditText>(R.id.todayLog)
-        shortcutTrayView = ShortcutTrayView(
-            context,
-            trayView,
-            shortcutList,
-            inputView,
-        )
-
+        val gridview = view.findViewById<GridView>(R.id.shortcutTray)
+        val adapter = ShortcutTrayAdapter(context, inputView, R.layout.shortcut_layout, shortcutList.shortcutList)
+        gridview.adapter = adapter
     }
 
     private fun loadCurrentLogFile() {
