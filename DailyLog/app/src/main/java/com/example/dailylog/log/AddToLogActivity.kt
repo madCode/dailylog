@@ -41,6 +41,11 @@ class AddToLogActivity : AppCompatActivity() {
         setUpActionBar()
     }
 
+    override fun onPause() {
+        super.onPause()
+        view.save()
+    }
+
     private fun setUpActionBar() {
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_settings_24px);// set drawable icon
         supportActionBar?.setDisplayHomeAsUpEnabled(true);

@@ -64,6 +64,7 @@ class ShortcutListView(private var view: View) : ShortcutListPresenter.View {
         removeButton.setImageResource(R.drawable.ic_delete_outline_black_48dp)
         removeButton.maxWidth = 24
         removeButton.maxHeight = 24
+        removeButton.scaleType = ImageView.ScaleType.CENTER
         removeButton.setBackgroundColor(Color.TRANSPARENT)
         removeButton.setOnClickListener {
             presenter?.removeShortcut(category)

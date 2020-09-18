@@ -32,6 +32,16 @@ class AddToLogView(
         todayLog.requestFocus()
     }
 
+    fun save() {
+        if (presenter.saveToFile(todayLog.text.toString())) {
+            Toast.makeText(context, "Saved to file", Toast.LENGTH_SHORT).show()
+            loadCurrentLogFile()
+        } else {
+            Toast.makeText(context, "Error saving file!!!", Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
+
     private fun setUpButtons(dateTimeFormat: String) {
         todayLog = view.findViewById(R.id.todayLog)
         btnRead = view.findViewById(R.id.btnRead)
@@ -49,13 +59,7 @@ class AddToLogView(
         }
         btnSave = view.findViewById(R.id.btnSave)
         btnSave?.setOnClickListener {
-            if (presenter.saveToFile(todayLog.text.toString())) {
-                Toast.makeText(context, "Saved to file", Toast.LENGTH_SHORT).show()
-                loadCurrentLogFile()
-            } else {
-                Toast.makeText(context, "Error saving file!!!", Toast.LENGTH_SHORT)
-                    .show()
-            }
+            save()
         }
 
     }
