@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.dailylog.Constants
 import com.example.dailylog.R
 import com.example.dailylog.filemanager.FileHelper
@@ -27,7 +28,7 @@ class AddToLogActivity : AppCompatActivity() {
         setContentView(R.layout.add_to_log_screen)
         val globalShortcuts = ShortcutList(Constants.SHORTCUTS_LIST_PREF_KEY, application)
         globalShortcuts.loadShortcuts()
-        val logView = findViewById<ScrollView>(R.id.addToLogView)
+        val logView = findViewById<ConstraintLayout>(R.id.addToLogView)
         view = AddToLogView(logView, applicationContext, globalShortcuts)
 
         val fileHelper = FileHelper
