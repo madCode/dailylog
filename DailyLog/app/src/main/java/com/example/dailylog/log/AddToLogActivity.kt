@@ -21,24 +21,30 @@ class AddToLogActivity : AppCompatActivity() {
     private lateinit var presenter: AddToLogPresenter
     private lateinit var view: AddToLogView
     private lateinit var permissionChecker: PermissionChecker
+    private lateinit var globalShortcuts: ShortcutList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         permissionChecker = PermissionChecker(this)
         setContentView(R.layout.add_to_log_screen)
-        val globalShortcuts = ShortcutList(Constants.SHORTCUTS_LIST_PREF_KEY, application)
-        globalShortcuts.loadShortcuts()
+        globalShortcuts = ShortcutList(Constants.SHORTCUTS_LIST_PREF_KEY, application)
         val logView = findViewById<ConstraintLayout>(R.id.addToLogView)
         view = AddToLogView(logView, applicationContext, globalShortcuts)
 
         val fileHelper = FileHelper
         fileHelper.setUpHelper(application)
         presenter = AddToLogPresenter(applicationContext, fileHelper, permissionChecker)
-        view.render(presenter, getDateTimeFormat())
         val inputMethodManager =
             getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
         setUpActionBar()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        globalShortcuts.loadShortcuts()
+        view.shortcutList = globalShortcuts
+        view.render(presenter, getDateTimeFormat())
     }
 
     override fun onPause() {
