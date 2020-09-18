@@ -23,12 +23,13 @@ class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_screen)
+        val view = findViewById<ConstraintLayout>(R.id.settingsView)
         fileHelper = FileHelper
         fileHelper.setUpHelper(application)
         fileSettingsView = FileFormatSettingsView(
             fileHelper.getDateTimeFormat(application),
             fileHelper.getFilename(application),
-            findViewById<ConstraintLayout>(R.id.fileSettingsLayout),
+            view,
             applicationContext
         )
         fileSettingsPresenter = FileFormatSettingsPresenter(
@@ -37,7 +38,7 @@ class SettingsActivity : AppCompatActivity() {
         )
         fileSettingsView.setPresenter(fileSettingsPresenter)
         fileSettingsView.render()
-        shortcutView = ShortcutListView(findViewById<ConstraintLayout>(R.id.shortcutLayout))
+        shortcutView = ShortcutListView(view)
         shortcutPresenter = ShortcutListPresenter(
             shortcutView, R.string.shortcutsTitle, R.string.shortcutsDescription,
             "global_shortcuts", application
