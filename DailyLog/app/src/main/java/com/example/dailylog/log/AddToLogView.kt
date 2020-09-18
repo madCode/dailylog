@@ -2,10 +2,7 @@ package com.example.dailylog.log
 
 import android.content.Context
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.dailylog.R
 import com.example.dailylog.shortcuts.ShortcutList

@@ -1,88 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/addToLogView"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/addToLogView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
     tools:context=".log.AddToLogView">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
+        android:id="@+id/addToLogScrollView"
         android:layout_width="match_parent"
-        android:layout_height="0dp">
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/shortcutTray"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+            <EditText
+                android:id="@+id/todayLog"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@android:color/transparent"
+                android:gravity="top"
+                android:hint="@string/write_something_to_save"
+                android:importantForAutofill="no"
+                android:inputType="textMultiLine"
+                android:padding="10dp"
+                android:theme="@style/styledText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+    </ScrollView>
 
-        <EditText
-            android:id="@+id/todayLog"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="10dp"
-            android:background="@android:color/transparent"
-            android:gravity="top"
-            android:hint="@string/write_something_to_save"
-            android:importantForAutofill="no"
-            android:inputType="textMultiLine"
-            android:padding="10dp"
-            android:theme="@style/styledText"
-            app:layout_constraintBottom_toTopOf="@+id/shortcutTray"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <ImageButton
+        android:id="@+id/btnDate"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/refresh"
+        android:scaleType="center"
+        android:src="@drawable/ic_today_black_48dp"
+        app:layout_constraintBottom_toTopOf="@id/btnRead"
+        app:layout_constraintEnd_toEndOf="@id/addToLogScrollView" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/shortcutTray"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/todayLog" />
+    <ImageButton
+        android:id="@+id/btnRead"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/refresh"
+        android:src="@drawable/ic_refresh_black_48dp"
+        app:layout_constraintBottom_toTopOf="@id/btnClear"
+        app:layout_constraintEnd_toEndOf="@id/addToLogScrollView" />
 
-        <ImageButton
-            android:id="@+id/btnDate"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/refresh"
-            android:scaleType="center"
-            android:src="@drawable/ic_today_black_48dp"
-            app:layout_constraintBottom_toTopOf="@id/btnRead"
-            app:layout_constraintEnd_toEndOf="@id/todayLog" />
+    <ImageButton
+        android:id="@+id/btnClear"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/clear"
+        android:src="@drawable/ic_delete_outline_black_48dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/btnSave"
+        app:layout_constraintEnd_toEndOf="@id/addToLogScrollView" />
 
-        <ImageButton
-            android:id="@+id/btnRead"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/refresh"
-            android:src="@drawable/ic_refresh_black_48dp"
-            app:layout_constraintBottom_toTopOf="@id/btnClear"
-            app:layout_constraintEnd_toEndOf="@id/todayLog" />
+    <ImageButton
+        android:id="@+id/btnSave"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/save"
+        android:src="@drawable/ic_save_black_48dp"
+        app:layout_constraintBottom_toBottomOf="@id/addToLogScrollView"
+        app:layout_constraintEnd_toEndOf="@id/addToLogScrollView" />
 
-        <ImageButton
-            android:visibility="gone"
-            android:id="@+id/btnClear"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/clear"
-            android:src="@drawable/ic_delete_outline_black_48dp"
-            app:layout_constraintBottom_toTopOf="@id/btnSave"
-            app:layout_constraintEnd_toEndOf="@id/todayLog" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/shortcutTray"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/addToLogScrollView"/>
 
-        <ImageButton
-            android:id="@+id/btnSave"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/save"
-            android:src="@drawable/ic_save_black_48dp"
-            app:layout_constraintBottom_toBottomOf="@id/todayLog"
-            app:layout_constraintEnd_toEndOf="@id/todayLog" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+<!--    <GridView-->
+<!--        android:id="@+id/shortcutTray"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:columnWidth="150dp"-->
+<!--        android:numColumns="auto_fit"-->
+<!--        android:horizontalSpacing="15dp"-->
+<!--        android:verticalSpacing="15dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/addToLogView" />-->
+</androidx.constraintlayout.widget.ConstraintLayout>
 

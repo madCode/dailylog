@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.GridView
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -18,6 +19,20 @@ class ShortcutTrayView(
     var shortcuts: ShortcutList,
     var inputView: EditText
 ) {
+
+//    fun renderTray() {
+//        val buttonList: ArrayList<View> = ArrayList()
+//
+//        shortcuts.shortcutList.forEach {
+//            val button = createShortcutButton(context, it)
+//            buttonList.add(button)
+//            constraintLayout.addView(button)
+//        }
+//        for (i in 0 until buttonList.size) {
+//            val button = buttonList[i]
+//            constraintLayout.addView(button)
+//        }
+//    }
 
     fun renderTray() {
         val set = ConstraintSet()
