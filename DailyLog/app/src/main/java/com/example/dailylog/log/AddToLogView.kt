@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter
 class AddToLogView(
     private var view: View,
     private var context: Context,
-    private var shortcutList: ShortcutList
+    var shortcutList: ShortcutList
 ) {
     private var btnRead: ImageButton? = null
     private var btnSave: ImageButton? = null
