@@ -3,6 +3,7 @@ package com.example.dailylog.settings
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.dailylog.R
@@ -47,12 +48,6 @@ class SettingsActivity : AppCompatActivity() {
         shortcutView.renderView()
         selectFile = findViewById(R.id.selectFileButton)
         setUpFileChooser()
-        setUpActionBar()
-    }
-
-    private fun setUpActionBar() {
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back_ios_24px);// set drawable icon
-        supportActionBar?.setDisplayHomeAsUpEnabled(true);
     }
 
     override fun onSupportNavigateUp(): Boolean {

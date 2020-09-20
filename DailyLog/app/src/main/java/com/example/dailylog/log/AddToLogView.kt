@@ -44,13 +44,9 @@ class AddToLogView(
 
     private fun setUpButtons(dateTimeFormat: String) {
         todayLog = view.findViewById(R.id.todayLog)
-        btnRead = view.findViewById(R.id.btnRead)
         btnDate = view.findViewById(R.id.btnDate)
         btnDate?.setOnClickListener {
             addCurrentDateToLog(dateTimeFormat)
-        }
-        btnRead?.setOnClickListener {
-            loadCurrentLogFile()
         }
         btnClear = view.findViewById(R.id.btnClear)
         btnClear?.setOnClickListener{
