@@ -13,13 +13,14 @@ import java.time.format.DateTimeFormatter
 class AddToLogView(
     private var view: View,
     private var context: Context,
-    var shortcutList: ShortcutList
+    var shortcutList: ShortcutList,
+    private var saveCursorLocation: (Int) -> Unit,
+    cursorStartLocation: Int,
 ) {
-    private var btnRead: ImageButton? = null
     private var btnSave: ImageButton? = null
     private var btnClear: ImageButton? = null
     private var btnDate: ImageButton? = null
-    private var cursor: Int = -1
+    private var cursor: Int = cursorStartLocation
     private lateinit var todayLog: EditText
     private lateinit var presenter: AddToLogPresenter
 
@@ -76,11 +77,14 @@ class AddToLogView(
     }
 
     private fun loadCurrentLogFile() {
-        cursor = todayLog.selectionStart
+        if (todayLog.text.isNotEmpty()) {
+            cursor = todayLog.selectionStart
+        }
         todayLog.setText(presenter.readFile(), TextView.BufferType.EDITABLE);
-        if (cursor == -1) {
+        if (cursor == -1 || cursor > todayLog.text.length) {
             cursor = todayLog.text.length
         }
+        saveCursorLocation(cursor)
         todayLog.setSelection(cursor)
     }
 

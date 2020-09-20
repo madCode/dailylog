@@ -4,11 +4,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageButton
-import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.dailylog.Constants
@@ -31,7 +29,7 @@ class AddToLogActivity : AppCompatActivity() {
         setContentView(R.layout.add_to_log_screen)
         globalShortcuts = ShortcutList(Constants.SHORTCUTS_LIST_PREF_KEY, application)
         val logView = findViewById<ConstraintLayout>(R.id.addToLogView)
-        view = AddToLogView(logView, applicationContext, globalShortcuts)
+        view = AddToLogView(logView, applicationContext, globalShortcuts, { i -> saveCursorLocation(i)}, getCursorLocation())
 
         val fileHelper = FileHelper
         fileHelper.setUpHelper(application)
@@ -52,6 +50,29 @@ class AddToLogActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         view.save()
+    }
+
+    private fun getCursorLocation() : Int{
+        val preferences =
+            application.getSharedPreferences(
+                application.applicationContext.getString(R.string.preference_file_key),
+                Context.MODE_PRIVATE
+            )
+        return preferences.getInt(
+            "cursorPoint",
+            -1
+        )
+    }
+
+    private fun saveCursorLocation(index: Int) {
+        val preferences =
+            application.getSharedPreferences(
+                application.applicationContext.getString(R.string.preference_file_key),
+                Context.MODE_PRIVATE
+            )
+        val editor = preferences.edit()
+        editor.putInt("cursorPoint", index)
+        editor.apply()
     }
 
     private fun setUpSettings(logView: View) {
