@@ -32,6 +32,20 @@
     </ScrollView>
 
     <ImageButton
+        android:id="@+id/btnSettings"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_margin="10dp"
+        android:alpha="0.4"
+        android:scaleType="fitCenter"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/settings"
+        android:src="@drawable/ic_settings_24px"
+        app:layout_constraintBottom_toTopOf="@id/btnDate"
+        app:layout_constraintEnd_toEndOf="@id/addToLogScrollView"
+         />
+
+    <ImageButton
         android:id="@+id/btnDate"
         android:layout_width="30dp"
         android:layout_height="30dp"
@@ -41,21 +55,9 @@
         android:alpha="0.4"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_today_black_48dp"
-        app:layout_constraintBottom_toTopOf="@id/btnRead"
-        app:layout_constraintEnd_toEndOf="@id/addToLogScrollView" />
-
-    <ImageButton
-        android:id="@+id/btnRead"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_margin="10dp"
-        android:alpha="0.4"
-        android:scaleType="fitCenter"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/refresh"
-        android:src="@drawable/ic_refresh_black_48dp"
-        app:layout_constraintBottom_toTopOf="@id/btnClear"
-        app:layout_constraintEnd_toEndOf="@id/addToLogScrollView" />
+        app:layout_constraintBottom_toTopOf="@id/btnSave"
+        app:layout_constraintEnd_toEndOf="@id/addToLogScrollView"
+        />
 
     <ImageButton
         android:id="@+id/btnClear"

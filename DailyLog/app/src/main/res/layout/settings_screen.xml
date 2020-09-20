@@ -9,11 +9,11 @@
     tools:context=".settings.SettingsActivity">
 
     <ScrollView
+        android:id="@+id/settingsScrollView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/addShortcutInfo"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_width="match_parent"
-        android:fillViewport="true"
         android:layout_height="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout

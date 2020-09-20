@@ -5,7 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageButton
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -37,7 +39,7 @@ class AddToLogActivity : AppCompatActivity() {
         val inputMethodManager =
             getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
-        setUpActionBar()
+        setUpSettings(logView)
     }
 
     override fun onStart() {
@@ -52,19 +54,11 @@ class AddToLogActivity : AppCompatActivity() {
         view.save()
     }
 
-    private fun setUpActionBar() {
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_settings_24px);// set drawable icon
-        supportActionBar?.setDisplayHomeAsUpEnabled(true);
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                val intent = Intent(this, SettingsActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+    private fun setUpSettings(logView: View) {
+        val settingsButton = logView.findViewById<ImageButton>(R.id.btnSettings)
+        settingsButton.setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
         }
     }
 
