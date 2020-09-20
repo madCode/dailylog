@@ -71,9 +71,9 @@ class AddToLogView(
 
     private fun setUpShortcuts() {
         val inputView = view.findViewById<EditText>(R.id.todayLog)
-        val gridview = view.findViewById<GridView>(R.id.shortcutTray)
+        val gridView = view.findViewById<GridView>(R.id.shortcutTray)
         val adapter = ShortcutTrayAdapter(context, inputView, R.layout.shortcut_layout, shortcutList.shortcutList)
-        gridview.adapter = adapter
+        gridView.adapter = adapter
     }
 
     private fun loadCurrentLogFile() {
