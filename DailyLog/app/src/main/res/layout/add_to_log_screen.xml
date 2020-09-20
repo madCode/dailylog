@@ -33,21 +33,24 @@
 
     <ImageButton
         android:id="@+id/btnDate"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_margin="10dp"
         android:background="@android:color/transparent"
         android:contentDescription="@string/refresh"
-        android:scaleType="center"
+        android:alpha="0.4"
+        android:scaleType="fitCenter"
         android:src="@drawable/ic_today_black_48dp"
         app:layout_constraintBottom_toTopOf="@id/btnRead"
         app:layout_constraintEnd_toEndOf="@id/addToLogScrollView" />
 
     <ImageButton
         android:id="@+id/btnRead"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_margin="10dp"
+        android:alpha="0.4"
+        android:scaleType="fitCenter"
         android:background="@android:color/transparent"
         android:contentDescription="@string/refresh"
         android:src="@drawable/ic_refresh_black_48dp"
@@ -56,9 +59,11 @@
 
     <ImageButton
         android:id="@+id/btnClear"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_margin="10dp"
+        android:alpha="0.4"
+        android:scaleType="fitCenter"
         android:background="@android:color/transparent"
         android:contentDescription="@string/clear"
         android:src="@drawable/ic_delete_outline_black_48dp"
@@ -68,9 +73,11 @@
 
     <ImageButton
         android:id="@+id/btnSave"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_margin="10dp"
+        android:alpha="0.4"
+        android:scaleType="fitCenter"
         android:background="@android:color/transparent"
         android:contentDescription="@string/save"
         android:src="@drawable/ic_save_black_48dp"
