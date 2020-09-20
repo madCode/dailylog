@@ -1,14 +1,17 @@
 package com.example.dailylog.shortcuts
 
 import android.graphics.Color
+import android.view.LayoutInflater
 import android.view.View
 import android.view.View.generateViewId
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.*
 import com.example.dailylog.R
+import com.example.dailylog.entities.Shortcut
 
 
 class ShortcutListView(private var view: View) : ShortcutListPresenter.View {
@@ -62,9 +65,10 @@ class ShortcutListView(private var view: View) : ShortcutListPresenter.View {
     private fun getShortcutRow(category: String): ConstraintLayout {
         val removeButton = ImageButton(view.context)
         removeButton.setImageResource(R.drawable.ic_delete_outline_black_48dp)
-        removeButton.maxWidth = 24
-        removeButton.maxHeight = 24
-        removeButton.scaleType = ImageView.ScaleType.CENTER
+        removeButton.layoutParams = ViewGroup.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
+        removeButton.maxWidth = 30
+        removeButton.maxHeight = 30
+        removeButton.scaleType = ImageView.ScaleType.FIT_CENTER
         removeButton.setBackgroundColor(Color.TRANSPARENT)
         removeButton.setOnClickListener {
             presenter?.removeShortcut(category)
