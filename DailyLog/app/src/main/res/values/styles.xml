@@ -4,7 +4,7 @@
     <style name="Theme.MyApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primaryDark</item>
+        <item name="colorPrimaryDark">@color/primaryLight</item>
         <item name="colorAccent">@color/accent</item>
 <!--        <item name="background">@color/primaryLight</item>-->
     </style>
