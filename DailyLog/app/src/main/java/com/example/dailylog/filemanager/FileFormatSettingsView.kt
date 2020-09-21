@@ -1,16 +1,17 @@
-package com.example.dailylog
+package com.example.dailylog.filemanager
 
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.Color
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import android.widget.TextView.OnEditorActionListener
 import android.widget.Toast
+import com.example.dailylog.Constants
+import com.example.dailylog.R
 
 
-class FileFormatSettingsView(private var dateTimeFormat: String?, private var filenameFormat: String?, private var view: View, private var context: Context, private var resources: Resources) {
+class FileFormatSettingsView(private var dateTimeFormat: String?, private var filename: String?, private var view: View, private var context: Context) {
     private var presenter: FileFormatSettingsPresenter? = null
 
     fun setPresenter(presenter: FileFormatSettingsPresenter) {
@@ -25,7 +26,10 @@ class FileFormatSettingsView(private var dateTimeFormat: String?, private var fi
     private fun renderDateFormatRow() {
         val dateFormatEditText = view.findViewById<TextView>(R.id.dateFormat)
         dateFormatEditText.text = dateTimeFormat
-        dateFormatEditText.hint = context.resources.getString(R.string.defaultStringPlaceholder, Constants.DATE_TIME_DEFAULT_FORMAT)
+        dateFormatEditText.hint = context.resources.getString(
+            R.string.defaultStringPlaceholder,
+            Constants.DATE_TIME_DEFAULT_FORMAT
+        )
         dateFormatEditText.setOnEditorActionListener(OnEditorActionListener { v, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val saved = this.presenter?.saveDateTimeFormat(v.text.toString())
@@ -42,22 +46,8 @@ class FileFormatSettingsView(private var dateTimeFormat: String?, private var fi
     }
 
     private fun renderFileNameRow() {
-        val fileNameEditText = view.findViewById<TextView>(R.id.fileNameEditText)
-        fileNameEditText.text = filenameFormat
-        fileNameEditText.hint = context.resources.getString(R.string.defaultStringPlaceholder, Constants.FILENAME_DEFAULT_FORMAT)
-        fileNameEditText.setOnEditorActionListener(OnEditorActionListener { v, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val saved = this.presenter?.saveFilenameFormat(v.text.toString())
-                if (saved == null || !saved) {
-                    fileNameEditText.setTextColor(Color.RED)
-                    Toast.makeText(context, "Unsupported date format, try something else", Toast.LENGTH_LONG).show()
-                    return@OnEditorActionListener true
-                } else {
-                    fileNameEditText.setTextColor(context.getColor(R.color.primaryText))
-                }
-            }
-            false
-        })
+        val fileNameTitle = view.findViewById<TextView>(R.id.fileName)
+        fileNameTitle.text = filename
     }
 
 }
