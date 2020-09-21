@@ -6,7 +6,6 @@ import androidx.room.*
 data class Shortcut(
     @PrimaryKey val label: String,
     @ColumnInfo(name = "text") val text: String,
-    @ColumnInfo(name = "type") val type: String,
     @ColumnInfo(name = "cursorIndex") val cursorIndex: Int,
     @ColumnInfo(name = "position") var position: Int
 )
@@ -15,12 +14,6 @@ data class Shortcut(
 interface ShortcutDao {
     @Query("SELECT * FROM shortcut ORDER BY position ASC")
     fun getAll(): List<Shortcut>
-
-    @Query("SELECT * FROM shortcut WHERE type = :type")
-    fun getAllByType(type: String): List<Shortcut>
-
-    @Insert
-    fun insertAll(vararg shortcuts: Shortcut)
 
     @Update
     fun updateAll(vararg shortcuts: Shortcut)
