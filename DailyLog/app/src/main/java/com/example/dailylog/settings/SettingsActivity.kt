@@ -2,8 +2,8 @@ package com.example.dailylog.settings
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
-import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.dailylog.R
@@ -11,20 +11,30 @@ import com.example.dailylog.filemanager.FileFormatSettingsPresenter
 import com.example.dailylog.filemanager.FileFormatSettingsView
 import com.example.dailylog.filemanager.FileHelper
 import com.example.dailylog.shortcuts.ShortcutListPresenter
-import com.example.dailylog.shortcuts.ShortcutListView
+
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var fileSettingsPresenter: FileFormatSettingsPresenter
     private lateinit var fileSettingsView: FileFormatSettingsView
     private lateinit var shortcutPresenter: ShortcutListPresenter
-    private lateinit var shortcutView: ShortcutListView
     private lateinit var selectFile: Button
     private lateinit var fileHelper: FileHelper
+    private lateinit var view: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_screen)
-        val view = findViewById<ConstraintLayout>(R.id.settingsView)
+        view = findViewById<ConstraintLayout>(R.id.settingsView)
+        setUpFileSettings()
+        shortcutPresenter = ShortcutListPresenter(
+            view, "global_shortcuts", application
+        )
+        shortcutPresenter.initializePresenter()
+        selectFile = findViewById(R.id.selectFileButton)
+        setUpFileChooser()
+    }
+
+    private fun setUpFileSettings() {
         fileHelper = FileHelper
         fileHelper.setUpHelper(application)
         fileSettingsView = FileFormatSettingsView(
@@ -39,20 +49,6 @@ class SettingsActivity : AppCompatActivity() {
         )
         fileSettingsView.setPresenter(fileSettingsPresenter)
         fileSettingsView.render()
-        shortcutView = ShortcutListView(view)
-        shortcutPresenter = ShortcutListPresenter(
-            shortcutView, R.string.shortcutsTitle, R.string.shortcutsDescription,
-            "global_shortcuts", application
-        )
-        shortcutView.initializeView(shortcutPresenter)
-        shortcutView.renderView()
-        selectFile = findViewById(R.id.selectFileButton)
-        setUpFileChooser()
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return true
     }
 
     private fun setUpFileChooser() {
