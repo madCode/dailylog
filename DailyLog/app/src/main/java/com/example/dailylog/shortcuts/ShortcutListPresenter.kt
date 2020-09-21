@@ -28,7 +28,10 @@ class ShortcutListPresenter(private var view: android.view.View,
     }
 
     private fun setUpShortcutList() {
-        adapter = ShortcutListAdapter(shortcutList.shortcutList) { label -> removeShortcut(label) }
+        adapter = ShortcutListAdapter(
+            items = shortcutList.shortcutList,
+            removeCallback = { label -> removeShortcut(label) },
+            updatePositionCallback = { label, pos -> shortcutList.updateShortcutPosition(label, pos)})
 
         recyclerView = view.findViewById(R.id.recycler_view)
         recyclerView.setHasFixedSize(true)
@@ -40,7 +43,7 @@ class ShortcutListPresenter(private var view: android.view.View,
         shortcutTouchHelper.attachToRecyclerView(recyclerView)
     }
 
-    fun addShortcut(label: String, text: String, cursor: Int): Boolean {
+    private fun addShortcut(label: String, text: String, cursor: Int): Boolean {
         val added = shortcutList.addShortcut(label, text, cursor)
         adapter.updateItems(shortcutList.shortcutList)
         return added

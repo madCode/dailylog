@@ -11,10 +11,10 @@ class ShortcutList constructor(private var shortcutType: String, application: Ap
         ShortcutDatabase::class.java, "database-name"
     ).allowMainThreadQueries().build()
     lateinit var shortcutList: MutableList<Shortcut>
-    lateinit var labelList: MutableSet<String>
+    lateinit var labelList: ArrayList<String>
 
     private fun createShortcut(label: String, text: String, cursorIndex: Int): Shortcut {
-        return  Shortcut(label = label, text = text, type = shortcutType, cursorIndex = cursorIndex)
+        return  Shortcut(label = label, text = text, type = shortcutType, cursorIndex = cursorIndex, position = shortcutList.size)
     }
 
     private fun saveShortcutToDB(shortcut: Shortcut): Boolean {
@@ -33,11 +33,24 @@ class ShortcutList constructor(private var shortcutType: String, application: Ap
 
     fun loadShortcuts(): Boolean {
         shortcutList = getAllShortcuts()
-        labelList = HashSet<String>()
+        labelList = ArrayList<String>()
         shortcutList.forEach{
             labelList.add(it.label)
         }
         return true
+    }
+
+    private fun updateAll() {
+        shortcutList.forEach{
+            it.position = labelList.indexOf(it.label)
+        }
+        shortcutDB.shortcutDao().updateAll(*shortcutList.toTypedArray())
+    }
+
+    fun updateShortcutPosition(label: String, position: Int) {
+        labelList.remove(label)
+        labelList.add(position, label)
+        updateAll()
     }
 
     fun addShortcut(label: String, text: String, cursorIndex: Int): Boolean {

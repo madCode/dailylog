@@ -17,7 +17,7 @@ import com.example.dailylog.entities.Shortcut
 /**
  * adopted from https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-b9456d2b1aaf
  */
-class ShortcutListAdapter(private var items: MutableList<Shortcut>, private var removeCallback: (String) -> Unit) : RecyclerView.Adapter<ShortcutListAdapter.ItemViewHolder>(),
+class ShortcutListAdapter(private var items: MutableList<Shortcut>, private var removeCallback: (String) -> Unit, private var updatePositionCallback: (String, Int) -> Unit) : RecyclerView.Adapter<ShortcutListAdapter.ItemViewHolder>(),
     ShortcutTouchHelperAdapter {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val view: View =
@@ -57,6 +57,7 @@ class ShortcutListAdapter(private var items: MutableList<Shortcut>, private var 
     override fun onItemMove(fromPosition: Int, toPosition: Int) {
         val prev = items.removeAt(fromPosition)
         items.add(if (toPosition > fromPosition) toPosition - 1 else toPosition, prev)
+        updatePositionCallback(prev.label, toPosition)
         notifyItemMoved(fromPosition, toPosition)
     }
 
