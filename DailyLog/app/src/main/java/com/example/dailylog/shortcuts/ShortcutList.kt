@@ -14,11 +14,11 @@ class ShortcutList constructor(private var shortcutType: String, application: Ap
     lateinit var labelList: ArrayList<String>
 
     private fun createShortcut(label: String, text: String, cursorIndex: Int): Shortcut {
-        return  Shortcut(label = label, text = text, type = shortcutType, cursorIndex = cursorIndex, position = shortcutList.size)
+        return  Shortcut(label = label, text = text, cursorIndex = cursorIndex, position = shortcutList.size)
     }
 
     private fun saveShortcutToDB(shortcut: Shortcut): Boolean {
-        shortcutDB.shortcutDao().insertAll(shortcuts = arrayOf(shortcut))
+        shortcutDB.shortcutDao().add(shortcut)
         return true
     }
 
