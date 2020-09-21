@@ -1,4 +1,4 @@
-package com.example.dailylog
+package com.example.dailylog.filemanager
 
 import android.os.Build
 import java.text.ParseException
@@ -31,15 +31,6 @@ class FileFormatSettingsPresenter(var dateTimeSaveFunction: (String) -> Unit, va
             return false
         }
         return true
-    }
-
-    fun saveFilenameFormat(format: String): Boolean {
-        return if (isValidDateTimeFormat(format)) {
-            filenameSaveFunction(format)
-            true
-        } else {
-            false
-        }
     }
 
 }
