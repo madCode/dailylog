@@ -18,6 +18,9 @@ interface ShortcutDao {
     @Update
     fun updateAll(vararg shortcuts: Shortcut)
 
+    @Insert
+    fun add(shortcut: Shortcut)
+
     @Delete
     fun delete(shortcut: Shortcut)
 
