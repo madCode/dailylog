@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.example.dailylog.Constants
 import com.example.dailylog.R
 import com.example.dailylog.filemanager.FileFormatSettingsPresenter
 import com.example.dailylog.filemanager.FileFormatSettingsView
@@ -68,7 +69,10 @@ class SettingsActivity : AppCompatActivity() {
             val selectedFileUri = data.data;
             if (selectedFileUri != null && selectedFileUri.path != null) {
                 //val file = File(selectedFileUri.path)
-                val path = fileHelper.getPathFromUri(applicationContext, selectedFileUri)
+                var path = fileHelper.getPathFromUri(applicationContext, selectedFileUri)
+                if (path == null) {
+                    path = Constants.FILENAME_DEFAULT
+                }
                 fileHelper.setFilename(
                     path,
                     application

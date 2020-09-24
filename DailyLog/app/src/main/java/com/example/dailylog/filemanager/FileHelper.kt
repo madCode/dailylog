@@ -21,7 +21,7 @@ import java.io.*
 
 object FileHelper {
     private const val TAG = "FileHelper"
-    private var fileName: String? = null
+    private var fileName: String = Constants.FILENAME_DEFAULT
 
     fun setUpHelper(application: Application) {
         fileName = getFilename(application)
@@ -43,7 +43,7 @@ object FileHelper {
         return preferences.getString(Constants.FILENAME_PREF_KEY, Constants.FILENAME_DEFAULT) ?: Constants.FILENAME_DEFAULT
     }
 
-    fun setFilename(filename: String?, application: Application) {
+    fun setFilename(filename: String, application: Application) {
         val preferences =
             application.getSharedPreferences(
                 application.applicationContext.getString(
