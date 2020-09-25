@@ -33,7 +33,7 @@ class AddToLogActivity : AppCompatActivity() {
 
         val fileHelper = FileHelper
         fileHelper.setUpHelper(application)
-        presenter = AddToLogPresenter(applicationContext, fileHelper, permissionChecker)
+        presenter = AddToLogPresenter(application, fileHelper, permissionChecker)
         val inputMethodManager =
             getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)

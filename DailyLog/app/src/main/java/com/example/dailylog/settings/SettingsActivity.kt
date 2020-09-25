@@ -6,7 +6,6 @@ import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.example.dailylog.Constants
 import com.example.dailylog.R
 import com.example.dailylog.filemanager.FileFormatSettingsPresenter
 import com.example.dailylog.filemanager.FileFormatSettingsView
@@ -54,9 +53,12 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun setUpFileChooser() {
         selectFile.setOnClickListener {
-            val intent = Intent()
-                .setType("*/*")
-                .setAction(Intent.ACTION_GET_CONTENT)
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "*/*"
+                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            }
 
             startActivityForResult(Intent.createChooser(intent, "Select a file"), 111)
         }
@@ -67,17 +69,13 @@ class SettingsActivity : AppCompatActivity() {
 
         if (requestCode == 111 && resultCode == RESULT_OK && data != null) {
             val selectedFileUri = data.data;
-            if (selectedFileUri != null && selectedFileUri.path != null) {
-                //val file = File(selectedFileUri.path)
-                var path = fileHelper.getPathFromUri(applicationContext, selectedFileUri)
-                if (path == null) {
-                    path = Constants.FILENAME_DEFAULT
-                }
-                fileHelper.setFilename(
-                    path,
-                    application
-                ) //The uri with the location of the file
-                fileSettingsView.render()
+            if (selectedFileUri != null) {
+                fileHelper.setFilename(selectedFileUri.toString(), application)
+                val contentResolver = applicationContext.contentResolver
+                val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                // Check for the freshest data.
+                contentResolver.takePersistableUriPermission(selectedFileUri, takeFlags)
             }
         }
     }
