@@ -11,7 +11,7 @@ import com.example.dailylog.Constants
 import com.example.dailylog.R
 
 
-class FileFormatSettingsView(private var dateTimeFormat: String?, private var filename: String?, private var view: View, private var context: Context) {
+class FileFormatSettingsView(private var dateTimeFormat: String?, var filename: String?, private var view: View, private var context: Context) {
     private var presenter: FileFormatSettingsPresenter? = null
 
     fun setPresenter(presenter: FileFormatSettingsPresenter) {

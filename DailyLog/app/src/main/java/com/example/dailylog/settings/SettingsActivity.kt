@@ -76,6 +76,8 @@ class SettingsActivity : AppCompatActivity() {
                         Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 // Check for the freshest data.
                 contentResolver.takePersistableUriPermission(selectedFileUri, takeFlags)
+                fileSettingsView.filename = selectedFileUri.toString()
+                fileSettingsView.render()
             }
         }
     }
