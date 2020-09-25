@@ -73,6 +73,9 @@ class AddToLogView(
         val inputView = view.findViewById<EditText>(R.id.todayLog)
         val gridView = view.findViewById<GridView>(R.id.shortcutTray)
         val adapter = ShortcutTrayAdapter(context, inputView, R.layout.shortcut_layout, shortcutList.shortcutList)
+        if (shortcutList.shortcutList.size == 0) {
+            gridView.visibility = View.GONE
+        }
         gridView.adapter = adapter
     }
 
