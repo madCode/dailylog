@@ -63,10 +63,12 @@ object FileHelper {
                     BufferedReader(InputStreamReader(inputStream)).use { reader ->
                         var line: String? = reader.readLine()
                         while (line != null) {
-                            stringBuilder.append(line + System.getProperty("line.separator"))
+                            stringBuilder.append(line)
+                            stringBuilder.append(System.lineSeparator())
                             line = reader.readLine()
                         }
                     }
+                    inputStream.close()
                 }
                 return stringBuilder.toString()
             } catch (ex: FileNotFoundException) {
@@ -84,7 +86,7 @@ object FileHelper {
     fun saveToFile(data: String, application: Application): Boolean {
         try {
             val uri = Uri.parse(fileName)
-            val fileDescriptor = application.contentResolver.openFileDescriptor(uri, "w")?.fileDescriptor
+            val fileDescriptor = application.contentResolver.openFileDescriptor(uri, "rwt")?.fileDescriptor
             val fileStream = FileOutputStream(fileDescriptor)
             fileStream.write((data).toByteArray())
             fileStream.close()
