@@ -5,7 +5,7 @@ import androidx.room.Room
 import com.example.dailylog.entities.Shortcut
 import com.example.dailylog.entities.ShortcutDatabase
 
-class ShortcutList constructor(private var shortcutType: String, application: Application) {
+class ShortcutList constructor(application: Application) {
     private var shortcutDB: ShortcutDatabase = Room.databaseBuilder(
         application.applicationContext,
         ShortcutDatabase::class.java, "database-name"

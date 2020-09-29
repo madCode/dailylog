@@ -15,7 +15,6 @@ import java.io.*
  */
 
 object FileHelper {
-    private const val TAG = "FileHelper"
     private var fileName: String = Constants.FILENAME_DEFAULT
 
     fun setUpHelper(application: Application) {
@@ -97,13 +96,6 @@ object FileHelper {
             Toast.makeText(application.applicationContext, ex.toString(), Toast.LENGTH_LONG).show()
         }
         return false
-    }
-
-    fun clearFile(context: Context): Boolean {
-        val fileStream = context.openFileOutput(fileName, MODE_PRIVATE)
-        fileStream.write("".toByteArray())
-        fileStream.close()
-        return true
     }
 
     fun getDateTimeFormat(application: Application): String? {

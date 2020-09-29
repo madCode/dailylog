@@ -7,14 +7,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.dailylog.R
 
 class ShortcutListPresenter(private var view: android.view.View,
-                            private var preferencesKey: String, private var application: Application
+                            private var application: Application
 ) {
     private lateinit var shortcutList: ShortcutList
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ShortcutListAdapter
 
     fun initializePresenter() {
-        shortcutList = ShortcutList(preferencesKey, application)
+        shortcutList = ShortcutList(application)
         shortcutList.loadShortcuts()
         setUpShortcutList()
         val addShortcutView = AddShortcutView(view) { label: String, text: String, cursor: Int ->
