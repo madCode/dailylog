@@ -1,4 +1,4 @@
-package com.example.dailylog.ui.main
+package com.example.dailylog.ui.settings
 
 import android.content.Intent
 import android.graphics.Color
@@ -12,12 +12,14 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dailylog.R
+import com.example.dailylog.repository.Constants
+import com.example.dailylog.repository.FileManager
 import kotlinx.android.synthetic.main.settings_view.view.*
 
-class SettingsView : Fragment() {
+class SettingsView(private var fileManager: FileManager) : Fragment() {
 
     companion object {
-        fun newInstance() = SettingsView()
+        fun newInstance(fileManager: FileManager) = SettingsView(fileManager)
     }
 
     private lateinit var viewModel: SettingsViewModel
@@ -31,7 +33,7 @@ class SettingsView : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = SettingsViewModel()
+        viewModel = SettingsViewModel(fileManager)
         renderDateFormatRow()
         renderFileNameRow()
     }
@@ -41,7 +43,7 @@ class SettingsView : Fragment() {
         dateFormatEditText?.setText(viewModel.dateTimeFormat, TextView.BufferType.EDITABLE)
         dateFormatEditText?.hint = context?.resources?.getString(
             R.string.defaultStringPlaceholder,
-            DATE_TIME_DEFAULT_FORMAT
+            Constants.DATE_TIME_DEFAULT_FORMAT
         )
         dateFormatEditText?.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
