@@ -11,6 +11,8 @@ import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dailylog.R
 import com.example.dailylog.repository.Constants
 import com.example.dailylog.repository.Repository
@@ -37,6 +39,7 @@ class SettingsView(private var repository: Repository) : Fragment() {
         renderDateFormatRow()
         renderFileNameRow()
         renderAddShortcut()
+        renderShortcutList()
     }
 
     private fun renderDateFormatRow() {
@@ -113,6 +116,18 @@ class SettingsView(private var repository: Repository) : Fragment() {
                 TODO("show an error and also validate that cursorInt is shorter than textString")
             }
         }
+    }
+
+    private fun renderShortcutList() {
+        val adapter = viewModel.shortcutListAdapter
+        val recyclerView = view!!.recycler_view
+        recyclerView.setHasFixedSize(true)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(context)
+
+        val callback: ItemTouchHelper.Callback = ShortcutTouchHelperCallback(adapter)
+        val shortcutTouchHelper = ItemTouchHelper(callback)
+        shortcutTouchHelper.attachToRecyclerView(recyclerView)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

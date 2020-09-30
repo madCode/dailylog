@@ -12,6 +12,10 @@ class SettingsViewModel(private var repository: Repository) : ViewModel() {
 
     var dateTimeFormat = repository.getDateTimeFormat()
     var filename = repository.getFilename()
+    var shortcutListAdapter = ShortcutListAdapter(
+        items = repository.getAllShortcuts(),
+        removeCallback = { label -> repository.removeShortcut(label) },
+        updatePositionCallback = { label, pos -> repository.updateShortcutPosition(label, pos)})
 
     fun saveDateTimeFormat(format: String): Boolean {
         return if (isValidDateTimeFormat(format)) {
