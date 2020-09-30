@@ -10,15 +10,15 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.example.dailylog.R
-import com.example.dailylog.repository.FileManager
+import com.example.dailylog.repository.Repository
 import com.example.dailylog.ui.settings.SettingsView
 import kotlinx.android.synthetic.main.add_to_log_view.view.*
 
 
-class LogView(private var fileManager: FileManager) : Fragment() {
+class LogView(private var repository: Repository) : Fragment() {
 
     companion object {
-        fun newInstance(fileManager: FileManager) = LogView(fileManager)
+        fun newInstance(repository: Repository) = LogView(repository)
     }
 
     private lateinit var viewModel: LogViewModel
@@ -57,7 +57,7 @@ class LogView(private var fileManager: FileManager) : Fragment() {
         if (view == null || context == null || activity == null) {
             error("view or context or activity is null")
         }
-        viewModel = LogViewModel(fileManager)
+        viewModel = LogViewModel(repository)
         val todayLog = view!!.todayLog
 
         view!!.btnSave.setOnClickListener {
@@ -74,7 +74,7 @@ class LogView(private var fileManager: FileManager) : Fragment() {
         view!!.btnSettings.setOnClickListener {
             save()
             parentFragmentManager.beginTransaction()
-                .replace(R.id.container, SettingsView.newInstance(fileManager))
+                .replace(R.id.container, SettingsView.newInstance(repository))
                 .addToBackStack(null)
                 .commit()
         }

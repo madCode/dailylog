@@ -94,27 +94,4 @@ class FileManager(var context: Context, var permissionChecker: PermissionChecker
         }
         return false
     }
-
-    fun getDateTimeFormat(): String? {
-        val preferences =
-            context.getSharedPreferences(
-                context.getString(R.string.preference_file_key),
-                Context.MODE_PRIVATE
-            )
-        return preferences.getString(
-            Constants.DATE_TIME_PREF_KEY,
-            Constants.DATE_TIME_DEFAULT_FORMAT
-        )
-    }
-
-    fun setDateTimeFormat(format: String) {
-        val preferences =
-            context.getSharedPreferences(
-                context.getString(R.string.preference_file_key),
-                Context.MODE_PRIVATE
-            )
-        val editor = preferences.edit()
-        editor.putString("dateFormat", format)
-        editor.apply()
-    }
 }

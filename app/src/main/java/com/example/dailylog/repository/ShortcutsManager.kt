@@ -1,15 +1,21 @@
 package com.example.dailylog.repository
 
-import android.app.Application
+import android.content.Context
 import androidx.room.Room
 
-class ShortcutsManager constructor(application: Application) {
+class ShortcutsManager constructor(context: Context) {
     private var shortcutDB: ShortcutDatabase = Room.databaseBuilder(
-        application.applicationContext,
-        ShortcutDatabase::class.java, "database-name"
-    ).allowMainThreadQueries().build()
-    lateinit var shortcutList: MutableList<Shortcut>
-    lateinit var labelList: ArrayList<String>
+       context,
+       ShortcutDatabase::class.java, "database-name"
+   ).allowMainThreadQueries().build()
+    var shortcutList: MutableList<Shortcut> = getAllShortcuts()
+    var labelList: ArrayList<String> = ArrayList()
+
+    init {
+        shortcutList.forEach{
+            labelList.add(it.label)
+        }
+    }
 
     private fun createShortcut(label: String, text: String, cursorIndex: Int): Shortcut {
         return  Shortcut(label = label, text = text, cursorIndex = cursorIndex, position = shortcutList.size)
@@ -27,15 +33,6 @@ class ShortcutsManager constructor(application: Application) {
 
     private fun getAllShortcuts(): MutableList<Shortcut> {
         return shortcutDB.shortcutDao().getAll().toMutableList()
-    }
-
-    fun loadShortcuts(): Boolean {
-        shortcutList = getAllShortcuts()
-        labelList = ArrayList<String>()
-        shortcutList.forEach{
-            labelList.add(it.label)
-        }
-        return true
     }
 
     private fun updateAll() {

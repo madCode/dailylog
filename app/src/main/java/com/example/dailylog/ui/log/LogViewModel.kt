@@ -3,15 +3,15 @@ package com.example.dailylog.ui.log
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
-import com.example.dailylog.repository.FileManager
+import com.example.dailylog.repository.Repository
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class LogViewModel(var fileManager: FileManager) : ViewModel() {
+class LogViewModel(var repository: Repository) : ViewModel() {
     var cursorIndex = 0
 
     fun getLog(): String {
-        return fileManager.readFile()
+        return repository.readFile()
     }
 
     fun saveCursorIndex(selectionStart: Int) {
@@ -21,11 +21,11 @@ class LogViewModel(var fileManager: FileManager) : ViewModel() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun getDateString(): String {
         val current = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern(fileManager.getDateTimeFormat())
+        val formatter = DateTimeFormatter.ofPattern(repository.getDateTimeFormat())
         return current.format(formatter)+ "\t"
     }
 
     fun save(text: String) {
-        fileManager.saveToFile(text)
+        repository.saveToFile(text)
     }
 }
