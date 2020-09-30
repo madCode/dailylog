@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">dailylog</string>
+    <string name="write_something_to_save">begin typing or click a button below to create today\'s entry</string>
+    <string name="save">Save</string>
+    <string name="refresh">Reload File</string>
+    <string name="previous_logs">Previous Logs:</string>
+    <string name="today">Today:</string>
+    <string name="clear">Delete Contents of File</string>
+    <string name="gym">Gym</string>
+    <string name="dinner">Dinner</string>
+    <string name="categoriesTitle">Categories</string>
+    <string name="addACategory">add a category</string>
+    <string name="preference_file_key">SharedPreferences</string>
+    <string name="shortcutsTitle">Keyboard Shortcuts</string>
+    <string name="addALabel">label</string>
+    <string name="addText">full text</string>
+    <string name="addCursor">cursor index</string>
+    <string name="shortcuts_button">Go to Shortcuts Screen</string>
+    <string name="shortcutsDescription">Shortcut labels must be unique."</string>
+    <string name="addToLogButton">Go to Log Screen</string>
+    <string name="file_format_settings_title">File Settings</string>
+    <string name="dateFormatTitle">Date Format</string>
+    <string name="defaultStringPlaceholder">%1$s</string>
+    <string name="fileNameTitle">Current file: </string>
+    <string name="select_file">Select file</string>
+    <string name="new_file">Create new file</string>
+    <string name="settings">settings</string>
+    <string name="delete">delete</string>
+</resources>
