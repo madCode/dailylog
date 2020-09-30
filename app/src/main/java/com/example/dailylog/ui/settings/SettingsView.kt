@@ -13,13 +13,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dailylog.R
 import com.example.dailylog.repository.Constants
-import com.example.dailylog.repository.FileManager
+import com.example.dailylog.repository.Repository
 import kotlinx.android.synthetic.main.settings_view.view.*
 
-class SettingsView(private var fileManager: FileManager) : Fragment() {
+class SettingsView(private var repository: Repository) : Fragment() {
 
     companion object {
-        fun newInstance(fileManager: FileManager) = SettingsView(fileManager)
+        fun newInstance(repository: Repository) = SettingsView(repository)
     }
 
     private lateinit var viewModel: SettingsViewModel
@@ -33,9 +33,10 @@ class SettingsView(private var fileManager: FileManager) : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = SettingsViewModel(fileManager)
+        viewModel = SettingsViewModel(repository)
         renderDateFormatRow()
         renderFileNameRow()
+        renderAddShortcut()
     }
 
     private fun renderDateFormatRow() {
@@ -84,6 +85,33 @@ class SettingsView(private var fileManager: FileManager) : Fragment() {
                 TODO("VERSION.SDK_INT < KITKAT")
             }
             startActivityForResult(Intent.createChooser(intent, "Select a file"), 111)
+        }
+    }
+
+    private fun renderAddShortcut() {
+        val label = view!!.labelInput
+        val text = view!!.textInput
+        val cursor = view!!.cursorInput
+        text?.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (cursor.text!!.equals("")) {
+                    cursor.setText((text.text.toString().length - 1).toString())
+                }
+                return@OnEditorActionListener true
+            }
+            false
+        })
+
+        view!!.btnSaveShortcut.setOnClickListener {
+            val cursorInt = Integer.parseInt(cursor.text.toString())
+            val added = repository.addShortcut(label.text.toString(), text.text.toString(), cursorInt)
+            if (added) {
+                label.text?.clear()
+                text.text?.clear()
+                cursor.text?.clear()
+            } else {
+                TODO("show an error and also validate that cursorInt is shorter than textString")
+            }
         }
     }
 

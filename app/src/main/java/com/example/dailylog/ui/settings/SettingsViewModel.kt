@@ -2,20 +2,20 @@ package com.example.dailylog.ui.settings
 
 import android.os.Build
 import androidx.lifecycle.ViewModel
-import com.example.dailylog.repository.FileManager
+import com.example.dailylog.repository.Repository
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class SettingsViewModel(private var fileManager: FileManager) : ViewModel() {
+class SettingsViewModel(private var repository: Repository) : ViewModel() {
 
-    var dateTimeFormat = fileManager.getDateTimeFormat()
-    var filename = fileManager.getFilename()
+    var dateTimeFormat = repository.getDateTimeFormat()
+    var filename = repository.getFilename()
 
     fun saveDateTimeFormat(format: String): Boolean {
         return if (isValidDateTimeFormat(format)) {
-            fileManager.setDateTimeFormat(format)
+            repository.setDateTimeFormat(format)
             dateTimeFormat = format
             true
         } else {
@@ -40,7 +40,7 @@ class SettingsViewModel(private var fileManager: FileManager) : ViewModel() {
     }
 
     fun saveFilename(filename: String) {
-        fileManager.setFilename(filename)
-        this.filename = fileManager.getFilename()
+        repository.setFilename(filename)
+        this.filename = repository.getFilename()
     }
 }
