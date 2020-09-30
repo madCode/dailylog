@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/dragIndicator"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:alpha="0.2"
+            android:contentDescription="@string/drag_icon"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_drag_indicator_48"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/dragIndicator"
+            app:layout_constraintStart_toEndOf="@id/dragIndicator"
+            app:layout_constraintTop_toTopOf="@id/dragIndicator"
+            tools:text="label" />
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingHorizontal="10dp"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="@id/label"
+            app:layout_constraintEnd_toStartOf="@id/removeShortcutButton"
+            app:layout_constraintStart_toEndOf="@id/label"
+            app:layout_constraintTop_toTopOf="@id/label"
+            tools:text="very very vey very very long text showing the entire text of the shortcut" />
+
+        <ImageButton
+            android:id="@+id/removeShortcutButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/delete"
+            android:paddingHorizontal="5dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_delete_48"
+            android:tint="@color/colorAccent"
+            app:layout_constraintBottom_toBottomOf="@id/label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/label" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

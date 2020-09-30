@@ -26,4 +26,5 @@
     <string name="new_file">Create new file</string>
     <string name="settings">settings</string>
     <string name="delete">delete</string>
+    <string name="drag_icon">drag icon</string>
 </resources>

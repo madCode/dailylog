@@ -59,7 +59,7 @@ class Repository(private var context: Context, permissionChecker: PermissionChec
         return shortcutsManager.removeShortcut(label)
     }
 
-    fun getAllShortcuts(): Array<Shortcut> {
-        return shortcutsManager.shortcutList.toTypedArray()
+    fun getAllShortcuts(): MutableList<Shortcut> {
+        return shortcutsManager.shortcutList
     }
 }
