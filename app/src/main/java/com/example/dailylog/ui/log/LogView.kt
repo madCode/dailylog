@@ -1,13 +1,18 @@
 package com.example.dailylog.ui.log
 
+import android.app.Activity
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import android.widget.GridView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import com.example.dailylog.R
 import com.example.dailylog.repository.Repository
@@ -37,10 +42,20 @@ class LogView(private var repository: Repository) : Fragment() {
         Toast.makeText(context, "Saved file", Toast.LENGTH_SHORT).show()
     }
 
+    private fun renderShortcutTray() {
+        if (context == null) {
+            return
+        }
+        val adapter = ShortcutTrayAdapter(context!!, view!!.todayLog, R.layout.shortcut_layout, repository.getAllShortcuts())
+        val tray = view!!.shortcutTray
+        tray.adapter = adapter
+    }
+
     private fun loadFile() {
         val todayLog = view!!.todayLog
         todayLog.setText(viewModel.getLog(), TextView.BufferType.EDITABLE)
-        todayLog.setSelection(viewModel.cursorIndex)
+        val cursorIndex = if (viewModel.cursorIndex > -1) viewModel.cursorIndex else todayLog.text!!.length
+        todayLog.setSelection(cursorIndex)
         Toast.makeText(context, "Loaded file", Toast.LENGTH_SHORT).show()
     }
 
@@ -78,6 +93,7 @@ class LogView(private var repository: Repository) : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
+        renderShortcutTray()
     }
 
     override fun onPause() {
@@ -89,6 +105,10 @@ class LogView(private var repository: Repository) : Fragment() {
         // gets called onResume but also after onActivityCreated
         super.onResume()
         loadFile()
+        view!!.todayLog.requestFocus()
+        val inputMethodManager =
+            getSystemService(context!!, InputMethodManager::class.java) as InputMethodManager
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
     }
 
 }
