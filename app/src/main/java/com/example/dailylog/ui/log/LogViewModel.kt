@@ -3,19 +3,21 @@ package com.example.dailylog.ui.log
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
+import com.example.dailylog.R
 import com.example.dailylog.repository.Repository
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class LogViewModel(var repository: Repository) : ViewModel() {
-    var cursorIndex = 0
+    var cursorIndex = repository.getCursorIndex()
 
     fun getLog(): String {
         return repository.readFile()
     }
 
-    fun saveCursorIndex(selectionStart: Int) {
-        cursorIndex = selectionStart
+    fun saveCursorIndex(index: Int) {
+        repository.setCursorIndex(index)
+        cursorIndex = index
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

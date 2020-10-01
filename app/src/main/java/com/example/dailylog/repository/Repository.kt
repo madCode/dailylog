@@ -43,7 +43,30 @@ class Repository(private var context: Context, permissionChecker: PermissionChec
                 Context.MODE_PRIVATE
             )
         val editor = preferences.edit()
-        editor.putString("dateFormat", format)
+        editor.putString(Constants.DATE_TIME_PREF_KEY, format)
+        editor.apply()
+    }
+
+    fun getCursorIndex(): Int {
+        val preferences =
+            context.getSharedPreferences(
+                context.getString(R.string.preference_file_key),
+                Context.MODE_PRIVATE
+            )
+        return preferences.getInt(
+            Constants.CURSOR_KEY,
+            Constants.DEFAULT_CURSOR_INDEX
+        )
+    }
+
+    fun setCursorIndex(index: Int) {
+        val preferences =
+            context.getSharedPreferences(
+                context.getString(R.string.preference_file_key),
+                Context.MODE_PRIVATE
+            )
+        val editor = preferences.edit()
+        editor.putInt(Constants.CURSOR_KEY, index)
         editor.apply()
     }
 
