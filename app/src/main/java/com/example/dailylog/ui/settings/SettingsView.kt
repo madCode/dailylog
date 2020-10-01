@@ -3,7 +3,6 @@ package com.example.dailylog.ui.settings
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +10,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dailylog.R
@@ -107,7 +107,11 @@ class SettingsView(private var repository: Repository) : Fragment() {
 
         view!!.btnSaveShortcut.setOnClickListener {
             val cursorInt = Integer.parseInt(cursor.text.toString())
-            val added = repository.addShortcut(label.text.toString(), text.text.toString(), cursorInt)
+            val added = repository.addShortcut(
+                label.text.toString(),
+                text.text.toString(),
+                cursorInt
+            )
             if (added) {
                 label.text?.clear()
                 text.text?.clear()

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,11 +8,11 @@
 
     <ScrollView
         android:id="@+id/settingsScrollView"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/addShortcutInfo"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_width="match_parent"
-        android:layout_height="0dp">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -23,11 +22,12 @@
 
             <TextView
                 android:id="@+id/fileFormatSettingsTitle"
+                style="@style/TextAppearance.MaterialComponents.Headline4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:text="@string/file_format_settings_title"
-                style="@style/TextAppearance.MaterialComponents.Headline4"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -41,11 +41,11 @@
 
                 <TextView
                     android:id="@+id/dateFormatTitle"
+                    style="@style/TextAppearance.MaterialComponents.Body1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:text="@string/dateFormatTitle"
-                    style="@style/TextAppearance.MaterialComponents.Overline"
                     app:layout_constraintEnd_toStartOf="@id/dateFormat"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
@@ -53,19 +53,19 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/dateFormat"
+                    style="@style/TextAppearance.MaterialComponents.Subtitle1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
                     android:autofillHints="no"
                     android:hint="@string/defaultStringPlaceholder"
                     android:imeOptions="actionDone"
                     android:inputType="text"
-                    style="@style/TextAppearance.MaterialComponents.Subtitle2"
                     app:layout_constraintBottom_toBottomOf="@id/dateFormatTitle"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/dateFormatTitle"
-                    tools:ignore="TextFields"
-                    android:layout_marginRight="10dp" />
+                    tools:ignore="TextFields" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -79,64 +79,66 @@
 
                 <TextView
                     android:id="@+id/fileNameTitle"
+                    style="@style/TextAppearance.MaterialComponents.Body1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:text="@string/fileNameTitle"
-                    style="@style/TextAppearance.MaterialComponents.Overline"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/fileName"
+                    style="@style/TextAppearance.MaterialComponents.Subtitle1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
                     android:ellipsize="start"
+                    android:singleLine="true"
                     app:layout_constrainedWidth="true"
-                    style="@style/TextAppearance.MaterialComponents.Subtitle2"
                     app:layout_constraintBottom_toBottomOf="@id/fileNameTitle"
                     app:layout_constraintEnd_toStartOf="@+id/selectFileButton"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toEndOf="@id/fileNameTitle"
                     app:layout_constraintTop_toTopOf="@id/fileNameTitle"
-                    tools:text="really really really really long text really really really really long text"
-                    android:singleLine="true" />
+                    tools:text="really really really really long text really really really really long text" />
 
                 <ImageButton
                     android:id="@+id/selectFileButton"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_margin="10dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_search_48"
                     android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/select_file"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_more_horiz_48"
                     app:layout_constraintBottom_toBottomOf="@id/fileNameTitle"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/fileNameTitle"
-                    android:contentDescription="@string/select_file" />
+                    app:layout_constraintTop_toTopOf="@id/fileNameTitle" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/shortcutTitle"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:text="@string/shortcutsTitle"
-                style="@style/TextAppearance.MaterialComponents.Headline4"
                 app:layout_constraintBottom_toTopOf="@id/shortcutDescription"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/shortcutDescription"
+                style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
-                style="@style/TextAppearance.MaterialComponents.Caption"
                 android:text="@string/shortcutsDescription"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/shortcutTitle" />
 
@@ -144,22 +146,24 @@
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/shortcutDescription" />
 
             <LinearLayout
-                android:visibility="gone"
                 android:id="@+id/shortcutList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/shortcutDescription" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/addShortcutInfo"
         android:layout_width="match_parent"
@@ -168,47 +172,69 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/labelInput"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/labelInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="3dp"
             android:hint="@string/addALabel"
-            android:importantForAutofill="no"
-            android:inputType="text"
-            android:singleLine="true"
+            android:layout_margin="3dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/textInput"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:text="really long text" />
+            app:layout_constraintEnd_toStartOf="@id/textInputLayout"
+            app:layout_constraintStart_toStartOf="parent">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/textInput"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/labelInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:singleLine="true"
+                tools:text="really long text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="3dp"
             android:hint="@string/addText"
-            android:imeOptions="actionDone"
-            android:importantForAutofill="no"
-            android:inputType="text"
-            android:singleLine="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/cursorInput"
-            app:layout_constraintStart_toEndOf="@+id/labelInput"
-            tools:text="really long text" />
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/cursorInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_margin="3dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/cursorInputLayout"
+            app:layout_constraintStart_toEndOf="@+id/labelInputLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:singleLine="true"
+                tools:text="really long text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/cursorInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:hint="@string/addCursor"
-            android:importantForAutofill="no"
-            android:inputType="number"
-            android:singleLine="true"
+            android:layout_margin="3dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/btnSaveShortcut"
-            app:layout_constraintStart_toEndOf="@+id/textInput"/>
+            app:layout_constraintStart_toEndOf="@+id/textInputLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/cursorInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:importantForAutofill="no"
+                android:inputType="number"
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
+
 
         <ImageButton
             android:id="@+id/btnSaveShortcut"
@@ -218,11 +244,13 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/save"
             android:scaleType="centerInside"
-            android:src="@drawable/ic_save_48"
-            app:layout_constraintBottom_toBottomOf="@+id/cursorInput"
+            android:src="@drawable/ic_check_circle_48"
+            app:layout_constraintBottom_toBottomOf="@+id/textInputLayout"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/cursorInput"
-            app:layout_constraintTop_toTopOf="@+id/cursorInput" />
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/textInputLayout"
+            app:layout_constraintTop_toTopOf="@+id/textInputLayout"
+            app:layout_constraintVertical_bias="0.578" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
