@@ -54,7 +54,7 @@ class LogView(private var repository: Repository) : Fragment() {
     private fun loadFile() {
         val todayLog = view!!.todayLog
         todayLog.setText(viewModel.getLog(), TextView.BufferType.EDITABLE)
-        val cursorIndex = if (viewModel.cursorIndex > -1) viewModel.cursorIndex else todayLog.text!!.length
+        val cursorIndex = if (viewModel.cursorIndex > -1 && viewModel.cursorIndex < todayLog.text!!.length) viewModel.cursorIndex else todayLog.text!!.length
         todayLog.setSelection(cursorIndex)
         Toast.makeText(context, "Loaded file", Toast.LENGTH_SHORT).show()
     }
