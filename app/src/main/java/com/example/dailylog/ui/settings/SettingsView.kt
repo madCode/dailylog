@@ -116,6 +116,7 @@ class SettingsView(private var repository: Repository) : Fragment() {
                 label.text?.clear()
                 text.text?.clear()
                 cursor.text?.clear()
+                viewModel.updateAdapter()
             } else {
                 TODO("show an error and also validate that cursorInt is shorter than textString")
             }

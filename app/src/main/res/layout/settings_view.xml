@@ -218,10 +218,10 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/cursorInputLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
+            android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:hint="@string/addCursor"
             android:layout_margin="3dp"
+            android:hint="@string/addCursor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/btnSaveShortcut"
             app:layout_constraintStart_toEndOf="@+id/textInputLayout">
