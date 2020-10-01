@@ -37,7 +37,7 @@
         android:layout_margin="10dp"
         android:alpha="0.4"
         android:scaleType="fitCenter"
-        android:background="@android:color/transparent"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/settings"
         android:src="@drawable/ic_settings_48"
         app:layout_constraintBottom_toTopOf="@id/btnDate"
@@ -49,7 +49,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_margin="10dp"
-        android:background="@android:color/transparent"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/refresh"
         android:alpha="0.4"
         android:scaleType="fitCenter"
@@ -59,27 +59,13 @@
         />
 
     <ImageButton
-        android:id="@+id/btnClear"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_margin="10dp"
-        android:alpha="0.4"
-        android:scaleType="fitCenter"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/clear"
-        android:src="@drawable/ic_delete_48"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/btnSave"
-        app:layout_constraintEnd_toEndOf="@id/logScrollView" />
-
-    <ImageButton
         android:id="@+id/btnSave"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_margin="10dp"
         android:alpha="0.4"
         android:scaleType="fitCenter"
-        android:background="@android:color/transparent"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/save"
         android:src="@drawable/ic_save_48"
         app:layout_constraintBottom_toBottomOf="@id/logScrollView"
@@ -90,6 +76,7 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:numColumns="5"
+        android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/logScrollView" />
