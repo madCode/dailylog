@@ -11,7 +11,7 @@
     <string name="categoriesTitle">Categories</string>
     <string name="addACategory">add a category</string>
     <string name="preference_file_key">SharedPreferences</string>
-    <string name="shortcutsTitle">Keyboard Shortcuts</string>
+    <string name="shortcutsTitle">Shortcuts</string>
     <string name="addALabel">label</string>
     <string name="addText">full text</string>
     <string name="addCursor">cursor index</string>
@@ -21,9 +21,8 @@
     <string name="file_format_settings_title">File Settings</string>
     <string name="dateFormatTitle">Date Format</string>
     <string name="defaultStringPlaceholder">%1$s</string>
-    <string name="fileNameTitle">Current file: </string>
+    <string name="fileNameTitle">Current file</string>
     <string name="select_file">Select file</string>
-    <string name="new_file">Create new file</string>
     <string name="settings">settings</string>
     <string name="delete">delete</string>
     <string name="drag_icon">drag icon</string>
