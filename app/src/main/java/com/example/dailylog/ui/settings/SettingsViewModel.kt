@@ -17,6 +17,10 @@ class SettingsViewModel(private var repository: Repository) : ViewModel() {
         removeCallback = { label -> repository.removeShortcut(label) },
         updatePositionCallback = { label, pos -> repository.updateShortcutPosition(label, pos)})
 
+    fun updateAdapter() {
+        shortcutListAdapter.updateItems(repository.getAllShortcuts())
+    }
+
     fun saveDateTimeFormat(format: String): Boolean {
         return if (isValidDateTimeFormat(format)) {
             repository.setDateTimeFormat(format)
