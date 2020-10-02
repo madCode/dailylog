@@ -77,16 +77,13 @@ class SettingsView(private var repository: Repository) : Fragment() {
     private fun renderFileNameRow() {
         view?.fileName?.text = viewModel.filename
         view?.selectFileButton?.setOnClickListener {
-            val intent = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            val intent =
                 Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                     addCategory(Intent.CATEGORY_OPENABLE)
                     type = "*/*"
                     flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
                             Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 }
-            } else {
-                TODO("VERSION.SDK_INT < KITKAT")
-            }
             startActivityForResult(Intent.createChooser(intent, "Select a file"), 111)
         }
     }
@@ -137,9 +134,6 @@ class SettingsView(private var repository: Repository) : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.KITKAT) {
-            TODO("VERSION.SDK_INT < KITKAT")
-        }
         if (requestCode == 111 && resultCode == AppCompatActivity.RESULT_OK && data != null) {
             val selectedFileUri = data.data;
             if (selectedFileUri != null) {

@@ -1,8 +1,5 @@
 package com.example.dailylog.ui.settings
 
-import android.annotation.SuppressLint
-import android.graphics.Color
-import android.os.Build
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
@@ -11,11 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dailylog.R
 import com.example.dailylog.repository.Shortcut
-import com.google.android.material.card.MaterialCardView
 
 
 /**
@@ -44,7 +39,6 @@ class ShortcutListAdapter(private var items: MutableList<Shortcut>, private var 
         return result
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val shortcut: Shortcut = items[position]
         holder.label.text = shortcut.label
@@ -81,13 +75,11 @@ class ShortcutListAdapter(private var items: MutableList<Shortcut>, private var 
         val text: TextView = itemView.findViewById(R.id.text) as TextView
         val removeButton: ImageButton = itemView.findViewById(R.id.removeShortcutButton)
 
-        @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
         override fun onItemSelected() {
             itemView.elevation = 3.0F
             //itemView.setBackgroundColor(Color.LTGRAY)
         }
 
-        @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
         override fun onItemClear() {
             itemView.elevation = 0F
             //itemView.setBackgroundColor(Color.TRANSPARENT)
