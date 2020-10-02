@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dailylog.R
 import com.example.dailylog.repository.Shortcut
+import com.google.android.material.card.MaterialCardView
 
 
 /**
@@ -76,14 +77,15 @@ class ShortcutListAdapter(private var items: MutableList<Shortcut>, private var 
         val removeButton: ImageButton = itemView.findViewById(R.id.removeShortcutButton)
 
         override fun onItemSelected() {
-            itemView.elevation = 3.0F
-            //itemView.setBackgroundColor(Color.LTGRAY)
+            if (itemView is MaterialCardView) {
+                itemView.isDragged = true
+            }
         }
 
         override fun onItemClear() {
-            itemView.elevation = 0F
-            //itemView.setBackgroundColor(Color.TRANSPARENT)
-            //itemView.setBackgroundResource(R.drawable.underline)
+            if (itemView is MaterialCardView) {
+                itemView.isDragged = false
+            }
         }
 
     }

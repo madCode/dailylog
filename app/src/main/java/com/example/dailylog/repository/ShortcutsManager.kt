@@ -54,7 +54,7 @@ class ShortcutsManager constructor(context: Context) {
 
     fun addShortcut(label: String, text: String, cursorIndex: Int): Boolean {
         val shortcut = createShortcut(label, text, cursorIndex)
-        return if (!labelList.contains(label)) {
+        return if (!labelList.contains(label) || label.isEmpty() || text.isEmpty()) {
             shortcutList.add(shortcut)
             labelList.add(label)
             saveShortcutToDB(shortcut)

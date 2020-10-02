@@ -85,4 +85,8 @@ class Repository(private var context: Context, permissionChecker: PermissionChec
     fun getAllShortcuts(): MutableList<Shortcut> {
         return shortcutsManager.shortcutList
     }
+
+    fun labelIsUnique(label: String): Boolean {
+        return !shortcutsManager.labelList.contains(label)
+    }
 }
