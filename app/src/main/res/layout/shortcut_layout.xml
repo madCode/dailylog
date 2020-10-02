@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.chip.Chip xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<com.google.android.material.chip.Chip xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    android:id="@+id/shortcutChip"-->
+<!--    android:ellipsize="end"-->
+<!--    app:chipBackgroundColor="@color/colorPrimaryDark"-->
+<!--    android:layout_width="wrap_content"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:layout_marginHorizontal="3dp"-->
+<!--    app:rippleColor="@color/colorAccent"-->
+<!--    android:textColor="@color/textLight"-->
+<!--    tools:text="button" />-->
+<com.google.android.material.button.MaterialButton xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/shortcutChip"
@@ -8,4 +20,5 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="3dp"
     app:rippleColor="@color/colorAccent"
+    android:textAllCaps="false"
     tools:text="button" />

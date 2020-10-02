@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dailylog.R
@@ -43,6 +44,6 @@ class ShortcutTrayAdapter internal constructor(
 
     // stores and recycles views as they are scrolled off screen
     inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var shortcutChip: Chip = itemView.findViewById(R.id.shortcutChip)
+        var shortcutChip: Button = itemView.findViewById(R.id.shortcutChip)
     }
 }

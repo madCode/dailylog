@@ -47,9 +47,12 @@ class LogView(private var repository: Repository) : Fragment() {
         if (context == null) {
             return
         }
+        val shortcuts = repository.getAllShortcuts()
         val tray = view!!.shortcutTray
-        tray.layoutManager = StaggeredGridLayoutManager(2, RecyclerView.HORIZONTAL)
-        tray.adapter = ShortcutTrayAdapter(context!!, view!!.todayLog, repository.getAllShortcuts())
+        //val rowCount = if (shortcuts.size > 4) 2 else 1
+        //tray.layoutManager = StaggeredGridLayoutManager(rowCount, RecyclerView.HORIZONTAL)
+        tray.layoutManager = GridLayoutManager(context, 5)
+        tray.adapter = ShortcutTrayAdapter(context!!, view!!.todayLog, shortcuts)
     }
 
     private fun loadFile() {
