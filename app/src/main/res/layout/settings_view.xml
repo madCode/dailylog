@@ -41,7 +41,7 @@
 
                 <TextView
                     android:id="@+id/dateFormatTitle"
-                    style="@style/TextAppearance.MaterialComponents.Body1"
+                    style="@style/TextHeadline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
@@ -79,7 +79,7 @@
 
                 <TextView
                     android:id="@+id/fileNameTitle"
-                    style="@style/TextAppearance.MaterialComponents.Body1"
+                    style="@style/TextHeadline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
@@ -104,28 +104,39 @@
                     app:layout_constraintTop_toTopOf="@id/fileNameTitle"
                     tools:text="really really really really long text really really really really long text" />
 
-                <ImageButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/selectFileButton"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/select_file"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_more_horiz_48"
+                    android:text="@string/select_file"
                     app:layout_constraintBottom_toBottomOf="@id/fileNameTitle"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/fileNameTitle" />
+
+<!--                <ImageButton-->
+<!--                    android:id="@+id/selectFileButton"-->
+<!--                    android:layout_width="30dp"-->
+<!--                    android:layout_height="30dp"-->
+<!--                    android:layout_margin="10dp"-->
+<!--                    android:background="?attr/selectableItemBackgroundBorderless"-->
+<!--                    android:contentDescription="@string/select_file"-->
+<!--                    android:scaleType="fitCenter"-->
+<!--                    android:src="@drawable/ic_more_horiz_48"-->
+<!--                    app:layout_constraintBottom_toBottomOf="@id/fileNameTitle"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="@id/fileNameTitle" />-->
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/shortcutTitle"
-                style="@style/TextAppearance.MaterialComponents.Body1"
+                style="@style/TextHeadline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:text="@string/shortcutsTitle"
+                android:textStyle="normal"
                 app:layout_constraintBottom_toTopOf="@id/shortcutDescription"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -249,8 +260,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/textInputLayout"
-            app:layout_constraintTop_toTopOf="@+id/textInputLayout"
-            app:layout_constraintVertical_bias="0.578" />
+            app:layout_constraintTop_toTopOf="@+id/textInputLayout" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,8 @@
 package com.example.dailylog.ui.settings
 
+import android.annotation.SuppressLint
 import android.graphics.Color
+import android.os.Build
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
@@ -9,9 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dailylog.R
 import com.example.dailylog.repository.Shortcut
+import com.google.android.material.card.MaterialCardView
 
 
 /**
@@ -40,11 +44,17 @@ class ShortcutListAdapter(private var items: MutableList<Shortcut>, private var 
         return result
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val shortcut: Shortcut = items[position]
         holder.label.text = shortcut.label
         holder.text.text = getText(shortcut.text, shortcut.cursorIndex)
-        holder.removeButton.setOnClickListener { onItemDismiss(position) }
+        holder.removeButton.setOnClickListener { onDelete(shortcut) }
+    }
+
+    fun onDelete(shortcut: Shortcut) {
+        val index = items.indexOf(shortcut)
+        onItemDismiss(index)
     }
 
     override fun onItemDismiss(position: Int) {
@@ -56,7 +66,7 @@ class ShortcutListAdapter(private var items: MutableList<Shortcut>, private var 
 
     override fun onItemMove(fromPosition: Int, toPosition: Int) {
         val prev = items.removeAt(fromPosition)
-        items.add(if (toPosition > fromPosition) toPosition - 1 else toPosition, prev)
+        items.add(toPosition, prev)
         updatePositionCallback(prev.label, toPosition)
         notifyItemMoved(fromPosition, toPosition)
     }
@@ -71,12 +81,16 @@ class ShortcutListAdapter(private var items: MutableList<Shortcut>, private var 
         val text: TextView = itemView.findViewById(R.id.text) as TextView
         val removeButton: ImageButton = itemView.findViewById(R.id.removeShortcutButton)
 
+        @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
         override fun onItemSelected() {
-            itemView.setBackgroundColor(Color.LTGRAY)
+            itemView.elevation = 3.0F
+            //itemView.setBackgroundColor(Color.LTGRAY)
         }
 
+        @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
         override fun onItemClear() {
-            itemView.setBackgroundColor(Color.TRANSPARENT)
+            itemView.elevation = 0F
+            //itemView.setBackgroundColor(Color.TRANSPARENT)
             //itemView.setBackgroundResource(R.drawable.underline)
         }
 

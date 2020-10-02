@@ -1,10 +1,22 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="TextHeadline" parent="TextAppearance.MaterialComponents.Headline6">
+        <!-- Fake Roboto Medium. -->
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="TextCaption" parent="TextAppearance.MaterialComponents.Caption">
+        <!-- Fake Roboto Medium. -->
+        <item name="android:textSize">14sp</item>
     </style>
 
 </resources>
