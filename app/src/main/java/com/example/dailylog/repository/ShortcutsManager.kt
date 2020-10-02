@@ -44,7 +44,11 @@ class ShortcutsManager constructor(context: Context) {
 
     fun updateShortcutPosition(label: String, position: Int) {
         labelList.remove(label)
-        labelList.add(position, label)
+        if (position > labelList.size) {
+            labelList.add(label)
+        } else {
+            labelList.add(position, label)
+        }
         updateAll()
     }
 
