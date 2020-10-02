@@ -4,33 +4,45 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.EditText
+import androidx.recyclerview.widget.RecyclerView
 import com.example.dailylog.R
 import com.example.dailylog.repository.Shortcut
+import com.google.android.material.chip.Chip
 
-internal class ShortcutTrayAdapter internal constructor(context: Context, var inputView: EditText, private val resource: Int, private val itemList: List<Shortcut>?) : ArrayAdapter<Button>(context, resource) {
 
-    override fun getCount(): Int {
-        return if (this.itemList != null) this.itemList.size else 0
+class ShortcutTrayAdapter internal constructor(
+    context: Context?,
+    private var inputView: EditText,
+    private var itemList: List<Shortcut>
+) :
+    RecyclerView.Adapter<ShortcutTrayAdapter.ViewHolder>() {
+    private val shortcutInflator: LayoutInflater = LayoutInflater.from(context)
+
+    // inflates the cell layout from xml when needed
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view: View = shortcutInflator.inflate(R.layout.shortcut_layout, parent, false)
+        return ViewHolder(view)
     }
 
-    override fun getView(position: Int, convertedView: View?, parent: ViewGroup): View {
-        var convertView = convertedView
-        val button: Button
-        if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(resource, null)
-            button = convertView!!.findViewById(R.id.shortcutButton)
-            convertView.tag = button
-        } else {
-            button = convertView.tag as Button
-        }
-        val shortcut = this.itemList!![position]
-        button.text = shortcut.label
-        button.setOnClickListener {
+    // binds the data to the TextView in each cell
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val shortcut = itemList[position]
+        holder.shortcutChip.text = shortcut.label
+        holder.shortcutChip.setOnClickListener {
             val start: Int = inputView.selectionStart
             inputView.text.insert(start, shortcut.text)
             inputView.setSelection(start + shortcut.cursorIndex);
         }
-        return convertView
+    }
+
+    // total number of cells
+    override fun getItemCount(): Int {
+        return if (itemList.size < 14) itemList.size else 14
+    }
+
+    // stores and recycles views as they are scrolled off screen
+    inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var shortcutChip: Chip = itemView.findViewById(R.id.shortcutChip)
     }
 }
