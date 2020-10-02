@@ -1,19 +1,20 @@
 package com.example.dailylog.ui.log
 
-import android.app.Activity
+import android.R.attr.data
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.GridView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.dailylog.R
 import com.example.dailylog.repository.Repository
 import com.example.dailylog.ui.settings.SettingsView
@@ -46,9 +47,9 @@ class LogView(private var repository: Repository) : Fragment() {
         if (context == null) {
             return
         }
-        val adapter = ShortcutTrayAdapter(context!!, view!!.todayLog, R.layout.shortcut_layout, repository.getAllShortcuts())
         val tray = view!!.shortcutTray
-        tray.adapter = adapter
+        tray.layoutManager = StaggeredGridLayoutManager(2, RecyclerView.HORIZONTAL)
+        tray.adapter = ShortcutTrayAdapter(context!!, view!!.todayLog, repository.getAllShortcuts())
     }
 
     private fun loadFile() {
