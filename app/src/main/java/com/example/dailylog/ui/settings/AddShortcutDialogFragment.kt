@@ -6,6 +6,7 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -103,8 +104,10 @@ class AddShortcutDialogFragment : DialogFragment() {
         val result = SpannableStringBuilder("$firstHalf|$secondHalf")
         val start = firstHalf.length
         val end = start + 1
+        val value = TypedValue()
+        context!!.theme.resolveAttribute(R.attr.colorAccent, value, true)
         result.setSpan(
-            ForegroundColorSpan(-0x10000),
+            ForegroundColorSpan(value.data),
             start,
             end,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE

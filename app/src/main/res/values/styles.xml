@@ -2,9 +2,18 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+<!--        <item name="colorPrimary">@color/colorPrimary</item>-->
+<!--        <item name="colorPrimaryDark">#33C1B1</item>-->
+<!--        <item name="colorPrimaryVariant">#264653</item>-->
+<!--        <item name="colorPrimary">#1C9F91</item>-->
+        <item name="colorPrimary">#83C5BE</item>
+<!--        <item name="colorPrimary">#006D77</item>-->
+        <item name="colorPrimaryDark">#006D77</item>
+        <item name="colorPrimaryVariant">#006D77</item>
+        <item name="colorAccent">#FF9800</item>
+        <item name="colorSecondary">#FFDDD2</item>
+        <item name="colorSecondaryVariant">#E29578</item>
+        <item name="colorOnSecondary">#000000</item>
     </style>
 
     <style name="TextHeadline" parent="TextAppearance.MaterialComponents.Headline6">
@@ -16,7 +25,7 @@
 
     <style name="TextCaption" parent="TextAppearance.MaterialComponents.Caption">
         <!-- Fake Roboto Medium. -->
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">20sp</item>
     </style>
 
 </resources>
