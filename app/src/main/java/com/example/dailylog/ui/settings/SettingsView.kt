@@ -18,7 +18,8 @@ import com.example.dailylog.repository.Constants
 import com.example.dailylog.repository.Repository
 import kotlinx.android.synthetic.main.settings_view.view.*
 
-class SettingsView(private var repository: Repository) : Fragment() {
+class SettingsView(private var repository: Repository) : Fragment(),
+    AddShortcutDialogFragment.AddShortcutDialogListener {
 
     companion object {
         fun newInstance(repository: Repository) = SettingsView(repository)
@@ -38,8 +39,13 @@ class SettingsView(private var repository: Repository) : Fragment() {
         viewModel = SettingsViewModel(repository)
         renderDateFormatRow()
         renderFileNameRow()
-        renderAddShortcut()
         renderShortcutList()
+        view?.addShortcutButton?.setOnClickListener {
+            val editNameDialogFragment: AddShortcutDialogFragment =
+                AddShortcutDialogFragment.newInstance()
+            editNameDialogFragment.setTargetFragment(this, 300)
+            editNameDialogFragment.show(parentFragmentManager, "fragment_add_shortcut")
+        }
     }
 
     private fun renderDateFormatRow() {
@@ -88,38 +94,6 @@ class SettingsView(private var repository: Repository) : Fragment() {
         }
     }
 
-    private fun renderAddShortcut() {
-        val label = view!!.labelInput
-        val text = view!!.textInput
-        val cursor = view!!.cursorInput
-        text?.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                if (cursor.text!!.equals("")) {
-                    cursor.setText((text.text.toString().length - 1).toString())
-                }
-                return@OnEditorActionListener true
-            }
-            false
-        })
-
-        view!!.btnSaveShortcut.setOnClickListener {
-            val cursorInt = Integer.parseInt(cursor.text.toString())
-            val added = repository.addShortcut(
-                label.text.toString(),
-                text.text.toString(),
-                cursorInt
-            )
-            if (added) {
-                label.text?.clear()
-                text.text?.clear()
-                cursor.text?.clear()
-                viewModel.updateAdapter()
-            } else {
-                TODO("show an error and also validate that cursorInt is shorter than textString")
-            }
-        }
-    }
-
     private fun renderShortcutList() {
         val adapter = viewModel.shortcutListAdapter
         val recyclerView = view!!.recycler_view
@@ -146,6 +120,21 @@ class SettingsView(private var repository: Repository) : Fragment() {
 //                TODO("if we didn't get the permissions we needed, ask for permission or have the user select a different file")
             }
         }
+    }
+
+    override fun onFinishAddShortcutDialog(label: String, text: String, cursor: Int) {
+        val added = repository.addShortcut(
+            label,
+            text,
+            cursor
+        )
+        if (added) {
+            viewModel.updateAdapter()
+        }
+    }
+
+    override fun labelIsUnique(label: String): Boolean {
+        return repository.labelIsUnique(label)
     }
 
 }
