@@ -3,6 +3,7 @@ package com.example.dailylog.ui.settings
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +18,7 @@ import com.google.android.material.card.MaterialCardView
 /**
  * adopted from https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-b9456d2b1aaf
  */
-class ShortcutListAdapter(private var items: MutableList<Shortcut>, private var removeCallback: (String) -> Unit, private var updatePositionCallback: (String, Int) -> Unit) : RecyclerView.Adapter<ShortcutListAdapter.ItemViewHolder>(),
+class ShortcutListAdapter(private var items: MutableList<Shortcut>, private var removeCallback: (String) -> Unit, private var updatePositionCallback: (String, Int) -> Unit, private var cursorColor: Int) : RecyclerView.Adapter<ShortcutListAdapter.ItemViewHolder>(),
     ShortcutTouchHelperAdapter {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val view: View =
@@ -31,12 +32,20 @@ class ShortcutListAdapter(private var items: MutableList<Shortcut>, private var 
     }
 
     private fun getText(text: String, cursorIndex: Int): SpannableStringBuilder {
-        val firstHalf = text.subSequence(0,cursorIndex).toString()
+        if (text.isEmpty()) {
+            return SpannableStringBuilder("")
+        }
+        val firstHalf = text.subSequence(0, cursorIndex).toString()
         val secondHalf = text.subSequence(cursorIndex, text.length).toString()
         val result = SpannableStringBuilder("$firstHalf|$secondHalf")
         val start = firstHalf.length
         val end = start + 1
-        result.setSpan(ForegroundColorSpan(-0x10000), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        result.setSpan(
+            ForegroundColorSpan(cursorColor),
+            start,
+            end,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
         return result
     }
 

@@ -1,21 +1,37 @@
 package com.example.dailylog.ui.settings
 
+import android.content.Context
 import android.os.Build
+import android.util.TypedValue
 import androidx.lifecycle.ViewModel
+import com.example.dailylog.R
 import com.example.dailylog.repository.Repository
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class SettingsViewModel(private var repository: Repository) : ViewModel() {
+class SettingsViewModel(private var repository: Repository, context: Context?) : ViewModel() {
 
     var dateTimeFormat = repository.getDateTimeFormat()
     var filename = repository.getFilename()
-    var shortcutListAdapter = ShortcutListAdapter(
-        items = repository.getAllShortcuts(),
-        removeCallback = { label -> repository.removeShortcut(label) },
-        updatePositionCallback = { label, pos -> repository.updateShortcutPosition(label, pos)})
+    private val value = TypedValue()
+    var shortcutListAdapter: ShortcutListAdapter
+
+    init {
+        context?.theme?.resolveAttribute(R.attr.colorAccent, value, true)
+        shortcutListAdapter = ShortcutListAdapter(
+            items = repository.getAllShortcuts(),
+            removeCallback = { label -> repository.removeShortcut(label) },
+            updatePositionCallback = { label, pos ->
+                repository.updateShortcutPosition(
+                    label,
+                    pos
+                )
+            },
+            if (value.isColorType) value.data else -0x10000
+        )
+    }
 
     fun updateAdapter() {
         shortcutListAdapter.updateItems(repository.getAllShortcuts())

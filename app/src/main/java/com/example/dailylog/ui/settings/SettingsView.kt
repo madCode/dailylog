@@ -36,7 +36,7 @@ class SettingsView(private var repository: Repository) : Fragment(),
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = SettingsViewModel(repository)
+        viewModel = SettingsViewModel(repository, context)
         renderDateFormatRow()
         renderFileNameRow()
         renderShortcutList()
