@@ -7,6 +7,7 @@ import com.example.dailylog.R
 import com.example.dailylog.ui.permissions.PermissionChecker
 import java.io.*
 import java.io.File
+import java.lang.Exception
 
 class FileManager(var context: Context, var permissionChecker: PermissionChecker) {
     private var filename: String
@@ -56,42 +57,37 @@ class FileManager(var context: Context, var permissionChecker: PermissionChecker
                         var line: String? = reader.readLine()
                         while (line != null) {
                             stringBuilder.append(line)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                                stringBuilder.append(System.lineSeparator())
-                            } else {
-                                TODO("VERSION GREATER THAN KITKAT")
-                            }
+                            stringBuilder.append(System.lineSeparator())
                             line = reader.readLine()
                         }
                     }
                     inputStream.close()
                 }
                 return stringBuilder.toString()
-            } catch (ex: FileNotFoundException) {
-                Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG)
-                    .show()
-            } catch (ex: IOException) {
+            } catch (ex: Exception) {
                 Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG)
                     .show()
             }
         }
-        Toast.makeText(context, "No permissions", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "File read permissions not granted", Toast.LENGTH_LONG).show()
         return ""
     }
 
     fun saveToFile(data: String): Boolean {
-        try {
-            val uri = Uri.parse(filename)
-            val fileDescriptor = context.contentResolver.openFileDescriptor(uri, "rwt")?.fileDescriptor
-            val fileStream = FileOutputStream(fileDescriptor)
-            fileStream.write((data).toByteArray())
-            fileStream.close()
-            return true
-        } catch (ex: FileNotFoundException) {
-            Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show()
-        } catch (ex: IOException) {
-            Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show()
+        if (permissionChecker.doIfAndroid10ExtStoragePermissionGranted()) {
+            try {
+                val uri = Uri.parse(filename)
+                val fileDescriptor =
+                    context.contentResolver.openFileDescriptor(uri, "rwt")?.fileDescriptor
+                val fileStream = FileOutputStream(fileDescriptor)
+                fileStream.write((data).toByteArray())
+                fileStream.close()
+                return true
+            } catch (ex: Exception) {
+                Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show()
+            }
         }
+        Toast.makeText(context, "File write permissions not granted", Toast.LENGTH_LONG).show()
         return false
     }
 }
