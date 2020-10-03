@@ -39,7 +39,7 @@ class LogView(private var repository: Repository) : Fragment() {
         }
         viewModel.save(todayLog.text.toString())
         todayLog.setText(viewModel.getLog(), TextView.BufferType.EDITABLE)
-        todayLog.setSelection(viewModel.cursorIndex)
+        todayLog.setSelection(getCursorIndex(todayLog.text.toString()))
         Toast.makeText(context, "Saved file", Toast.LENGTH_SHORT).show()
     }
 
@@ -55,10 +55,14 @@ class LogView(private var repository: Repository) : Fragment() {
         tray.adapter = ShortcutTrayAdapter(context!!, view!!.todayLog, shortcuts)
     }
 
+    private fun getCursorIndex(text: String): Int {
+        return if (viewModel.cursorIndex > -1 && viewModel.cursorIndex < text.length) viewModel.cursorIndex else text.length
+    }
+
     private fun loadFile() {
         val todayLog = view!!.todayLog
         todayLog.setText(viewModel.getLog(), TextView.BufferType.EDITABLE)
-        val cursorIndex = if (viewModel.cursorIndex > -1 && viewModel.cursorIndex < todayLog.text!!.length) viewModel.cursorIndex else todayLog.text!!.length
+        val cursorIndex = getCursorIndex(todayLog.text!!.toString())
         todayLog.setSelection(cursorIndex)
         Toast.makeText(context, "Loaded file", Toast.LENGTH_SHORT).show()
     }
