@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import com.example.dailylog.R
+import com.google.android.material.slider.Slider
 import kotlinx.android.synthetic.main.create_new_shortcut.view.*
 
 
@@ -54,10 +55,10 @@ class AddShortcutDialogFragment : DialogFragment() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable) {
-                cursorSlider.valueTo = s.length.toFloat()
+                updateCursorView(cursorSlider, s.toString())
+                view.previewText.text = getText(s.toString(), cursorSlider.value.toInt())
                 if (isTextValid(s.toString())) {
                     view.textInputLayout.error = null
-                    view.previewText.text = getText(s.toString(), cursorSlider.value.toInt())
                 }
             }
         })
@@ -92,6 +93,18 @@ class AddShortcutDialogFragment : DialogFragment() {
                 )
                 dismiss()
             }
+        }
+    }
+
+    private fun updateCursorView(cursorView: Slider, text: String) {
+        val curr = cursorView.value
+        val newMax = text.length
+        if (newMax <= 0) {
+            cursorView.value = 0F
+            cursorView.valueTo = 1F
+        } else {
+            cursorView.value = minOf(newMax.toFloat(), curr)
+            cursorView.valueTo = newMax.toFloat()
         }
     }
 
