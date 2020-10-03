@@ -66,14 +66,6 @@ class SettingsView(private var repository: Repository) : Fragment(),
                         Toast.LENGTH_LONG
                     ).show()
                     return@OnEditorActionListener true
-                } else {
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                        context?.getColor(R.color.colorPrimaryDark)?.let {
-                            dateFormatEditText.setTextColor(
-                                it
-                            )
-                        }
-                    }
                 }
             }
             false
