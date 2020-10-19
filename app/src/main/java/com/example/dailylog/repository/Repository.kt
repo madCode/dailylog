@@ -86,6 +86,10 @@ class Repository(private var context: Context, permissionChecker: PermissionChec
         return shortcutsManager.shortcutList
     }
 
+    fun areShortcuts(): Boolean {
+        return shortcutsManager.shortcutList.size > 0
+    }
+
     fun labelIsUnique(label: String): Boolean {
         return !shortcutsManager.labelList.contains(label)
     }

@@ -36,7 +36,7 @@ class SettingsView(private var repository: Repository) : Fragment(),
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = SettingsViewModel(repository, context)
+        viewModel = SettingsViewModel(repository, context) { renderShortcutInstructions() }
         renderDateFormatRow()
         renderFileNameRow()
         renderShortcutList()
@@ -111,6 +111,14 @@ class SettingsView(private var repository: Repository) : Fragment(),
                 view?.fileName?.text = viewModel.filename
 //                TODO("if we didn't get the permissions we needed, ask for permission or have the user select a different file")
             }
+        }
+    }
+
+    private fun renderShortcutInstructions() {
+        if (viewModel.showShortcutInstructions()) {
+            view!!.noShortcutsMessage.visibility = View.VISIBLE
+        } else {
+            view!!.noShortcutsMessage.visibility = View.GONE
         }
     }
 

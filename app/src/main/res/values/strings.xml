@@ -34,4 +34,5 @@
     <string name="permissionNeeded">Permission Needed</string>
     <string name="permissionNeededExplanation">The file you selected is located outside of this app\'s directory. In order to write to a file in another folder, Android 10 requires us to ask you for the "Manage External Storage" permission. Press "OK" to start the permission-granting process, then try to save again. "Cancel" will cancel. If you do not wish to give this app the extra permission, try selecting the "log.md" file in the app\'s folder.</string>
     <string name="ok">OK</string>
+    <string name="no_shortcuts_info">Click on the + button at the bottom of the screen to add a shortcut.</string>
 </resources>
