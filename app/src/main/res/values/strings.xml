@@ -31,4 +31,7 @@
     <string name="textExplanation">full text for your shortcut</string>
     <string name="cursorIndexExplanation">Where you want the cursor to go after pasting text. (e.g. If your text is \'hello\' and your cursor index is 0, your cursor would be before the word \'hello\'. If your cursor index was 3, it would go after the first l in the word \'hello\'.)</string>
     <string name="addShortcut">Add a shortcut</string>
+    <string name="permissionNeeded">Permission Needed</string>
+    <string name="permissionNeededExplanation">The file you selected is located outside of this app\'s directory. In order to write to a file in another folder, Android 10 requires us to ask you for the "Manage External Storage" permission. Press "OK" to start the permission-granting process, then try to save again. "Cancel" will cancel. If you do not wish to give this app the extra permission, try selecting the "log.md" file in the app\'s folder.</string>
+    <string name="ok">OK</string>
 </resources>

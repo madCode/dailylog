@@ -29,7 +29,7 @@ class SettingsViewModel(private var repository: Repository, context: Context?) :
                     pos
                 )
             },
-            if (value.isColorType) value.data else -0x10000
+            if (value.type == TypedValue.TYPE_INT_COLOR_RGB8 || value.type == TypedValue.TYPE_INT_COLOR_RGB4  || value.type == TypedValue.TYPE_INT_COLOR_ARGB4   || value.type == TypedValue.TYPE_INT_COLOR_ARGB8) value.data else -0x10000
         )
     }
 
