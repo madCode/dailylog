@@ -9,7 +9,7 @@ import java.io.*
 import java.io.File
 import java.lang.Exception
 
-class FileManager(var context: Context, var permissionChecker: PermissionChecker) {
+class FileManager(var context: Context, private var permissionChecker: PermissionChecker) {
     private var filename: String
     init {
         filename = getFilename()
@@ -74,20 +74,24 @@ class FileManager(var context: Context, var permissionChecker: PermissionChecker
     }
 
     fun saveToFile(data: String): Boolean {
-        if (permissionChecker.doIfAndroid10ExtStoragePermissionGranted()) {
-            try {
+        if (permissionChecker.doIfExtStoragePermissionGranted()) {
+            return try {
                 val uri = Uri.parse(filename)
                 val fileDescriptor =
                     context.contentResolver.openFileDescriptor(uri, "rwt")?.fileDescriptor
                 val fileStream = FileOutputStream(fileDescriptor)
                 fileStream.write((data).toByteArray())
                 fileStream.close()
-                return true
+                true
+            } catch (ex: IllegalArgumentException) {
+                Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show()
+                false
             } catch (ex: Exception) {
                 Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show()
+                false
             }
         }
-        Toast.makeText(context, "File write permissions not granted", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "File write permissions not granted.", Toast.LENGTH_LONG).show()
         return false
     }
 }

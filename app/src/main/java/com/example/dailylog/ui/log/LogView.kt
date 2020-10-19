@@ -1,6 +1,5 @@
 package com.example.dailylog.ui.log
 
-import android.R.attr.data
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,8 +12,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.dailylog.R
 import com.example.dailylog.repository.Repository
 import com.example.dailylog.ui.settings.SettingsView
