@@ -93,4 +93,8 @@ class Repository(private var context: Context, permissionChecker: PermissionChec
     fun labelIsUnique(label: String): Boolean {
         return !shortcutsManager.labelList.contains(label)
     }
+
+    fun bulkAddShortcuts(shortcutInfo: List<List<String>>): Boolean {
+        return shortcutsManager.bulkAddShortcuts(shortcutInfo)
+    }
 }

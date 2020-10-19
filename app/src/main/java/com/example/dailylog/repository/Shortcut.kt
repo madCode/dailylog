@@ -21,6 +21,9 @@ interface ShortcutDao {
     @Insert
     fun add(shortcut: Shortcut)
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun addAll(vararg shortcuts: Shortcut)
+
     @Delete
     fun delete(shortcut: Shortcut)
 

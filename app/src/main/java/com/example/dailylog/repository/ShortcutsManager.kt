@@ -64,6 +64,47 @@ class ShortcutsManager constructor(context: Context) {
         }
     }
 
+    fun bulkAddShortcuts(shortcutInfoList: List<List<String>>): Boolean {
+        val results = ArrayList<Shortcut>()
+        shortcutInfoList.forEachIndexed {
+                index, list ->
+            try {
+                if (validateShortcutBulkRow(list)) {
+                    val label = list[0]
+                    val text = list[1]
+                    val cursorIndex = list[2].toInt()
+                    results.add(
+                        Shortcut(
+                            label = label,
+                            text = text,
+                            cursorIndex = cursorIndex,
+                            position = shortcutList.size + index
+                        )
+                    )
+                }
+            } catch (e: java.lang.IllegalArgumentException) {
+                throw java.lang.IllegalArgumentException("row " + index + ": " + e.message)
+            } catch (e: NumberFormatException) {
+                throw java.lang.IllegalArgumentException("row " + index + ": " + e.message)
+            }
+        }
+        shortcutDB.shortcutDao().addAll(*results.toTypedArray())
+        shortcutList = getAllShortcuts()
+        labelList = ArrayList()
+        shortcutList.forEach{
+            labelList.add(it.label)
+        }
+        return true
+    }
+
+    private fun validateShortcutBulkRow(shortcutInfo: List<String>): Boolean {
+        if (shortcutInfo.size != 3) {
+            throw IllegalArgumentException("Row should contain exactly 3 items.")
+        }
+        shortcutInfo[2].toInt() // throws error if cannot be converted to int
+        return true
+    }
+
     fun removeShortcut(label: String): Boolean {
         labelList.remove(label)
         deleteShortcutFromDB(label)
