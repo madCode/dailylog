@@ -3,15 +3,17 @@ package com.example.dailylog.ui.settings
 import android.content.Context
 import android.os.Build
 import android.util.TypedValue
+import android.view.View
 import androidx.lifecycle.ViewModel
 import com.example.dailylog.R
 import com.example.dailylog.repository.Repository
+import kotlinx.android.synthetic.main.settings_view.view.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class SettingsViewModel(private var repository: Repository, context: Context?) : ViewModel() {
+class SettingsViewModel(private var repository: Repository, context: Context?, private var showInstructions: () -> Unit) : ViewModel() {
 
     var dateTimeFormat = repository.getDateTimeFormat()
     var filename = repository.getFilename()
@@ -22,7 +24,7 @@ class SettingsViewModel(private var repository: Repository, context: Context?) :
         context?.theme?.resolveAttribute(R.attr.colorAccent, value, true)
         shortcutListAdapter = ShortcutListAdapter(
             items = repository.getAllShortcuts(),
-            removeCallback = { label -> repository.removeShortcut(label) },
+            removeCallback = { label -> repository.removeShortcut(label); showInstructions() },
             updatePositionCallback = { label, pos ->
                 repository.updateShortcutPosition(
                     label,
@@ -35,6 +37,11 @@ class SettingsViewModel(private var repository: Repository, context: Context?) :
 
     fun updateAdapter() {
         shortcutListAdapter.updateItems(repository.getAllShortcuts())
+        showInstructions()
+    }
+
+    fun showShortcutInstructions(): Boolean {
+        return !repository.areShortcuts()
     }
 
     fun saveDateTimeFormat(format: String): Boolean {

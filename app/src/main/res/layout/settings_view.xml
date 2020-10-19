@@ -126,6 +126,17 @@
                 app:layout_constraintTop_toBottomOf="@id/constraintLayout"
                 app:layout_constraintStart_toStartOf="parent" />
 
+            <TextView
+                android:id="@+id/noShortcutsMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/shortcutTitle"
+                android:paddingVertical="20dp"
+                android:paddingHorizontal="40dp"
+                android:text="@string/no_shortcuts_info"
+                />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
