@@ -19,7 +19,7 @@ import com.example.dailylog.repository.Repository
 import kotlinx.android.synthetic.main.settings_view.view.*
 
 class SettingsView(private var repository: Repository) : Fragment(),
-    AddShortcutDialogFragment.AddShortcutDialogListener {
+    AddShortcutDialogFragment.AddShortcutDialogListener, BulkAddShortcutsDialogFragment.BulkAddListener {
 
     companion object {
         fun newInstance(repository: Repository) = SettingsView(repository)
@@ -41,10 +41,17 @@ class SettingsView(private var repository: Repository) : Fragment(),
         renderFileNameRow()
         renderShortcutList()
         view?.addShortcutButton?.setOnClickListener {
-            val editNameDialogFragment: AddShortcutDialogFragment =
+            val addDialog: AddShortcutDialogFragment =
                 AddShortcutDialogFragment.newInstance()
-            editNameDialogFragment.setTargetFragment(this, 300)
-            editNameDialogFragment.show(parentFragmentManager, "fragment_add_shortcut")
+            addDialog.setTargetFragment(this, 300)
+            addDialog.show(parentFragmentManager, "fragment_add_shortcut")
+        }
+        view?.addShortcutButton?.setOnLongClickListener {
+            val addBulkDialog: BulkAddShortcutsDialogFragment =
+                BulkAddShortcutsDialogFragment.newInstance()
+            addBulkDialog.setTargetFragment(this, 300)
+            addBulkDialog.show(parentFragmentManager, "fragment_bulk_add")
+            return@setOnLongClickListener true
         }
     }
 
@@ -128,6 +135,13 @@ class SettingsView(private var repository: Repository) : Fragment(),
             text,
             cursor
         )
+        if (added) {
+            viewModel.updateAdapter()
+        }
+    }
+
+    override fun onBulkAddShortcuts(shortcuts: List<List<String>>) {
+        val added = repository.bulkAddShortcuts(shortcuts)
         if (added) {
             viewModel.updateAdapter()
         }
