@@ -56,7 +56,7 @@ class ShortcutListAdapter(private var items: MutableList<Shortcut>, private var 
         holder.removeButton.setOnClickListener { onDelete(shortcut) }
     }
 
-    fun onDelete(shortcut: Shortcut) {
+    private fun onDelete(shortcut: Shortcut) {
         val index = items.indexOf(shortcut)
         onItemDismiss(index)
     }
