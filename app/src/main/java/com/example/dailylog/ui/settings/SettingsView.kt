@@ -22,7 +22,8 @@ import kotlinx.android.synthetic.main.settings_view.view.*
 class SettingsView(private var repository: Repository) : Fragment(),
     AddShortcutDialogFragment.AddShortcutDialogListener,
     BulkAddShortcutsDialogFragment.BulkAddListener,
-    EditShortcutDialogFragment.EditShortcutDialogListener {
+    EditShortcutDialogFragment.EditShortcutDialogListener,
+    ShortcutDialogListener {
 
     companion object {
         fun newInstance(repository: Repository) = SettingsView(repository)

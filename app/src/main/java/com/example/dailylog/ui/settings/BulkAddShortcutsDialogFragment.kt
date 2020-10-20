@@ -1,25 +1,16 @@
 package com.example.dailylog.ui.settings
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.TextWatcher
-import android.text.style.ForegroundColorSpan
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.fragment.app.DialogFragment
 import com.example.dailylog.R
-import com.google.android.material.slider.Slider
 import kotlinx.android.synthetic.main.bulk_add_shortcuts.view.*
 
-class BulkAddShortcutsDialogFragment : DialogFragment()  {
+class BulkAddShortcutsDialogFragment : ShortcutDialogFragment()  {
     interface BulkAddListener {
         fun onBulkAddShortcuts(info: List<List<String>>)
-        fun labelIsUnique(label: String): Boolean
     }
 
     companion object {
@@ -79,11 +70,6 @@ class BulkAddShortcutsDialogFragment : DialogFragment()  {
         }
     }
 
-    private fun isLabelValid(label: String): Boolean {
-        val listener: BulkAddListener = targetFragment as BulkAddListener
-        return label.isNotEmpty() && listener.labelIsUnique(label)
-    }
-
     private fun isCursorValid(cursor: String, text: String): Boolean {
         return try {
             val value = cursor.toInt()
@@ -91,9 +77,5 @@ class BulkAddShortcutsDialogFragment : DialogFragment()  {
         } catch (e: NumberFormatException) {
             false
         }
-    }
-
-    private fun isTextValid(text: String): Boolean {
-        return text.isNotEmpty()
     }
 }
