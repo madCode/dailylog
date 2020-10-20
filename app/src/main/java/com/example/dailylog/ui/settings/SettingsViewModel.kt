@@ -7,13 +7,14 @@ import android.view.View
 import androidx.lifecycle.ViewModel
 import com.example.dailylog.R
 import com.example.dailylog.repository.Repository
+import com.example.dailylog.repository.Shortcut
 import kotlinx.android.synthetic.main.settings_view.view.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class SettingsViewModel(private var repository: Repository, context: Context?, private var showInstructions: () -> Unit) : ViewModel() {
+class SettingsViewModel(private var repository: Repository, context: Context?, private var showInstructions: () -> Unit, private var updateCallback: (Shortcut) -> Unit) : ViewModel() {
 
     var dateTimeFormat = repository.getDateTimeFormat()
     var filename = repository.getFilename()
@@ -30,6 +31,9 @@ class SettingsViewModel(private var repository: Repository, context: Context?, p
                     label,
                     pos
                 )
+            },
+            updateCallback = { shortcut ->
+                updateCallback(shortcut)
             },
             if (value.type == TypedValue.TYPE_INT_COLOR_RGB8 || value.type == TypedValue.TYPE_INT_COLOR_RGB4  || value.type == TypedValue.TYPE_INT_COLOR_ARGB4   || value.type == TypedValue.TYPE_INT_COLOR_ARGB8) value.data else -0x10000
         )

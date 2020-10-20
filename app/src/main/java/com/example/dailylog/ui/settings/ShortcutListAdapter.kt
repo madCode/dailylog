@@ -17,7 +17,7 @@ import com.google.android.material.card.MaterialCardView
 /**
  * adopted from https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-b9456d2b1aaf
  */
-class ShortcutListAdapter(private var items: MutableList<Shortcut>, private var removeCallback: (String) -> Unit, private var updatePositionCallback: (String, Int) -> Unit, private var cursorColor: Int) : RecyclerView.Adapter<ShortcutListAdapter.ItemViewHolder>(),
+class ShortcutListAdapter(private var items: MutableList<Shortcut>, private var removeCallback: (String) -> Unit, private var updatePositionCallback: (String, Int) -> Unit, private var updateCallback: (Shortcut) -> Unit, private var cursorColor: Int) : RecyclerView.Adapter<ShortcutListAdapter.ItemViewHolder>(),
     ShortcutTouchHelperAdapter {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val view: View =
@@ -53,6 +53,7 @@ class ShortcutListAdapter(private var items: MutableList<Shortcut>, private var 
         holder.label.text = shortcut.label
         holder.text.text = getText(shortcut.text, shortcut.cursorIndex)
         holder.removeButton.setOnClickListener { onDelete(shortcut) }
+        holder.editButton.setOnClickListener { updateCallback(shortcut)}
     }
 
     private fun onDelete(shortcut: Shortcut) {
@@ -83,6 +84,7 @@ class ShortcutListAdapter(private var items: MutableList<Shortcut>, private var 
         val label: TextView = itemView.findViewById(R.id.label) as TextView
         val text: TextView = itemView.findViewById(R.id.text) as TextView
         val removeButton: ImageButton = itemView.findViewById(R.id.removeShortcutButton)
+        val editButton: ImageButton = itemView.findViewById(R.id.editShortcutButton)
 
         override fun onItemSelected() {
             if (itemView is MaterialCardView) {

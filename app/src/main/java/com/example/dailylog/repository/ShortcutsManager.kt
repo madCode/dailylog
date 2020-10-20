@@ -42,6 +42,12 @@ class ShortcutsManager constructor(context: Context) {
         shortcutDB.shortcutDao().updateAll(*shortcutList.toTypedArray())
     }
 
+    fun updateShortcut(label: String, text: String, cursorIndex: Int, position: Int): Boolean {
+        val shortcut = Shortcut(label = label, text = text, cursorIndex = cursorIndex, position = position)
+        shortcutDB.shortcutDao().updateAll(shortcut)
+        return true
+    }
+
     fun updateShortcutPosition(label: String, position: Int) {
         labelList.remove(label)
         if (position > labelList.size) {
@@ -54,7 +60,7 @@ class ShortcutsManager constructor(context: Context) {
 
     fun addShortcut(label: String, text: String, cursorIndex: Int): Boolean {
         val shortcut = createShortcut(label, text, cursorIndex)
-        return if (!labelList.contains(label) || label.isEmpty() || text.isEmpty()) {
+        return if (!labelList.contains(label) && label.isNotEmpty() && text.isNotEmpty()) {
             shortcutList.add(shortcut)
             labelList.add(label)
             saveShortcutToDB(shortcut)
