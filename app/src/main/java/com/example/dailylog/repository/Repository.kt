@@ -97,4 +97,9 @@ class Repository(private var context: Context, permissionChecker: PermissionChec
     fun bulkAddShortcuts(shortcutInfo: List<List<String>>): Boolean {
         return shortcutsManager.bulkAddShortcuts(shortcutInfo)
     }
+
+    fun updateShortcut(label: String, text: String, cursorIndex: Int): Boolean {
+        val position = shortcutsManager.labelList.indexOf(label)
+        return shortcutsManager.updateShortcut(label, text, cursorIndex, position)
+    }
 }

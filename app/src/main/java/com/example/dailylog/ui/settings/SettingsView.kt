@@ -16,10 +16,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dailylog.R
 import com.example.dailylog.repository.Constants
 import com.example.dailylog.repository.Repository
+import com.example.dailylog.repository.Shortcut
 import kotlinx.android.synthetic.main.settings_view.view.*
 
 class SettingsView(private var repository: Repository) : Fragment(),
-    AddShortcutDialogFragment.AddShortcutDialogListener, BulkAddShortcutsDialogFragment.BulkAddListener {
+    AddShortcutDialogFragment.AddShortcutDialogListener,
+    BulkAddShortcutsDialogFragment.BulkAddListener,
+    EditShortcutDialogFragment.EditShortcutDialogListener {
 
     companion object {
         fun newInstance(repository: Repository) = SettingsView(repository)
@@ -36,7 +39,7 @@ class SettingsView(private var repository: Repository) : Fragment(),
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = SettingsViewModel(repository, context) { renderShortcutInstructions() }
+        viewModel = SettingsViewModel(repository, context, { renderShortcutInstructions() }, { shortcut -> onEdit(shortcut) })
         renderDateFormatRow()
         renderFileNameRow()
         renderShortcutList()
@@ -53,6 +56,12 @@ class SettingsView(private var repository: Repository) : Fragment(),
             addBulkDialog.show(parentFragmentManager, "fragment_bulk_add")
             return@setOnLongClickListener true
         }
+    }
+
+    private fun onEdit(shortcut: Shortcut) {
+        val editDialog: EditShortcutDialogFragment = EditShortcutDialogFragment.newInstance(shortcut)
+        editDialog.setTargetFragment(this, 300)
+        editDialog.show(parentFragmentManager, "fragment_edit")
     }
 
     private fun renderDateFormatRow() {
@@ -142,6 +151,17 @@ class SettingsView(private var repository: Repository) : Fragment(),
 
     override fun onBulkAddShortcuts(shortcuts: List<List<String>>) {
         val added = repository.bulkAddShortcuts(shortcuts)
+        if (added) {
+            viewModel.updateAdapter()
+        }
+    }
+
+    override fun onFinishEditShortcutDialog(label: String, text: String, cursor: Int) {
+        val added = repository.updateShortcut(
+            label,
+            text,
+            cursor
+        )
         if (added) {
             viewModel.updateAdapter()
         }
