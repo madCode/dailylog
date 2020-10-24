@@ -54,30 +54,21 @@ open class ModifyShortcutDialogFragment: ShortcutDialogFragment() {
         view.btnCancelShortcut.setOnClickListener {
             dismiss()
         }
+    }
 
-        view.btnSaveShortcut.setOnClickListener {
-            val label = view.labelInput
-            val text = view.textInput
-            val cursor = view.cursorSlider
-            var valid = true
-            if (!isLabelValid(label.text.toString())) {
-                view.labelInputLayout.error = "Label must be unique and cannot be empty"
-                valid = false
-            }
-            if (!isTextValid(text.text.toString())) {
-                view.textInputLayout.error = "Text cannot be empty"
-                valid = false
-            }
-            if (valid) {
-                val listener: EditShortcutDialogFragment.EditShortcutDialogListener = targetFragment as EditShortcutDialogFragment.EditShortcutDialogListener
-                listener.onFinishEditShortcutDialog(
-                    label.text.toString(),
-                    text.text.toString(),
-                    cursor.value.toInt()
-                )
-                dismiss()
-            }
+    fun isValid(view: View): Boolean {
+        val label = view.labelInput
+        val text = view.textInput
+        var valid = true
+        if (!isLabelValid(label.text.toString())) {
+            view.labelInputLayout.error = "Label must be unique and cannot be empty"
+            valid = false
         }
+        if (!isTextValid(text.text.toString())) {
+            view.textInputLayout.error = "Text cannot be empty"
+            valid = false
+        }
+        return valid
     }
 }
 
