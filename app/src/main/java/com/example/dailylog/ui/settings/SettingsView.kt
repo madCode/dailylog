@@ -150,8 +150,8 @@ class SettingsView(private var repository: Repository) : Fragment(),
         }
     }
 
-    override fun onBulkAddShortcuts(shortcuts: List<List<String>>) {
-        val added = repository.bulkAddShortcuts(shortcuts)
+    override fun onBulkAddShortcuts(info: List<List<String>>) {
+        val added = repository.bulkAddShortcuts(info)
         if (added) {
             viewModel.updateAdapter()
         }

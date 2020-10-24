@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.dailylog.R
+import kotlinx.android.synthetic.main.create_new_shortcut.view.*
 
 
 class AddShortcutDialogFragment : ModifyShortcutDialogFragment() {
@@ -22,5 +23,23 @@ class AddShortcutDialogFragment : ModifyShortcutDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.create_new_shortcut, container)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        view.btnSaveShortcut.setOnClickListener {
+            val label = view.labelInput
+            val text = view.textInput
+            val cursor = view.cursorSlider
+            if (isValid(view)) {
+                val listener: AddShortcutDialogListener = targetFragment as AddShortcutDialogListener
+                listener.onFinishAddShortcutDialog(
+                    label.text.toString(),
+                    text.text.toString(),
+                    cursor.value.toInt()
+                )
+                dismiss()
+            }
+        }
     }
 }

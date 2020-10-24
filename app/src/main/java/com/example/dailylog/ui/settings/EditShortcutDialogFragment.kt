@@ -37,6 +37,20 @@ class EditShortcutDialogFragment(private var shortcut: Shortcut) : ModifyShortcu
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        view.btnSaveShortcut.setOnClickListener {
+            val label = view.labelInput
+            val text = view.textInput
+            val cursor = view.cursorSlider
+            if (isValid(view)) {
+                val listener: EditShortcutDialogListener = targetFragment as EditShortcutDialogListener
+                listener.onFinishEditShortcutDialog(
+                    label.text.toString(),
+                    text.text.toString(),
+                    cursor.value.toInt()
+                )
+                dismiss()
+            }
+        }
         view.addShortcutTitle.text = context?.getString(R.string.editShortcut)
         val textInput = view.textInput
         val cursorSlider = view.cursorSlider
