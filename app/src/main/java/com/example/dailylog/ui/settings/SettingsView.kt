@@ -46,7 +46,11 @@ class SettingsView(private val application: Application, private var repository:
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this, SettingsViewModelFactory(application, repository, context, { shortcut -> onEdit(shortcut) })).get(SettingsViewModel::class.java)
+        viewModel = ViewModelProvider(this, SettingsViewModelFactory(application, repository, context) { shortcut ->
+            onEdit(
+                shortcut
+            )
+        }).get(SettingsViewModel::class.java)
         shortcutsLiveData.observe(viewLifecycleOwner, Observer { shortcuts ->
             // Update the cached copy of the words in the adapter.
             shortcuts.let {
