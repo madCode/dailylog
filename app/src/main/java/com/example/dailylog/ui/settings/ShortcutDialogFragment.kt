@@ -19,6 +19,8 @@ interface ShortcutDialogListener {
 }
 
 open class ModifyShortcutDialogFragment: ShortcutDialogFragment() {
+    var keepCursorValueAtMax = true // keep the cursor value at the max it can be
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         super.onViewCreated(view, savedInstanceState)
@@ -39,9 +41,15 @@ open class ModifyShortcutDialogFragment: ShortcutDialogFragment() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable) {
-                updateCursorView(cursorSlider, s.toString())
-                view.previewText.text = getText(s.toString(), cursorSlider.value.toInt())
-                if (isTextValid(s.toString())) {
+                val string = s.toString()
+                if (string.isEmpty()) {
+                    // if the string is empty, assume you want the cursor
+                    // to default to the end when we start typing again.
+                    keepCursorValueAtMax = true
+                }
+                updateCursorView(cursorSlider, string)
+                view.previewText.text = getText(string, cursorSlider.value.toInt())
+                if (isTextValid(string)) {
                     view.textInputLayout.error = null
                 }
             }
@@ -51,8 +59,35 @@ open class ModifyShortcutDialogFragment: ShortcutDialogFragment() {
             view.previewText.text = getText(textInput.text.toString(), value.toInt())
         }
 
+        cursorSlider.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
+            override fun onStartTrackingTouch(slider: Slider) {
+                // If we've touched the slider, don't move it when the text changes
+                keepCursorValueAtMax = false
+            }
+
+            override fun onStopTrackingTouch(slider: Slider) {
+                // Responds to when slider's touch event is being stopped
+            }
+        })
+
         view.btnCancelShortcut.setOnClickListener {
             dismiss()
+        }
+    }
+
+    fun updateCursorView(cursorView: Slider, text: String) {
+        val curr = cursorView.value
+        val newMax = text.length
+        if (newMax <= 0) {
+            cursorView.value = 0F
+            cursorView.valueTo = 1F
+        } else {
+            cursorView.value = minOf(newMax.toFloat(), curr)
+            cursorView.valueTo = newMax.toFloat()
+
+            if (keepCursorValueAtMax) {
+                cursorView.value = newMax.toFloat()
+            }
         }
     }
 
@@ -73,19 +108,6 @@ open class ModifyShortcutDialogFragment: ShortcutDialogFragment() {
 }
 
 open class ShortcutDialogFragment: DialogFragment() {
-
-    fun updateCursorView(cursorView: Slider, text: String) {
-        val curr = cursorView.value
-        val newMax = text.length
-        if (newMax <= 0) {
-            cursorView.value = 0F
-            cursorView.valueTo = 1F
-        } else {
-            cursorView.value = minOf(newMax.toFloat(), curr)
-            cursorView.valueTo = newMax.toFloat()
-        }
-    }
-
     fun getText(text: String, cursorIndex: Int): SpannableStringBuilder {
         if (text.isEmpty()) {
             return SpannableStringBuilder("")
