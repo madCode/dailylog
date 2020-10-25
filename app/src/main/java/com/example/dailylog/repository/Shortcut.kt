@@ -1,5 +1,6 @@
 package com.example.dailylog.repository
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 
 @Entity
@@ -13,20 +14,17 @@ data class Shortcut(
 @Dao
 interface ShortcutDao {
     @Query("SELECT * FROM shortcut ORDER BY position ASC")
-    fun getAll(): List<Shortcut>
+    fun getAll(): LiveData<List<Shortcut>>
 
     @Update
-    fun updateAll(vararg shortcuts: Shortcut)
+    suspend fun updateAll(vararg shortcuts: Shortcut)
 
     @Insert
-    fun add(shortcut: Shortcut)
+    suspend fun add(shortcut: Shortcut)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun addAll(vararg shortcuts: Shortcut)
-
-    @Delete
-    fun delete(shortcut: Shortcut)
+    suspend fun addAll(vararg shortcuts: Shortcut)
 
     @Query("DELETE FROM shortcut WHERE label = :label")
-    fun deleteByLabel(label: String)
+    suspend fun deleteByLabel(label: String)
 }

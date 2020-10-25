@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
         val repository = Repository(applicationContext, PermissionChecker(this))
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                    .replace(R.id.container, LogView.newInstance(repository))
+                    .replace(R.id.container, LogView.newInstance(application, repository))
                     .commitNow()
         }
     }

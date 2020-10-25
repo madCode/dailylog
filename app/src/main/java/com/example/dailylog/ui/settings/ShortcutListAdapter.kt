@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dailylog.R
 import com.example.dailylog.repository.Shortcut
@@ -17,15 +18,18 @@ import com.google.android.material.card.MaterialCardView
 /**
  * adopted from https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-b9456d2b1aaf
  */
-class ShortcutListAdapter(private var items: MutableList<Shortcut>, private var removeCallback: (String) -> Unit, private var updatePositionCallback: (String, Int) -> Unit, private var updateCallback: (Shortcut) -> Unit, private var cursorColor: Int) : RecyclerView.Adapter<ShortcutListAdapter.ItemViewHolder>(),
+class ShortcutListAdapter(private var removeCallback: (String) -> Unit, private var updatePositionCallback: (String, Int) -> Unit, private var editCallback: (Shortcut) -> Unit, private var cursorColor: Int) : RecyclerView.Adapter<ShortcutListAdapter.ItemViewHolder>(),
     ShortcutTouchHelperAdapter {
+
+    var items = emptyList<Shortcut>()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val view: View =
             LayoutInflater.from(parent.context).inflate(R.layout.shortcut_row_layout, parent, false)
         return ItemViewHolder(view)
     }
 
-    fun updateItems(newItems: MutableList<Shortcut>) {
+    fun updateItems(newItems: List<Shortcut>) {
         items = newItems
         notifyDataSetChanged();
     }
@@ -53,7 +57,7 @@ class ShortcutListAdapter(private var items: MutableList<Shortcut>, private var 
         holder.label.text = shortcut.label
         holder.text.text = getText(shortcut.text, shortcut.cursorIndex)
         holder.removeButton.setOnClickListener { onDelete(shortcut) }
-        holder.editButton.setOnClickListener { updateCallback(shortcut)}
+        holder.editButton.setOnClickListener { editCallback(shortcut)}
     }
 
     private fun onDelete(shortcut: Shortcut) {
@@ -63,14 +67,15 @@ class ShortcutListAdapter(private var items: MutableList<Shortcut>, private var 
 
     override fun onItemDismiss(position: Int) {
         val item = items[position]
-        items.removeAt(position)
+        //items.removeAt(position)
         removeCallback(item.label)
         notifyItemRemoved(position)
     }
 
     override fun onItemMove(fromPosition: Int, toPosition: Int) {
-        val prev = items.removeAt(fromPosition)
-        items.add(toPosition, prev)
+        val prev = items[fromPosition]
+//        val prev = items.removeAt(fromPosition)
+//        items.add(toPosition, prev)
         updatePositionCallback(prev.label, toPosition)
         notifyItemMoved(fromPosition, toPosition)
     }

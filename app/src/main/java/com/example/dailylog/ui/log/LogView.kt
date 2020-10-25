@@ -1,5 +1,6 @@
 package com.example.dailylog.ui.log
 
+import android.app.Application
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.dailylog.R
 import com.example.dailylog.repository.Repository
@@ -18,10 +20,10 @@ import com.example.dailylog.ui.settings.SettingsView
 import kotlinx.android.synthetic.main.add_to_log_view.view.*
 
 
-class LogView(private var repository: Repository) : Fragment() {
+class LogView(private val application: Application, private var repository: Repository) : Fragment() {
 
     companion object {
-        fun newInstance(repository: Repository) = LogView(repository)
+        fun newInstance(application: Application, repository: Repository) = LogView(application, repository)
     }
 
     private lateinit var viewModel: LogViewModel
@@ -44,12 +46,17 @@ class LogView(private var repository: Repository) : Fragment() {
         if (context == null) {
             return
         }
-        val shortcuts = repository.getAllShortcuts()
+        val shortcutsLiveData = repository.getAllShortcuts()
         val tray = view!!.shortcutTray
         //val rowCount = if (shortcuts.size > 4) 2 else 1
         //tray.layoutManager = StaggeredGridLayoutManager(rowCount, RecyclerView.HORIZONTAL)
         tray.layoutManager = GridLayoutManager(context, 5)
-        tray.adapter = ShortcutTrayAdapter(context!!, view!!.todayLog, shortcuts)
+        val adapter = ShortcutTrayAdapter(context!!, view!!.todayLog)
+        shortcutsLiveData.observe(viewLifecycleOwner, Observer { shortcuts ->
+            // Update the cached copy of the words in the adapter.
+            shortcuts.let { adapter.itemList = it; repository.setShortcutList(it); }
+        })
+        tray.adapter = adapter
     }
 
     private fun getCursorIndex(text: String): Int {
@@ -94,7 +101,7 @@ class LogView(private var repository: Repository) : Fragment() {
         view!!.btnSettings.setOnClickListener {
             save()
             parentFragmentManager.beginTransaction()
-                .replace(R.id.container, SettingsView.newInstance(repository))
+                .replace(R.id.container, SettingsView.newInstance(application, repository))
                 .addToBackStack(null)
                 .commit()
         }

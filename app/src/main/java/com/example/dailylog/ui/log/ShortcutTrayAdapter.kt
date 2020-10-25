@@ -14,10 +14,11 @@ import com.google.android.material.chip.Chip
 
 class ShortcutTrayAdapter internal constructor(
     context: Context?,
-    private var inputView: EditText,
-    private var itemList: List<Shortcut>
+    private var inputView: EditText
 ) :
     RecyclerView.Adapter<ShortcutTrayAdapter.ViewHolder>() {
+
+    var itemList: List<Shortcut> = ArrayList()
     private val shortcutInflator: LayoutInflater = LayoutInflater.from(context)
 
     // inflates the cell layout from xml when needed

@@ -1,5 +1,6 @@
 package com.example.dailylog.ui.settings
 
+import android.app.Application
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -11,6 +12,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dailylog.R
@@ -19,14 +23,16 @@ import com.example.dailylog.repository.Repository
 import com.example.dailylog.repository.Shortcut
 import kotlinx.android.synthetic.main.settings_view.view.*
 
-class SettingsView(private var repository: Repository) : Fragment(),
+class SettingsView(private val application: Application, private var repository: Repository) : Fragment(),
     AddShortcutDialogFragment.AddShortcutDialogListener,
     BulkAddShortcutsDialogFragment.BulkAddListener,
     EditShortcutDialogFragment.EditShortcutDialogListener,
     ShortcutDialogListener {
 
+    var shortcutsLiveData: LiveData<List<Shortcut>> = repository.getAllShortcuts()
+
     companion object {
-        fun newInstance(repository: Repository) = SettingsView(repository)
+        fun newInstance(application: Application, repository: Repository) = SettingsView(application, repository)
     }
 
     private lateinit var viewModel: SettingsViewModel
@@ -40,7 +46,15 @@ class SettingsView(private var repository: Repository) : Fragment(),
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = SettingsViewModel(repository, context, { renderShortcutInstructions() }, { shortcut -> onEdit(shortcut) })
+        viewModel = ViewModelProvider(this, SettingsViewModelFactory(application, repository, context, { shortcut -> onEdit(shortcut) })).get(SettingsViewModel::class.java)
+        shortcutsLiveData.observe(viewLifecycleOwner, Observer { shortcuts ->
+            // Update the cached copy of the words in the adapter.
+            shortcuts.let {
+                viewModel.shortcutListAdapter.updateItems(it)
+                repository.setShortcutList(it)
+                renderShortcutInstructions()
+            }
+        })
         renderDateFormatRow()
         renderFileNameRow()
         renderShortcutList()
@@ -132,7 +146,7 @@ class SettingsView(private var repository: Repository) : Fragment(),
     }
 
     private fun renderShortcutInstructions() {
-        if (viewModel.showShortcutInstructions()) {
+        if (viewModel.shortcutListAdapter.items.isEmpty()) {
             view!!.noShortcutsMessage.visibility = View.VISIBLE
         } else {
             view!!.noShortcutsMessage.visibility = View.GONE
@@ -140,32 +154,23 @@ class SettingsView(private var repository: Repository) : Fragment(),
     }
 
     override fun onFinishAddShortcutDialog(label: String, text: String, cursor: Int) {
-        val added = repository.addShortcut(
+        viewModel.addShortcut(
             label,
             text,
             cursor
         )
-        if (added) {
-            viewModel.updateAdapter()
-        }
     }
 
     override fun onBulkAddShortcuts(info: List<List<String>>) {
-        val added = repository.bulkAddShortcuts(info)
-        if (added) {
-            viewModel.updateAdapter()
-        }
+        viewModel.bulkAddShortcuts(info)
     }
 
     override fun onFinishEditShortcutDialog(label: String, text: String, cursor: Int) {
-        val added = repository.updateShortcut(
+        viewModel.updateShortcut(
             label,
             text,
             cursor
         )
-        if (added) {
-            viewModel.updateAdapter()
-        }
     }
 
     override fun labelIsUnique(label: String): Boolean {
