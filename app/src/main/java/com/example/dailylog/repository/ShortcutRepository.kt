@@ -4,11 +4,6 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 
 class ShortcutRepository constructor(applicationContext: Context) {
-//    var shortcutDB: ShortcutDatabase = Room.databaseBuilder(
-//       context,
-//       ShortcutDatabase::class.java, "database-name"
-//   ).allowMainThreadQueries().build()
-//    var shortcutList: MutableList<Shortcut> = getAllShortcuts()
     private val shortcutDao = ShortcutDatabase.getDatabase(applicationContext).shortcutDao()
     var labelList: ArrayList<String> = ArrayList()
 
@@ -20,20 +15,9 @@ class ShortcutRepository constructor(applicationContext: Context) {
         return true
     }
 
-//    init {
-//        shortcutList.forEach{
-//            labelList.add(it.label)
-//        }
-//    }
-
     private fun createShortcut(label: String, text: String, cursorIndex: Int): Shortcut {
         return  Shortcut(label = label, text = text, cursorIndex = cursorIndex, position = shortcutList.size)
     }
-
-//    private fun saveShortcutToDB(shortcut: Shortcut): Boolean {
-//        shortcutDao.add(shortcut)
-//        return true
-//    }
 
     private suspend fun deleteShortcutFromDB(label: String): Boolean {
         shortcutDao.deleteByLabel(label)
@@ -70,8 +54,6 @@ class ShortcutRepository constructor(applicationContext: Context) {
     suspend fun addShortcut(label: String, text: String, cursorIndex: Int): Boolean {
         val shortcut = createShortcut(label, text, cursorIndex)
         return if (!labelList.contains(label) && label.isNotEmpty() && text.isNotEmpty()) {
-//            shortcutList.add(shortcut)
-//            labelList.add(label)
             saveShortcutToDB(shortcut)
             true
         } else {
@@ -105,10 +87,6 @@ class ShortcutRepository constructor(applicationContext: Context) {
         }
         shortcutDao.addAll(*results.toTypedArray())
         shortcutLiveData = getAllShortcuts()
-//        labelList = ArrayList()
-//        shortcutList.forEach{
-//            labelList.add(it.label)
-//        }
         return true
     }
 

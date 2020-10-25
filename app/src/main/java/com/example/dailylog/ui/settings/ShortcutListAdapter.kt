@@ -67,15 +67,12 @@ class ShortcutListAdapter(private var removeCallback: (String) -> Unit, private 
 
     override fun onItemDismiss(position: Int) {
         val item = items[position]
-        //items.removeAt(position)
         removeCallback(item.label)
         notifyItemRemoved(position)
     }
 
     override fun onItemMove(fromPosition: Int, toPosition: Int) {
         val prev = items[fromPosition]
-//        val prev = items.removeAt(fromPosition)
-//        items.add(toPosition, prev)
         updatePositionCallback(prev.label, toPosition)
         notifyItemMoved(fromPosition, toPosition)
     }

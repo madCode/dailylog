@@ -48,8 +48,6 @@ class LogView(private val application: Application, private var repository: Repo
         }
         val shortcutsLiveData = repository.getAllShortcuts()
         val tray = view!!.shortcutTray
-        //val rowCount = if (shortcuts.size > 4) 2 else 1
-        //tray.layoutManager = StaggeredGridLayoutManager(rowCount, RecyclerView.HORIZONTAL)
         tray.layoutManager = GridLayoutManager(context, 5)
         val adapter = ShortcutTrayAdapter(context!!, view!!.todayLog)
         shortcutsLiveData.observe(viewLifecycleOwner, Observer { shortcuts ->

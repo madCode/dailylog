@@ -5,12 +5,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-
-//@Database(entities = [Shortcut::class], version = 3)
-//abstract class ShortcutDatabase : RoomDatabase() {
-//    abstract fun shortcutDao(): ShortcutDao
-//}
-
 @Database(entities = [Shortcut::class], version = 3, exportSchema = false)
 abstract class ShortcutDatabase : RoomDatabase() {
     abstract fun shortcutDao(): ShortcutDao

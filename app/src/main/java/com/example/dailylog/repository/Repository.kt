@@ -8,7 +8,6 @@ import java.util.ArrayList
 
 
 class Repository(private val context: Context, permissionChecker: PermissionChecker) {
-//    var context: Context = application.applicationContext
     private var fileManager = FileManager(context, permissionChecker)
     private var shortcutsManager = ShortcutRepository(context)
 
