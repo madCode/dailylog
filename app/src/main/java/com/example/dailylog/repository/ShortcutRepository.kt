@@ -1,54 +1,63 @@
 package com.example.dailylog.repository
 
 import android.content.Context
-import androidx.room.Room
+import androidx.lifecycle.LiveData
 
-class ShortcutsManager constructor(context: Context) {
-    private var shortcutDB: ShortcutDatabase = Room.databaseBuilder(
-       context,
-       ShortcutDatabase::class.java, "database-name"
-   ).allowMainThreadQueries().build()
-    var shortcutList: MutableList<Shortcut> = getAllShortcuts()
+class ShortcutRepository constructor(applicationContext: Context) {
+//    var shortcutDB: ShortcutDatabase = Room.databaseBuilder(
+//       context,
+//       ShortcutDatabase::class.java, "database-name"
+//   ).allowMainThreadQueries().build()
+//    var shortcutList: MutableList<Shortcut> = getAllShortcuts()
+    private val shortcutDao = ShortcutDatabase.getDatabase(applicationContext).shortcutDao()
     var labelList: ArrayList<String> = ArrayList()
 
-    init {
-        shortcutList.forEach{
-            labelList.add(it.label)
-        }
+    var shortcutLiveData: LiveData<List<Shortcut>> = shortcutDao.getAll()
+    lateinit var shortcutList: List<Shortcut>
+
+    private suspend fun saveShortcutToDB(shortcut: Shortcut): Boolean {
+        shortcutDao.add(shortcut)
+        return true
     }
+
+//    init {
+//        shortcutList.forEach{
+//            labelList.add(it.label)
+//        }
+//    }
 
     private fun createShortcut(label: String, text: String, cursorIndex: Int): Shortcut {
         return  Shortcut(label = label, text = text, cursorIndex = cursorIndex, position = shortcutList.size)
     }
 
-    private fun saveShortcutToDB(shortcut: Shortcut): Boolean {
-        shortcutDB.shortcutDao().add(shortcut)
+//    private fun saveShortcutToDB(shortcut: Shortcut): Boolean {
+//        shortcutDao.add(shortcut)
+//        return true
+//    }
+
+    private suspend fun deleteShortcutFromDB(label: String): Boolean {
+        shortcutDao.deleteByLabel(label)
         return true
     }
 
-    private fun deleteShortcutFromDB(label: String): Boolean {
-        shortcutDB.shortcutDao().deleteByLabel(label)
-        return true
+    private fun getAllShortcuts(): LiveData<List<Shortcut>> {
+        return shortcutDao.getAll()
     }
 
-    private fun getAllShortcuts(): MutableList<Shortcut> {
-        return shortcutDB.shortcutDao().getAll().toMutableList()
-    }
-
-    private fun updateAll() {
+    private suspend fun updateAll() {
         shortcutList.forEach{
             it.position = labelList.indexOf(it.label)
         }
-        shortcutDB.shortcutDao().updateAll(*shortcutList.toTypedArray())
+        shortcutDao.updateAll(*shortcutList.toTypedArray())
     }
 
-    fun updateShortcut(label: String, text: String, cursorIndex: Int, position: Int): Boolean {
+    suspend fun updateShortcut(label: String, text: String, cursorIndex: Int, position: Int): Boolean {
         val shortcut = Shortcut(label = label, text = text, cursorIndex = cursorIndex, position = position)
-        shortcutDB.shortcutDao().updateAll(shortcut)
+        shortcutDao.updateAll(shortcut)
         return true
     }
 
-    fun updateShortcutPosition(label: String, position: Int) {
+    suspend fun updateShortcutPosition(label: String, position: Int) {
         labelList.remove(label)
         if (position > labelList.size) {
             labelList.add(label)
@@ -58,11 +67,11 @@ class ShortcutsManager constructor(context: Context) {
         updateAll()
     }
 
-    fun addShortcut(label: String, text: String, cursorIndex: Int): Boolean {
+    suspend fun addShortcut(label: String, text: String, cursorIndex: Int): Boolean {
         val shortcut = createShortcut(label, text, cursorIndex)
         return if (!labelList.contains(label) && label.isNotEmpty() && text.isNotEmpty()) {
-            shortcutList.add(shortcut)
-            labelList.add(label)
+//            shortcutList.add(shortcut)
+//            labelList.add(label)
             saveShortcutToDB(shortcut)
             true
         } else {
@@ -70,7 +79,7 @@ class ShortcutsManager constructor(context: Context) {
         }
     }
 
-    fun bulkAddShortcuts(shortcutInfoList: List<List<String>>): Boolean {
+    suspend fun bulkAddShortcuts(shortcutInfoList: List<List<String>>): Boolean {
         val results = ArrayList<Shortcut>()
         shortcutInfoList.forEachIndexed {
                 index, list ->
@@ -94,12 +103,12 @@ class ShortcutsManager constructor(context: Context) {
                 throw java.lang.IllegalArgumentException("row " + index + ": " + e.message)
             }
         }
-        shortcutDB.shortcutDao().addAll(*results.toTypedArray())
-        shortcutList = getAllShortcuts()
-        labelList = ArrayList()
-        shortcutList.forEach{
-            labelList.add(it.label)
-        }
+        shortcutDao.addAll(*results.toTypedArray())
+        shortcutLiveData = getAllShortcuts()
+//        labelList = ArrayList()
+//        shortcutList.forEach{
+//            labelList.add(it.label)
+//        }
         return true
     }
 
@@ -111,7 +120,7 @@ class ShortcutsManager constructor(context: Context) {
         return true
     }
 
-    fun removeShortcut(label: String): Boolean {
+    suspend fun removeShortcut(label: String): Boolean {
         labelList.remove(label)
         deleteShortcutFromDB(label)
         return true

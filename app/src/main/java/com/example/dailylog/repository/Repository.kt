@@ -1,12 +1,16 @@
 package com.example.dailylog.repository
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import com.example.dailylog.R
 import com.example.dailylog.ui.permissions.PermissionChecker
+import java.util.ArrayList
 
-class Repository(private var context: Context, permissionChecker: PermissionChecker) {
-    var fileManager = FileManager(context, permissionChecker)
-    var shortcutsManager = ShortcutsManager(context)
+
+class Repository(private val context: Context, permissionChecker: PermissionChecker) {
+//    var context: Context = application.applicationContext
+    private var fileManager = FileManager(context, permissionChecker)
+    private var shortcutsManager = ShortcutRepository(context)
 
     fun getFilename(): String {
         return fileManager.getFilename()
@@ -70,36 +74,43 @@ class Repository(private var context: Context, permissionChecker: PermissionChec
         editor.apply()
     }
 
-    fun updateShortcutPosition(label: String, position: Int) {
+    suspend fun updateShortcutPosition(label: String, position: Int) {
         shortcutsManager.updateShortcutPosition(label, position)
     }
 
-    fun addShortcut(label: String, text: String, cursorIndex: Int): Boolean {
+    suspend fun addShortcut(label: String, text: String, cursorIndex: Int): Boolean {
         return shortcutsManager.addShortcut(label, text, cursorIndex)
     }
 
-    fun removeShortcut(label: String): Boolean {
+    suspend fun removeShortcut(label: String): Boolean {
         return shortcutsManager.removeShortcut(label)
     }
 
-    fun getAllShortcuts(): MutableList<Shortcut> {
-        return shortcutsManager.shortcutList
-    }
-
-    fun areShortcuts(): Boolean {
-        return shortcutsManager.shortcutList.size > 0
+    fun getAllShortcuts(): LiveData<List<Shortcut>> {
+        return shortcutsManager.shortcutLiveData
     }
 
     fun labelIsUnique(label: String): Boolean {
         return !shortcutsManager.labelList.contains(label)
     }
 
-    fun bulkAddShortcuts(shortcutInfo: List<List<String>>): Boolean {
+    suspend fun bulkAddShortcuts(shortcutInfo: List<List<String>>): Boolean {
         return shortcutsManager.bulkAddShortcuts(shortcutInfo)
     }
 
-    fun updateShortcut(label: String, text: String, cursorIndex: Int): Boolean {
+    suspend fun updateShortcut(label: String, text: String, cursorIndex: Int): Boolean {
         val position = shortcutsManager.labelList.indexOf(label)
         return shortcutsManager.updateShortcut(label, text, cursorIndex, position)
+    }
+
+    fun setShortcutList(it: List<Shortcut>?) {
+        if (it != null) {
+            shortcutsManager.shortcutList = it
+            val labelList = ArrayList<String>()
+            it.forEach{
+                labelList.add(it.label)
+            }
+            shortcutsManager.labelList = labelList
+        }
     }
 }
