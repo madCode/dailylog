@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import com.example.dailylog.R
 import com.example.dailylog.repository.Repository
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 class LogViewModel(var repository: Repository) : ViewModel() {
     var cursorIndex = repository.getCursorIndex()
@@ -23,7 +25,9 @@ class LogViewModel(var repository: Repository) : ViewModel() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun getDateString(): String {
         val current = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern(repository.getDateTimeFormat())
+        val formatter = DateTimeFormatter
+            .ofPattern(repository.getDateTimeFormat())
+            .withZone(ZoneId.systemDefault()) // once android has moved to JDK 9 we can remove this
         return current.format(formatter)+ "\t"
     }
 
