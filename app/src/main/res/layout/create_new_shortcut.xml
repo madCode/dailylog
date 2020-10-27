@@ -73,8 +73,8 @@
             android:layout_height="wrap_content"
             android:imeOptions="actionDone"
             android:importantForAutofill="no"
-            android:inputType="text"
-            android:singleLine="true"
+            android:inputType="textMultiLine"
+            android:maxLines="1"
             tools:text="really long text" />
     </com.google.android.material.textfield.TextInputLayout>
 

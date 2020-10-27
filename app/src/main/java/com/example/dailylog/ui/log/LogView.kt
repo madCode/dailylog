@@ -18,6 +18,7 @@ import com.example.dailylog.R
 import com.example.dailylog.repository.Repository
 import com.example.dailylog.ui.settings.SettingsView
 import kotlinx.android.synthetic.main.add_to_log_view.view.*
+import kotlinx.android.synthetic.main.settings_view.view.*
 
 
 class LogView(private val application: Application, private var repository: Repository) : Fragment() {
@@ -89,11 +90,16 @@ class LogView(private val application: Application, private var repository: Repo
             save()
         }
 
-        view!!.btnDate.setOnClickListener {
-            val start: Int = todayLog.selectionStart
-            val dateString: String = viewModel.getDateString()
-            todayLog.text?.insert(start, dateString)
-            todayLog.setSelection(start + dateString.length)
+        if (Build.VERSION.SDK_INT >= 26) {
+            view!!.btnDate.visibility = View.VISIBLE
+            view!!.btnDate.setOnClickListener {
+                val start: Int = todayLog.selectionStart
+                val dateString: String = viewModel.getDateString()
+                todayLog.text?.insert(start, dateString)
+                todayLog.setSelection(start + dateString.length)
+            }
+        } else {
+            view!!.btnDate.visibility = View.GONE
         }
 
         view!!.btnSettings.setOnClickListener {
