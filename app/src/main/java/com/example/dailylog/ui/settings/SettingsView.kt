@@ -3,6 +3,7 @@ package com.example.dailylog.ui.settings
 import android.app.Application
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -59,7 +60,11 @@ class SettingsView(private val application: Application, private var repository:
                 renderShortcutInstructions()
             }
         })
-        renderDateFormatRow()
+        if (Build.VERSION.SDK_INT >= 26) {
+            renderDateFormatRow()
+        } else {
+           view?.dateFormatRow?.visibility = View.INVISIBLE
+        }
         renderFileNameRow()
         renderShortcutList()
         view?.addShortcutButton?.setOnClickListener {

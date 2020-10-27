@@ -28,7 +28,7 @@ class LogViewModel(var repository: Repository) : ViewModel() {
         val formatter = DateTimeFormatter
             .ofPattern(repository.getDateTimeFormat())
             .withZone(ZoneId.systemDefault()) // once android has moved to JDK 9 we can remove this
-        return current.format(formatter)+ "\t"
+        return current.format(formatter)+ System.lineSeparator()
     }
 
     fun save(text: String) {
