@@ -1,14 +1,13 @@
 package com.example.dailylog.repository
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 
-class ShortcutRepository constructor(applicationContext: Context) {
-    private val shortcutDao = ShortcutDatabase.getDatabase(applicationContext).shortcutDao()
-    var labelList: ArrayList<String> = ArrayList()
+interface ShortcutRepositoryInterface {
+    val shortcutDao: ShortcutDao
+    var labelList: ArrayList<String>
 
-    var shortcutLiveData: LiveData<List<Shortcut>> = shortcutDao.getAll()
-    lateinit var shortcutList: List<Shortcut>
+    var shortcutLiveData: LiveData<List<Shortcut>>
+    var shortcutList: List<Shortcut>
 
     private suspend fun saveShortcutToDB(shortcut: Shortcut): Boolean {
         shortcutDao.add(shortcut)

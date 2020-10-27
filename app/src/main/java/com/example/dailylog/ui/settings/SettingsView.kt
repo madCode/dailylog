@@ -56,7 +56,7 @@ class SettingsView(private val application: Application, private var repository:
             // Update the cached copy of the words in the adapter.
             shortcuts.let {
                 viewModel.shortcutListAdapter.updateItems(it)
-                repository.setShortcutList(it)
+                repository.updateShortcutList(it)
                 renderShortcutInstructions()
             }
         })
@@ -113,7 +113,7 @@ class SettingsView(private val application: Application, private var repository:
     }
 
     private fun renderFileNameRow() {
-        view?.fileName?.text = viewModel.filename
+        view?.fileName?.text = viewModel.getFilename()
         view?.selectFileButton?.setOnClickListener {
             val intent =
                 Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
@@ -148,7 +148,7 @@ class SettingsView(private val application: Application, private var repository:
                 val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
                         Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 contentResolver.takePersistableUriPermission(selectedFileUri, takeFlags)
-                view?.fileName?.text = viewModel.filename
+                view?.fileName?.text = viewModel.getFilename()
 //                TODO("if we didn't get the permissions we needed, ask for permission or have the user select a different file")
             }
         }

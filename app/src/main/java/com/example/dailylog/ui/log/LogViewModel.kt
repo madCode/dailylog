@@ -3,12 +3,10 @@ package com.example.dailylog.ui.log
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
-import com.example.dailylog.R
 import com.example.dailylog.repository.Repository
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 class LogViewModel(var repository: Repository) : ViewModel() {
     var cursorIndex = repository.getCursorIndex()
