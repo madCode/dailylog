@@ -26,7 +26,6 @@ class SettingsViewModelFactory(private val application: Application, private var
 class SettingsViewModel(application: Application, private var repository: Repository, context: Context?, private var editCallback: (Shortcut) -> Unit) : AndroidViewModel(application) {
 
     var dateTimeFormat = repository.getDateTimeFormat()
-    var filename = repository.getFilename()
     private val value = TypedValue()
     var shortcutListAdapter: ShortcutListAdapter
 
@@ -43,7 +42,7 @@ class SettingsViewModel(application: Application, private var repository: Reposi
             editCallback = { shortcut ->
                 editCallback(shortcut)
             },
-            if (value.type == TypedValue.TYPE_INT_COLOR_RGB8 || value.type == TypedValue.TYPE_INT_COLOR_RGB4  || value.type == TypedValue.TYPE_INT_COLOR_ARGB4   || value.type == TypedValue.TYPE_INT_COLOR_ARGB8) value.data else -0x10000
+            cursorColor = if (value.type == TypedValue.TYPE_INT_COLOR_RGB8 || value.type == TypedValue.TYPE_INT_COLOR_RGB4  || value.type == TypedValue.TYPE_INT_COLOR_ARGB4   || value.type == TypedValue.TYPE_INT_COLOR_ARGB8) value.data else -0x10000
         )
     }
 
@@ -85,8 +84,7 @@ class SettingsViewModel(application: Application, private var repository: Reposi
     }
 
     fun saveFilename(filename: String) {
-        repository.setFilename(filename)
-        this.filename = repository.getFilename()
+        repository.storeFilename(filename)
     }
 
     fun updateShortcut(label: String, text: String, cursor: Int) = viewModelScope.launch(Dispatchers.IO) {
@@ -99,5 +97,9 @@ class SettingsViewModel(application: Application, private var repository: Reposi
 
     fun addShortcut(label: String, text: String, cursor: Int) = viewModelScope.launch(Dispatchers.IO) {
         repository.addShortcut(label, text, cursor)
+    }
+
+    fun getFilename(): String {
+        return repository.retrieveFilename()
     }
 }

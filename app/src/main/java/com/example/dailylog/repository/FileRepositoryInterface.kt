@@ -9,22 +9,25 @@ import java.io.*
 import java.io.File
 import java.lang.Exception
 
-class FileManager(var context: Context, private var permissionChecker: PermissionChecker) {
-    private var filename: String
-    init {
-        filename = getFilename()
+interface FileRepositoryInterface {
+    var filename: String
+    val context: Context
+    val permissionChecker: PermissionChecker
+
+    fun initializeFilename() {
+        filename = retrieveFilename()
         if (filename == Constants.FILENAME_DEFAULT) {
             val dir = context.getDir("log_files", Context.MODE_PRIVATE)
             val file = File(dir, filename)
             file.createNewFile()
             val fileUri = file.toURI().toString()
-            setFilename(fileUri)
+            storeFilename(fileUri)
             filename = fileUri
             saveToFile("")
         }
     }
 
-    fun getFilename(): String {
+    fun retrieveFilename(): String {
         val preferences =
             context.getSharedPreferences(
                 context.getString(R.string.preference_file_key),
@@ -34,7 +37,7 @@ class FileManager(var context: Context, private var permissionChecker: Permissio
             ?: Constants.FILENAME_DEFAULT
     }
 
-    fun setFilename(filename: String) {
+    fun storeFilename(filename: String) {
         val preferences =
             context.getSharedPreferences(
                 context.getString(

@@ -18,7 +18,6 @@ import com.example.dailylog.R
 import com.example.dailylog.repository.Repository
 import com.example.dailylog.ui.settings.SettingsView
 import kotlinx.android.synthetic.main.add_to_log_view.view.*
-import kotlinx.android.synthetic.main.settings_view.view.*
 
 
 class LogView(private val application: Application, private var repository: Repository) : Fragment() {
@@ -51,9 +50,9 @@ class LogView(private val application: Application, private var repository: Repo
         val tray = view!!.shortcutTray
         tray.layoutManager = GridLayoutManager(context, 5)
         val adapter = ShortcutTrayAdapter(context!!, view!!.todayLog)
-        shortcutsLiveData.observe(viewLifecycleOwner, Observer { shortcuts ->
+        shortcutsLiveData.observe(viewLifecycleOwner, Observer{ shortcuts ->
             // Update the cached copy of the words in the adapter.
-            shortcuts.let { adapter.itemList = it; repository.setShortcutList(it); }
+            shortcuts.let { adapter.itemList = it; repository.updateShortcutList(it); }
         })
         tray.adapter = adapter
     }

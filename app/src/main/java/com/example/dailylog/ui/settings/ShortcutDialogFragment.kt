@@ -1,5 +1,6 @@
 package com.example.dailylog.ui.settings
 
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.Spannable
@@ -22,7 +23,11 @@ open class ModifyShortcutDialogFragment: ShortcutDialogFragment() {
     var keepCursorValueAtMax = true // keep the cursor value at the max it can be
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            dialog?.window?.setDecorFitsSystemWindows(true)
+        } else {
+            dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        }
         super.onViewCreated(view, savedInstanceState)
         val textInput = view.textInput
         val cursorSlider = view.cursorSlider
