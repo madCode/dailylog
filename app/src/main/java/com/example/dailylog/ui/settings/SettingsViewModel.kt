@@ -2,12 +2,12 @@ package com.example.dailylog.ui.settings
 
 import android.app.Application
 import android.content.Context
-import android.os.Build
 import android.util.TypedValue
 import androidx.lifecycle.*
 import com.example.dailylog.R
 import com.example.dailylog.repository.Repository
 import com.example.dailylog.repository.Shortcut
+import com.example.dailylog.utils.DetermineBuild
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.ParseException
@@ -23,7 +23,7 @@ class SettingsViewModelFactory(private val application: Application, private var
 
 }
 
-class SettingsViewModel(application: Application, private var repository: Repository, context: Context?, private var editCallback: (Shortcut) -> Unit) : AndroidViewModel(application) {
+class SettingsViewModel(application: Application, private var repository: Repository, context: Context?, private var editCallback: (Shortcut) -> Unit) : AndroidViewModel(application), DetermineBuild {
 
     var dateTimeFormat = repository.getDateTimeFormat()
     private val value = TypedValue()
@@ -69,11 +69,11 @@ class SettingsViewModel(application: Application, private var repository: Reposi
 
     private fun isValidDateTimeFormat(format: String): Boolean {
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (isOreoOrGreater()) {
                 DateTimeFormatter.ofPattern(format)
             } else {
                 val formatter = SimpleDateFormat(format, Locale.getDefault())
-                formatter.parse(format)
+                formatter.format(Date())
             }
         } catch (e: ParseException) {
             return false
