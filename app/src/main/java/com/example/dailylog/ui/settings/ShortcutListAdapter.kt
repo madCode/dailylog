@@ -57,7 +57,7 @@ class ShortcutListAdapter(private var removeCallback: (String) -> Unit, private 
         holder.label.text = shortcut.label
         holder.text.text = getText(shortcut.text, shortcut.cursorIndex)
         holder.removeButton.setOnClickListener { onDelete(shortcut) }
-        holder.editButton.setOnClickListener { editCallback(shortcut)}
+        holder.itemView.setOnClickListener { editCallback(shortcut) }
     }
 
     private fun onDelete(shortcut: Shortcut) {
@@ -86,7 +86,6 @@ class ShortcutListAdapter(private var removeCallback: (String) -> Unit, private 
         val label: TextView = itemView.findViewById(R.id.label) as TextView
         val text: TextView = itemView.findViewById(R.id.text) as TextView
         val removeButton: ImageButton = itemView.findViewById(R.id.removeShortcutButton)
-        val editButton: ImageButton = itemView.findViewById(R.id.editShortcutButton)
 
         override fun onItemSelected() {
             if (itemView is MaterialCardView) {

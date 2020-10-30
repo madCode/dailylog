@@ -37,36 +37,50 @@ class BulkAddShortcutsDialogFragment : ShortcutDialogFragment()  {
             val lines = view.bulkInput.text?.lines()
             var valid = true
             lines?.forEachIndexed { index, s ->
-                val splitResults = s.split(",")
+                val regex = Regex(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)")
+                val splitResults = s.split(regex = regex)
+                val displayIndex = index + 1
                 if (splitResults.size != 3) {
-                    view.bulkInputLayout.error = "Line $index: need exactly three values"
+                    view.bulkInputLayout.error = "Line $displayIndex: need exactly three values"
                     valid = false
                     return@forEachIndexed
                 }
-                val (label, text, cursor) = splitResults
+                var (label, text, cursor) = splitResults
+                cursor = cursor.trim()
+                text = cleanUpText(text)
                 if (!isLabelValid(label)) {
-                    view.bulkInputLayout.error = "Line $index: label must be unique and cannot be empty"
+                    view.bulkInputLayout.error = "Line $displayIndex: label must be unique and cannot be empty"
                     valid = false
                     return@forEachIndexed
                 }
                 if (!isTextValid(text)) {
-                    view.bulkInputLayout.error = "Line $index: text cannot be empty"
+                    view.bulkInputLayout.error = "Line $displayIndex: text cannot be empty"
                     valid = false
                     return@forEachIndexed
                 }
                 if (!isCursorValid(cursor, text)) {
-                    view.bulkInputLayout.error = "Line $index: cursor must be an int. Cursor cannot be less than 0 or greater than the length of text."
+                    view.bulkInputLayout.error = "Line $displayIndex: cursor must be an int. Cursor cannot be less than 0 or greater than the length of text."
                     valid = false
                     return@forEachIndexed
                 }
-
-                resultLines.add(splitResults)
+                resultLines.add(listOf(label, text, cursor))
             }
             if (valid) {
                 val listener: BulkAddListener = targetFragment as BulkAddListener
                 listener.onBulkAddShortcuts(resultLines)
                 dismiss()
             }
+        }
+    }
+
+    private fun cleanUpText(text: String): String {
+        // If it contains a comma and is surrounded by quotes, remove the quotes
+        val containsComma = text.contains(',')
+        val startsAndEndsWithQuotes = text.startsWith('"') && text.endsWith('"')
+        return if (!containsComma || !startsAndEndsWithQuotes) {
+            text
+        } else {
+            text.substring(1, text.length-2)
         }
     }
 
