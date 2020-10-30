@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="8dp"
+    android:layout_marginBottom="4dp"
     app:cardElevation="0dp"
     app:strokeColor="@color/material_on_surface_stroke"
     app:strokeWidth="1dp">
@@ -51,27 +52,12 @@
             android:paddingBottom="10dp"
             app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/editShortcutButton"
+            app:layout_constraintEnd_toStartOf="@id/removeShortcutButton"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/label"
             app:layout_constraintTop_toBottomOf="@id/label"
             app:layout_constraintVertical_bias="0.0"
             tools:text="very very very very very very very very very very very very very very very very very very very very very very very very very very very very" />
-
-        <ImageButton
-            android:id="@+id/editShortcutButton"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginEnd="10dp"
-            android:alpha="0.3"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/delete"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_edit_48"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/removeShortcutButton"
-            app:layout_constraintTop_toTopOf="parent"
-            android:visibility="gone"/>
 
         <ImageButton
             android:id="@+id/removeShortcutButton"
