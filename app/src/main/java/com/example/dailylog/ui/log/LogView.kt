@@ -1,6 +1,5 @@
 package com.example.dailylog.ui.log
 
-import android.app.Application
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,18 +14,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.dailylog.R
-import com.example.dailylog.repository.Repository
-import com.example.dailylog.ui.settings.SettingsView
 import kotlinx.android.synthetic.main.add_to_log_view.view.*
 
 
-class LogView(private val application: Application, private var repository: Repository) : Fragment() {
+class LogView(private val viewModel: LogViewModel, private val goToSettings: () -> Unit) : Fragment() {
 
     companion object {
-        fun newInstance(application: Application, repository: Repository) = LogView(application, repository)
+        fun newInstance(viewModel: LogViewModel, goToSettings: () -> Unit) = LogView(viewModel, goToSettings)
     }
-
-    private lateinit var viewModel: LogViewModel
 
     private fun save() {
         if (view == null) {
@@ -52,7 +47,7 @@ class LogView(private val application: Application, private var repository: Repo
         val adapter = ShortcutTrayAdapter(view!!.todayLog)
         shortcutsLiveData.observe(viewLifecycleOwner, Observer{ shortcuts ->
             // Update the cached copy of the words in the adapter.
-            shortcuts.let { adapter.itemList = it; repository.updateShortcutList(it); }
+            shortcuts.let { adapter.itemList = it; viewModel.updateShortcutList(it); }
         })
         tray.adapter = adapter
     }
@@ -82,7 +77,6 @@ class LogView(private val application: Application, private var repository: Repo
         if (view == null || context == null || activity == null) {
             error("view or context or activity is null")
         }
-        viewModel = LogViewModel(repository)
         val todayLog = view!!.todayLog
 
         view!!.btnSave.setOnClickListener {
@@ -103,10 +97,7 @@ class LogView(private val application: Application, private var repository: Repo
 
         view!!.btnSettings.setOnClickListener {
             save()
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.container, SettingsView.newInstance(application, repository))
-                .addToBackStack(null)
-                .commit()
+            goToSettings()
         }
         renderShortcutTray()
     }

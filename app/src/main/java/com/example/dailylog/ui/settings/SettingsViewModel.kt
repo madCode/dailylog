@@ -1,10 +1,7 @@
 package com.example.dailylog.ui.settings
 
 import android.app.Application
-import android.content.Context
-import android.util.TypedValue
 import androidx.lifecycle.*
-import com.example.dailylog.R
 import com.example.dailylog.repository.Repository
 import com.example.dailylog.repository.Shortcut
 import com.example.dailylog.utils.DetermineBuild
@@ -86,5 +83,13 @@ class SettingsViewModel(application: Application, private var repository: Reposi
 
     fun getAllShortcuts(): LiveData<List<Shortcut>> {
         return repository.getAllShortcuts()
+    }
+
+    fun updateShortcutList(it: List<Shortcut>?) {
+        repository.updateShortcutList(it)
+    }
+
+    fun labelIsUnique(label: String): Boolean {
+        return repository.labelIsUnique(label)
     }
 }

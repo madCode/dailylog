@@ -1,6 +1,5 @@
 package com.example.dailylog.ui.settings
 
-import android.app.Application
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
@@ -16,17 +15,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dailylog.R
 import com.example.dailylog.repository.Constants
-import com.example.dailylog.repository.Repository
 import com.example.dailylog.repository.Shortcut
-import com.example.dailylog.utils.DetermineBuild
 import kotlinx.android.synthetic.main.settings_view.view.*
 
-class SettingsView(private val application: Application, private var repository: Repository) : Fragment(),
+class SettingsView(private val viewModel: SettingsViewModel) : Fragment(),
     AddShortcutDialogFragment.AddShortcutDialogListener,
     BulkAddShortcutsDialogFragment.BulkAddListener,
     EditShortcutDialogFragment.EditShortcutDialogListener,
@@ -36,10 +32,8 @@ class SettingsView(private val application: Application, private var repository:
     private lateinit var adapter: ShortcutListAdapter
 
     companion object {
-        fun newInstance(application: Application, repository: Repository) = SettingsView(application, repository)
+        fun newInstance(viewModel: SettingsViewModel) = SettingsView(viewModel)
     }
-
-    private lateinit var viewModel: SettingsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,7 +44,6 @@ class SettingsView(private val application: Application, private var repository:
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this, SettingsViewModelFactory(application, repository, DetermineBuild)).get(SettingsViewModel::class.java)
         val value = TypedValue()
         context?.theme?.resolveAttribute(R.attr.colorAccent, value, true)
         adapter = ShortcutListAdapter(
@@ -70,7 +63,7 @@ class SettingsView(private val application: Application, private var repository:
             // Update the cached copy of the words in the adapter.
             shortcuts.let {
                 adapter.updateItems(it)
-                repository.updateShortcutList(it)
+                viewModel.updateShortcutList(it)
                 renderShortcutInstructions()
             }
         })
@@ -196,7 +189,7 @@ class SettingsView(private val application: Application, private var repository:
     }
 
     override fun labelIsUnique(label: String): Boolean {
-        return repository.labelIsUnique(label)
+        return viewModel.labelIsUnique(label)
     }
 
 }
