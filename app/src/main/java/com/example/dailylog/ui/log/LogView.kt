@@ -46,10 +46,10 @@ class LogView(private val application: Application, private var repository: Repo
         if (context == null) {
             return
         }
-        val shortcutsLiveData = repository.getAllShortcuts()
+        val shortcutsLiveData = viewModel.getAllShortcuts()
         val tray = view!!.shortcutTray
         tray.layoutManager = GridLayoutManager(context, 5)
-        val adapter = ShortcutTrayAdapter(context!!, view!!.todayLog)
+        val adapter = ShortcutTrayAdapter(view!!.todayLog)
         shortcutsLiveData.observe(viewLifecycleOwner, Observer{ shortcuts ->
             // Update the cached copy of the words in the adapter.
             shortcuts.let { adapter.itemList = it; repository.updateShortcutList(it); }

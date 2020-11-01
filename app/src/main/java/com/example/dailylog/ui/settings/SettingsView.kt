@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,7 @@ import com.example.dailylog.R
 import com.example.dailylog.repository.Constants
 import com.example.dailylog.repository.Repository
 import com.example.dailylog.repository.Shortcut
+import com.example.dailylog.utils.DetermineBuild
 import kotlinx.android.synthetic.main.settings_view.view.*
 
 class SettingsView(private val application: Application, private var repository: Repository) : Fragment(),
@@ -30,7 +32,8 @@ class SettingsView(private val application: Application, private var repository:
     EditShortcutDialogFragment.EditShortcutDialogListener,
     ShortcutDialogListener {
 
-    var shortcutsLiveData: LiveData<List<Shortcut>> = repository.getAllShortcuts()
+    var shortcutsLiveData: LiveData<List<Shortcut>> = viewModel.getAllShortcuts()
+    private lateinit var adapter: ShortcutListAdapter
 
     companion object {
         fun newInstance(application: Application, repository: Repository) = SettingsView(application, repository)
@@ -47,15 +50,26 @@ class SettingsView(private val application: Application, private var repository:
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this, SettingsViewModelFactory(application, repository, context) { shortcut ->
-            onEdit(
-                shortcut
-            )
-        }).get(SettingsViewModel::class.java)
+        viewModel = ViewModelProvider(this, SettingsViewModelFactory(application, repository, DetermineBuild)).get(SettingsViewModel::class.java)
+        val value = TypedValue()
+        context?.theme?.resolveAttribute(R.attr.colorAccent, value, true)
+        adapter = ShortcutListAdapter(
+            removeCallback = { label -> viewModel.removeCallback(label) },
+            updatePositionCallback = { label, pos ->
+                viewModel.updateShortcutPositionCallback(
+                    label,
+                    pos
+                )
+            },
+            editCallback = { shortcut ->
+                onEdit(shortcut)
+            },
+            cursorColor = if (value.type == TypedValue.TYPE_INT_COLOR_RGB8 || value.type == TypedValue.TYPE_INT_COLOR_RGB4  || value.type == TypedValue.TYPE_INT_COLOR_ARGB4   || value.type == TypedValue.TYPE_INT_COLOR_ARGB8) value.data else -0x10000
+        )
         shortcutsLiveData.observe(viewLifecycleOwner, Observer { shortcuts ->
             // Update the cached copy of the words in the adapter.
             shortcuts.let {
-                viewModel.shortcutListAdapter.updateItems(it)
+                adapter.updateItems(it)
                 repository.updateShortcutList(it)
                 renderShortcutInstructions()
             }
@@ -127,7 +141,6 @@ class SettingsView(private val application: Application, private var repository:
     }
 
     private fun renderShortcutList() {
-        val adapter = viewModel.shortcutListAdapter
         val recyclerView = view!!.recycler_view
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = adapter
@@ -155,7 +168,7 @@ class SettingsView(private val application: Application, private var repository:
     }
 
     private fun renderShortcutInstructions() {
-        if (viewModel.shortcutListAdapter.items.isEmpty()) {
+        if (adapter.items.isEmpty()) {
             view!!.noShortcutsMessage.visibility = View.VISIBLE
         } else {
             view!!.noShortcutsMessage.visibility = View.GONE

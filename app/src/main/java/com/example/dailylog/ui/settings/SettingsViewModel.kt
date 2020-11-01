@@ -15,45 +15,26 @@ import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class SettingsViewModelFactory(private val application: Application, private var repository: Repository, private val context: Context?, private var editCallback: (Shortcut) -> Unit): ViewModelProvider.Factory {
+class SettingsViewModelFactory(private val application: Application, private var repository: Repository, private var build: DetermineBuild): ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return SettingsViewModel(application, repository, context, editCallback) as T
+        return SettingsViewModel(application, repository, build) as T
     }
 
 }
 
-class SettingsViewModel(application: Application, private var repository: Repository, context: Context?, private var editCallback: (Shortcut) -> Unit) : AndroidViewModel(application), DetermineBuild {
+class SettingsViewModel(application: Application, private var repository: Repository, private var build: DetermineBuild) : AndroidViewModel(application) {
 
     var dateTimeFormat = repository.getDateTimeFormat()
-    private val value = TypedValue()
-    var shortcutListAdapter: ShortcutListAdapter
 
-    init {
-        context?.theme?.resolveAttribute(R.attr.colorAccent, value, true)
-        shortcutListAdapter = ShortcutListAdapter(
-            removeCallback = { label -> removeCallback(label) },
-            updatePositionCallback = { label, pos ->
-                updateShortcutPositionCallback(
-                    label,
-                    pos
-                )
-            },
-            editCallback = { shortcut ->
-                editCallback(shortcut)
-            },
-            cursorColor = if (value.type == TypedValue.TYPE_INT_COLOR_RGB8 || value.type == TypedValue.TYPE_INT_COLOR_RGB4  || value.type == TypedValue.TYPE_INT_COLOR_ARGB4   || value.type == TypedValue.TYPE_INT_COLOR_ARGB8) value.data else -0x10000
-        )
-    }
-
-    private fun updateShortcutPositionCallback(label: String, pos: Int) = viewModelScope.launch(Dispatchers.IO) {
+    fun updateShortcutPositionCallback(label: String, pos: Int) = viewModelScope.launch(Dispatchers.IO) {
         repository.updateShortcutPosition(
             label,
             pos
         )
     }
 
-    private fun removeCallback(label: String) = viewModelScope.launch(Dispatchers.IO) {
+    fun removeCallback(label: String) = viewModelScope.launch(Dispatchers.IO) {
         repository.removeShortcut(label)
     }
 
@@ -69,7 +50,7 @@ class SettingsViewModel(application: Application, private var repository: Reposi
 
     private fun isValidDateTimeFormat(format: String): Boolean {
         try {
-            if (isOreoOrGreater()) {
+            if (build.isOreoOrGreater()) {
                 DateTimeFormatter.ofPattern(format)
             } else {
                 val formatter = SimpleDateFormat(format, Locale.getDefault())
@@ -101,5 +82,9 @@ class SettingsViewModel(application: Application, private var repository: Reposi
 
     fun getFilename(): String {
         return repository.retrieveFilename()
+    }
+
+    fun getAllShortcuts(): LiveData<List<Shortcut>> {
+        return repository.getAllShortcuts()
     }
 }
