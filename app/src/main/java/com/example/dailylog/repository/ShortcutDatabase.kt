@@ -10,6 +10,7 @@ abstract class ShortcutDatabase : RoomDatabase() {
     abstract fun shortcutDao(): ShortcutDao
 
     companion object {
+        var TEST_MODE = false
         // Singleton prevents multiple instances of database opening at the
         // same time.
         @Volatile
@@ -21,13 +22,22 @@ abstract class ShortcutDatabase : RoomDatabase() {
                 return tempInstance
             }
             synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context,
-                    ShortcutDatabase::class.java,
-                    "shortcut_database"
-                ).build()
-                INSTANCE = instance
-                return instance
+                if (TEST_MODE) {
+                    val instance = Room.inMemoryDatabaseBuilder(
+                        context,
+                        ShortcutDatabase::class.java
+                    ).allowMainThreadQueries().build()
+                    INSTANCE = instance
+                    return instance
+                } else {
+                    val instance = Room.databaseBuilder(
+                        context,
+                        ShortcutDatabase::class.java,
+                        "shortcut_database"
+                    ).build()
+                    INSTANCE = instance
+                    return instance
+                }
             }
         }
     }
