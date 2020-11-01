@@ -12,7 +12,7 @@ class Repository(override val context: Context,
 ): FileRepositoryInterface, ShortcutRepositoryInterface {
     override lateinit var filename : String
 
-    override val shortcutDao = ShortcutDatabase.getDatabase(context).shortcutDao()
+    override var shortcutDao = ShortcutDatabase.getDatabase(context).shortcutDao()
     override var labelList: ArrayList<String> = ArrayList()
     override var shortcutLiveData: LiveData<List<Shortcut>> = shortcutDao.getAll()
     override lateinit var shortcutList: List<Shortcut>

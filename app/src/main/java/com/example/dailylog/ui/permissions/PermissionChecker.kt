@@ -19,7 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
 
-class PermissionChecker(private var activity: Activity) {
+class PermissionChecker(private var activity: Activity?) {
 
     fun doIfExtStoragePermissionGranted(): Boolean {
         return if (Build.VERSION.SDK_INT < 30) {
@@ -30,16 +30,19 @@ class PermissionChecker(private var activity: Activity) {
     }
 
     private fun doIfExtStoragePermissionGrantedOld(): Boolean {
+        if (activity == null) {
+            return false
+        }
         if (ContextCompat.checkSelfPermission(
-                activity,
+                activity!!,
                 Manifest.permission.READ_EXTERNAL_STORAGE
             ) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
-                activity,
+                activity!!,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
-                activity,
+                activity!!,
                 arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE),
                 CODE_PERMISSION_EXTERNAL_STORAGE
             )
