@@ -32,7 +32,7 @@ class LogViewModelTest : TestCase() {
         val viewModel = LogViewModel(repository)
         viewModel.clock = clock
         val dateString = viewModel.getDateString()
-        assertEquals("Wed 8-22-2018 10:00 AM PT\n", dateString)
+        assertEquals("Wed 8-22-2018 10:00 AM PT", dateString)
     }
 
     @Test
@@ -45,7 +45,7 @@ class LogViewModelTest : TestCase() {
         val viewModel = LogViewModel(repository)
         viewModel.clock = clock
         val dateString = viewModel.getDateString()
-        assertEquals("Wed 8-22-2018 10:00 AM PT\n", dateString)
+        assertEquals("Wed 8-22-2018 10:00 AM PT", dateString)
     }
 
     @Test
@@ -61,5 +61,37 @@ class LogViewModelTest : TestCase() {
         assertEquals(
             "Issue with date time string. Please change Date Format in settings screen. Error message: Too many pattern letters: E",
             dateString)
+    }
+
+    @Test
+    fun `test clock goes to system default when not passed in`() {
+        val repository: Repository = mock(Repository::class.java)
+        `when`(repository.getDateTimeFormat()).thenReturn("yyyy")
+        val viewModel = LogViewModel(repository)
+        assertEquals("2020", viewModel.getDateString())
+    }
+
+    @Test
+    fun `test repository called when getLog called`() {
+        val repository: Repository = mock(Repository::class.java)
+        val viewModel = LogViewModel(repository)
+        viewModel.getLog()
+        verify(repository).readFile()
+    }
+
+    @Test
+    fun `test repository called when getAllShortcuts called`() {
+        val repository: Repository = mock(Repository::class.java)
+        val viewModel = LogViewModel(repository)
+        viewModel.getAllShortcuts()
+        verify(repository).getAllShortcuts()
+    }
+
+    @Test
+    fun `test repository called when save called`() {
+        val repository: Repository = mock(Repository::class.java)
+        val viewModel = LogViewModel(repository)
+        viewModel.save("hello")
+        verify(repository).saveToFile("hello")
     }
 }

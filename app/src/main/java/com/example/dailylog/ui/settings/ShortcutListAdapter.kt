@@ -31,7 +31,7 @@ class ShortcutListAdapter(private var removeCallback: (String) -> Unit, private 
 
     fun updateItems(newItems: List<Shortcut>) {
         items = newItems
-        notifyDataSetChanged();
+        notifyDataSetChanged()
     }
 
     private fun getText(text: String, cursorIndex: Int): SpannableStringBuilder {
