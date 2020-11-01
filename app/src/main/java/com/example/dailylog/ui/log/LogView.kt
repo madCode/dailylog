@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -21,6 +20,51 @@ class LogView(private val viewModel: LogViewModel, private val goToSettings: () 
 
     companion object {
         fun newInstance(viewModel: LogViewModel, goToSettings: () -> Unit) = LogView(viewModel, goToSettings)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        if (view == null || context == null || activity == null) {
+            error("view or context or activity is null")
+        }
+        val todayLog = view!!.todayLog
+
+        view!!.btnSave.setOnClickListener {
+            save()
+        }
+
+        if (Build.VERSION.SDK_INT >= 26) {
+            view!!.btnDate.visibility = View.VISIBLE
+            view!!.btnDate.setOnClickListener {
+                val start: Int = todayLog.selectionStart
+                val dateString: String = viewModel.getDateString()
+                todayLog.text?.insert(start, dateString)
+                todayLog.setSelection(start + dateString.length)
+            }
+        } else {
+            view!!.btnDate.visibility = View.GONE
+        }
+
+        view!!.btnSettings.setOnClickListener {
+            save()
+            goToSettings()
+        }
+        renderShortcutTray()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        save()
+    }
+
+    override fun onResume() {
+        // gets called onResume but also after onActivityCreated
+        super.onResume()
+        loadFile()
+        view!!.todayLog.requestFocus()
+        val inputMethodManager =
+            getSystemService(context!!, InputMethodManager::class.java) as InputMethodManager
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
     }
 
     private fun save() {
@@ -69,52 +113,6 @@ class LogView(private val viewModel: LogViewModel, private val goToSettings: () 
         savedInstanceState: Bundle?
     ): View {
         return inflater.inflate(R.layout.add_to_log_view, container, false)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        if (view == null || context == null || activity == null) {
-            error("view or context or activity is null")
-        }
-        val todayLog = view!!.todayLog
-
-        view!!.btnSave.setOnClickListener {
-            save()
-        }
-
-        if (Build.VERSION.SDK_INT >= 26) {
-            view!!.btnDate.visibility = View.VISIBLE
-            view!!.btnDate.setOnClickListener {
-                val start: Int = todayLog.selectionStart
-                val dateString: String = viewModel.getDateString()
-                todayLog.text?.insert(start, dateString)
-                todayLog.setSelection(start + dateString.length)
-            }
-        } else {
-            view!!.btnDate.visibility = View.GONE
-        }
-
-        view!!.btnSettings.setOnClickListener {
-            save()
-            goToSettings()
-        }
-        renderShortcutTray()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        save()
-    }
-
-    override fun onResume() {
-        // gets called onResume but also after onActivityCreated
-        super.onResume()
-        loadFile()
-        view!!.todayLog.requestFocus()
-        val inputMethodManager =
-            getSystemService(context!!, InputMethodManager::class.java) as InputMethodManager
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
     }
 
 }
