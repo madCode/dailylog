@@ -5,10 +5,8 @@ import com.example.dailylog.BuildConfig
 
 interface ShortcutRepositoryInterface {
     val shortcutDao: ShortcutDao
-    var labelList: ArrayList<String>
 
     var shortcutLiveData: LiveData<List<Shortcut>>
-    var shortcutList: List<Shortcut>
 
     private suspend fun saveShortcutToDB(shortcut: Shortcut): Boolean {
         shortcutDao.add(shortcut)
@@ -16,16 +14,12 @@ interface ShortcutRepositoryInterface {
     }
 
     private fun createShortcut(label: String, text: String, cursorIndex: Int): Shortcut {
-        return  Shortcut(label = label, text = text, cursorIndex = cursorIndex, position = shortcutList.size)
+        return  Shortcut(label = label, text = text, cursorIndex = cursorIndex, position = nextShortcutPosition())
     }
 
     private suspend fun deleteShortcutFromDB(label: String): Boolean {
         shortcutDao.deleteByLabel(label)
         return true
-    }
-
-    private fun getAllShortcuts(): LiveData<List<Shortcut>> {
-        return shortcutDao.getAll()
     }
 
     suspend fun saveAllShortcutsToDb(shortcuts: List<Shortcut>) {
@@ -38,13 +32,10 @@ interface ShortcutRepositoryInterface {
         return true
     }
 
-    suspend fun addShortcut(label: String, text: String, cursorIndex: Int): Boolean {
+    suspend fun addShortcut(label: String, text: String, cursorIndex: Int) {
         val shortcut = createShortcut(label, text, cursorIndex)
-        return if (!labelList.contains(label) && label.isNotEmpty() && text.isNotEmpty()) {
+        if (!shortcutDao.labelExistsSuspend(label) && label.isNotEmpty() && text.isNotEmpty()) {
             saveShortcutToDB(shortcut)
-            true
-        } else {
-            false
         }
     }
 
@@ -62,7 +53,7 @@ interface ShortcutRepositoryInterface {
                             label = label,
                             text = text,
                             cursorIndex = cursorIndex,
-                            position = shortcutList.size + index
+                            position = nextShortcutPosition() + index
                         )
                     )
                 }
@@ -73,8 +64,15 @@ interface ShortcutRepositoryInterface {
             }
         }
         shortcutDao.addAll(*results.toTypedArray())
-        shortcutLiveData = getAllShortcuts()
         return true
+    }
+
+    private fun nextShortcutPosition(): Int {
+        return if (shortcutLiveData.value != null && shortcutLiveData.value!!.isNotEmpty()) {
+            shortcutLiveData.value!!.last().position + 1
+        } else {
+            0
+        }
     }
 
     private fun validateShortcutBulkRow(shortcutInfo: List<String>): Boolean {
@@ -86,7 +84,6 @@ interface ShortcutRepositoryInterface {
     }
 
     suspend fun removeShortcut(label: String): Boolean {
-        labelList.remove(label)
         deleteShortcutFromDB(label)
         return true
     }

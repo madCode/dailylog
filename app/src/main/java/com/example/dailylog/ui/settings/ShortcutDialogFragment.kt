@@ -11,12 +11,17 @@ import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.LiveData
 import com.example.dailylog.R
 import com.google.android.material.slider.Slider
 import kotlinx.android.synthetic.main.create_new_shortcut.view.*
+import kotlin.properties.Delegates
+import kotlin.properties.ReadOnlyProperty
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 interface ShortcutDialogListener {
-    fun labelIsUnique(label: String): Boolean
+    fun labelExists(label: String): LiveData<Boolean>
 }
 
 open class ModifyShortcutDialogFragment: ShortcutDialogFragment() {
@@ -36,9 +41,7 @@ open class ModifyShortcutDialogFragment: ShortcutDialogFragment() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable) {
-                if (isLabelValid(s.toString())) {
-                    view.labelInputLayout.error = null
-                }
+                view.labelInputLayout.error = null
             }
         })
 
@@ -96,11 +99,13 @@ open class ModifyShortcutDialogFragment: ShortcutDialogFragment() {
         }
     }
 
-    fun isValid(view: View): Boolean {
+    fun validateView(view: View) {
+        valid = true
+        clearInvalidLabelMessage()
         val label = view.labelInput
         val text = view.textInput
-        var valid = true
-        if (!isLabelValid(label.text.toString())) {
+        val isLabelValid = isLabelValid(label.text.toString())
+        if (isLabelValid != null && !isLabelValid) {
             view.labelInputLayout.error = "Label must be unique and cannot be empty"
             valid = false
         }
@@ -108,11 +113,21 @@ open class ModifyShortcutDialogFragment: ShortcutDialogFragment() {
             view.textInputLayout.error = "Text cannot be empty"
             valid = false
         }
-        return valid
+    }
+
+    override fun alertOnInvalidLabel(label: String) {
+        view?.labelInputLayout?.error = "Label must be unique and cannot be empty"
+    }
+
+    private fun clearInvalidLabelMessage() {
+        view?.labelInputLayout?.error = null
     }
 }
 
 open class ShortcutDialogFragment: DialogFragment() {
+    var valid = true
+    var numLabelsBeingValidated = 0
+
     fun getText(text: String, cursorIndex: Int): SpannableStringBuilder {
         if (text.isEmpty()) {
             return SpannableStringBuilder("")
@@ -133,12 +148,52 @@ open class ShortcutDialogFragment: DialogFragment() {
         return result
     }
 
-    open fun isLabelValid(label: String): Boolean {
+    open fun canSubmit(): Boolean {
+        return valid && numLabelsBeingValidated == 0
+    }
+
+    open fun isLabelValid(label: String): Boolean? {
+        numLabelsBeingValidated += 1
+        if (label.isEmpty()) {
+            numLabelsBeingValidated -= 1
+            return false
+        }
+        savingIndicator()
         val listener: ShortcutDialogListener = targetFragment as ShortcutDialogListener
-        return label.isNotEmpty() && listener.labelIsUnique(label)
+        listener.labelExists(label).observe(viewLifecycleOwner){
+            val alreadyExists = it
+            numLabelsBeingValidated -= 1
+            savingIndicator()
+            if (alreadyExists) {
+                alertOnInvalidLabel(label)
+                valid = false
+            } else {
+                submit()
+            }
+        }
+        return null
     }
 
     fun isTextValid(text: String): Boolean {
         return text.isNotEmpty()
+    }
+
+    open fun alertOnInvalidLabel(label: String) {
+        TODO("alertOnInvalidLabel not implemented")
+    }
+
+    open fun submit() {
+        TODO("implement submit")
+    }
+
+    open fun savingIndicator() {
+        val button = view?.btnSaveShortcut
+        if (numLabelsBeingValidated != 0) {
+            button?.isEnabled = false
+            button?.text = getString(R.string.saving)
+        } else {
+            button?.isEnabled = true
+            button?.text = getString(R.string.save)
+        }
     }
 }

@@ -40,4 +40,5 @@
     <string name="bulk_add_shortcuts_instructions">Each row represents one shortcut. Each row should contain three items: shortcut, text, and cursor index.\n\nSample row: four,4,1</string>
     <string name="bulk_add_shortcuts">bulk add</string>
     <string name="add_a_shortcut">Add a shortcut. Long press for bulk add screen.</string>
+    <string name="saving">saving...</string>
 </resources>

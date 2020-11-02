@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.create_new_shortcut.view.*
 class EditShortcutDialogFragment(private var shortcut: Shortcut) : ModifyShortcutDialogFragment() {
 
     interface EditShortcutDialogListener {
-        fun onFinishEditShortcutDialog(label: String, text: String, cursor: Int)
+        fun onFinishEditShortcutDialog(label: String, text: String, cursor: Int, position: Int)
     }
 
     companion object {
@@ -37,19 +37,11 @@ class EditShortcutDialogFragment(private var shortcut: Shortcut) : ModifyShortcu
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val label = view.labelInput
+        label.isEnabled = false
         view.btnSaveShortcut.setOnClickListener {
-            val label = view.labelInput
-            val text = view.textInput
-            val cursor = view.cursorSlider
-            if (isValid(view)) {
-                val listener: EditShortcutDialogListener = targetFragment as EditShortcutDialogListener
-                listener.onFinishEditShortcutDialog(
-                    label.text.toString(),
-                    text.text.toString(),
-                    cursor.value.toInt()
-                )
-                dismiss()
-            }
+            validateView(view)
+            submit()
         }
         view.addShortcutTitle.text = context?.getString(R.string.editShortcut)
         val textInput = view.textInput
@@ -59,6 +51,29 @@ class EditShortcutDialogFragment(private var shortcut: Shortcut) : ModifyShortcu
         updateCursorView(cursorSlider, shortcut.text)
         cursorSlider.value = shortcut.cursorIndex.toFloat()
         textInput.setText(shortcut.text)
+    }
+
+    override fun submit() {
+        if (view == null) {
+            return
+        }
+        val label = view!!.labelInput
+        val text = view!!.textInput
+        val cursor = view!!.cursorSlider
+        if (canSubmit()) {
+            val listener: EditShortcutDialogListener = targetFragment as EditShortcutDialogListener
+            listener.onFinishEditShortcutDialog(
+                label.text.toString(),
+                text.text.toString(),
+                cursor.value.toInt(),
+                shortcut.position
+            )
+            dismiss()
+        }
+    }
+
+    override fun isLabelValid(label: String): Boolean {
+        return label.isNotEmpty()
     }
 
 }

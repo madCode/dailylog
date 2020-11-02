@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import com.example.dailylog.R
 import kotlinx.android.synthetic.main.bulk_add_shortcuts.view.*
+import kotlinx.android.synthetic.main.create_new_shortcut.view.*
 
 class BulkAddShortcutsDialogFragment : ShortcutDialogFragment()  {
     interface BulkAddListener {
@@ -16,6 +17,7 @@ class BulkAddShortcutsDialogFragment : ShortcutDialogFragment()  {
     companion object {
         fun newInstance() = BulkAddShortcutsDialogFragment()
     }
+    private var resultLines = ArrayList<List<String>>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,9 +35,11 @@ class BulkAddShortcutsDialogFragment : ShortcutDialogFragment()  {
         }
 
         view.btnSaveBulkShortcut.setOnClickListener {
-            val resultLines = ArrayList<List<String>>()
+            numLabelsBeingValidated = 0
+            valid = true
+            clearInvalidLabelMessage()
+            resultLines = ArrayList()
             val lines = view.bulkInput.text?.lines()
-            var valid = true
             lines?.forEachIndexed { index, s ->
                 val regex = Regex(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)")
                 val splitResults = s.split(regex = regex)
@@ -48,7 +52,8 @@ class BulkAddShortcutsDialogFragment : ShortcutDialogFragment()  {
                 var (label, text, cursor) = splitResults
                 cursor = cursor.trim()
                 text = cleanUpText(text)
-                if (!isLabelValid(label)) {
+                val validLabel = isLabelValid(label)
+                if (validLabel != null && !validLabel) {
                     view.bulkInputLayout.error = "Line $displayIndex: label must be unique and cannot be empty"
                     valid = false
                     return@forEachIndexed
@@ -65,12 +70,24 @@ class BulkAddShortcutsDialogFragment : ShortcutDialogFragment()  {
                 }
                 resultLines.add(listOf(label, text, cursor))
             }
-            if (valid) {
-                val listener: BulkAddListener = targetFragment as BulkAddListener
-                listener.onBulkAddShortcuts(resultLines)
-                dismiss()
-            }
+            submit()
         }
+    }
+
+    override fun submit() {
+        if (canSubmit() && resultLines.size > 0) {
+            val listener: BulkAddListener = targetFragment as BulkAddListener
+            listener.onBulkAddShortcuts(resultLines)
+            dismiss()
+        }
+    }
+
+    override fun alertOnInvalidLabel(label: String) {
+        view?.bulkInputLayout?.error = "Label '$label' already exists."
+    }
+
+    private fun clearInvalidLabelMessage() {
+        view?.bulkInputLayout?.error = null
     }
 
     private fun cleanUpText(text: String): String {
@@ -90,6 +107,17 @@ class BulkAddShortcutsDialogFragment : ShortcutDialogFragment()  {
             value >= 0 && value <= text.length
         } catch (e: NumberFormatException) {
             false
+        }
+    }
+
+    override fun savingIndicator() {
+        val button = view?.btnSaveBulkShortcut
+        if (numLabelsBeingValidated > 0) {
+            button?.isEnabled = false
+            button?.text = getString(R.string.saving)
+        } else {
+            button?.isEnabled = true
+            button?.text = getString(R.string.save)
         }
     }
 }

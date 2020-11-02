@@ -58,8 +58,8 @@ class SettingsViewModel(application: Application, private var repository: Reposi
         repository.storeFilename(filename)
     }
 
-    fun updateShortcut(label: String, text: String, cursor: Int) = viewModelScope.launch(Dispatchers.IO) {
-        repository.updateShortcut(label,text,cursor)
+    fun updateShortcut(label: String, text: String, cursor: Int, position: Int) = viewModelScope.launch(Dispatchers.IO) {
+        repository.updateShortcut(label,text,cursor, position)
     }
 
     fun bulkAddShortcuts(shortcutsData: List<List<String>>) = viewModelScope.launch(Dispatchers.IO) {
@@ -78,12 +78,8 @@ class SettingsViewModel(application: Application, private var repository: Reposi
         return repository.getAllShortcuts()
     }
 
-    fun updateShortcutList(it: List<Shortcut>?) {
-        repository.updateShortcutList(it)
-    }
-
-    fun labelIsUnique(label: String): Boolean {
-        return repository.labelIsUnique(label)
+    fun labelExists(label: String): LiveData<Boolean> {
+        return repository.labelExists(label)
     }
 
     fun updateShortcutPositions(shortcuts: List<Shortcut>) = viewModelScope.launch(Dispatchers.IO) {

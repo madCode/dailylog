@@ -13,9 +13,7 @@ class Repository(override val context: Context,
     override lateinit var filename : String
 
     override var shortcutDao = ShortcutDatabase.getDatabase(context).shortcutDao()
-    override var labelList: ArrayList<String> = ArrayList()
     override var shortcutLiveData: LiveData<List<Shortcut>> = shortcutDao.getAll()
-    override lateinit var shortcutList: List<Shortcut>
 
     init {
         initializeFilename()
@@ -71,23 +69,7 @@ class Repository(override val context: Context,
         return shortcutLiveData
     }
 
-    fun labelIsUnique(label: String): Boolean {
-        return !labelList.contains(label)
-    }
-
-    suspend fun updateShortcut(label: String, text: String, cursorIndex: Int): Boolean {
-        val position = labelList.indexOf(label)
-        return updateShortcut(label, text, cursorIndex, position)
-    }
-
-    fun updateShortcutList(it: List<Shortcut>?) {
-        if (it != null) {
-            shortcutList = it
-            val labelList = ArrayList<String>()
-            it.forEach{
-                labelList.add(it.label)
-            }
-            this.labelList = labelList
-        }
+    fun labelExists(label: String): LiveData<Boolean> {
+        return shortcutDao.labelExists(label)
     }
 }
