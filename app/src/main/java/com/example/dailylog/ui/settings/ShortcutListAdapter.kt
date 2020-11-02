@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dailylog.R
 import com.example.dailylog.repository.Shortcut
@@ -18,19 +17,25 @@ import com.google.android.material.card.MaterialCardView
 /**
  * adopted from https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-b9456d2b1aaf
  */
-class ShortcutListAdapter(private var removeCallback: (String) -> Unit, private var updatePositionCallback: (String, Int) -> Unit, private var editCallback: (Shortcut) -> Unit, private var cursorColor: Int) : RecyclerView.Adapter<ShortcutListAdapter.ItemViewHolder>(),
+class ShortcutListAdapter(private var removeCallback: (String) -> Unit, private var updateShortcutPositions: (List<Shortcut>) -> Unit, private var editCallback: (Shortcut) -> Unit, private var cursorColor: Int) : RecyclerView.Adapter<ShortcutListAdapter.ItemViewHolder>(),
     ShortcutTouchHelperAdapter {
 
     var items = emptyList<Shortcut>()
+    var orderedItems: MutableList<Shortcut> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val view: View =
             LayoutInflater.from(parent.context).inflate(R.layout.shortcut_row_layout, parent, false)
-        return ItemViewHolder(view)
+        return ItemViewHolder(view) { saveAllShortcutPositions() }
+    }
+
+    private fun saveAllShortcutPositions() {
+        updateShortcutPositions(orderedItems)
     }
 
     fun updateItems(newItems: List<Shortcut>) {
         items = newItems
+        orderedItems = newItems.toMutableList()
         notifyDataSetChanged()
     }
 
@@ -65,23 +70,27 @@ class ShortcutListAdapter(private var removeCallback: (String) -> Unit, private 
         onItemDismiss(index)
     }
 
+    override fun onItemMove(fromPosition: Int, toPosition: Int) {
+        val removed = orderedItems.removeAt(fromPosition)
+        if (toPosition > orderedItems.size) {
+            orderedItems.add(removed)
+        } else {
+            orderedItems.add(toPosition, removed)
+        }
+        notifyItemMoved(fromPosition, toPosition)
+    }
+
     override fun onItemDismiss(position: Int) {
         val item = items[position]
         removeCallback(item.label)
         notifyItemRemoved(position)
     }
 
-    override fun onItemMove(fromPosition: Int, toPosition: Int) {
-        val prev = items[fromPosition]
-        updatePositionCallback(prev.label, toPosition)
-        notifyItemMoved(fromPosition, toPosition)
-    }
-
     override fun getItemCount(): Int {
         return items.size
     }
 
-    class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+    class ItemViewHolder(itemView: View, var updateShortcutPositions: () -> Unit) : RecyclerView.ViewHolder(itemView),
         ShortcutTouchHelperViewHolder {
         val label: TextView = itemView.findViewById(R.id.label) as TextView
         val text: TextView = itemView.findViewById(R.id.text) as TextView
@@ -96,8 +105,8 @@ class ShortcutListAdapter(private var removeCallback: (String) -> Unit, private 
         override fun onItemClear() {
             if (itemView is MaterialCardView) {
                 itemView.isDragged = false
+                updateShortcutPositions()
             }
         }
-
     }
 }
