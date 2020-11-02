@@ -25,7 +25,7 @@ interface ShortcutDialogListener {
 }
 
 open class ModifyShortcutDialogFragment: ShortcutDialogFragment() {
-    var keepCursorValueAtMax = true // keep the cursor value at the max it can be
+    open var keepCursorValueAtMax = true // keep the cursor value at the max it can be
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
