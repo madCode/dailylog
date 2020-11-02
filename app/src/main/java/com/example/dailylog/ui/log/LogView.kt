@@ -91,7 +91,7 @@ class LogView(private val viewModel: LogViewModel, private val goToSettings: () 
         val adapter = ShortcutTrayAdapter(view!!.todayLog)
         shortcutsLiveData.observe(viewLifecycleOwner, Observer{ shortcuts ->
             // Update the cached copy of the words in the adapter.
-            shortcuts.let { adapter.itemList = it; viewModel.updateShortcutList(it); }
+            shortcuts.let { adapter.itemList = it; }
         })
         tray.adapter = adapter
     }

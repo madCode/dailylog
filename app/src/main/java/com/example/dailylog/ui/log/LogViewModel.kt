@@ -54,8 +54,4 @@ class LogViewModel(var repository: Repository) : ViewModel() {
     fun save(text: String) {
         repository.saveToFile(text)
     }
-
-    fun updateShortcutList(it: List<Shortcut>?) {
-        repository.updateShortcutList(it)
-    }
 }
