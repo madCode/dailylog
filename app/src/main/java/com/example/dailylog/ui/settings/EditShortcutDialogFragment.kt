@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.create_new_shortcut.view.*
 
 
 class EditShortcutDialogFragment(private var shortcut: Shortcut) : ModifyShortcutDialogFragment() {
+    override var keepCursorValueAtMax = false
 
     interface EditShortcutDialogListener {
         fun onFinishEditShortcutDialog(label: String, text: String, cursor: Int, position: Int)
