@@ -24,13 +24,6 @@ class SettingsViewModel(application: Application, private var repository: Reposi
 
     var dateTimeFormat = repository.getDateTimeFormat()
 
-    fun updateShortcutPositionCallback(label: String, pos: Int) = viewModelScope.launch(Dispatchers.IO) {
-        repository.updateShortcutPosition(
-            label,
-            pos
-        )
-    }
-
     fun removeCallback(label: String) = viewModelScope.launch(Dispatchers.IO) {
         repository.removeShortcut(label)
     }
@@ -91,5 +84,9 @@ class SettingsViewModel(application: Application, private var repository: Reposi
 
     fun labelIsUnique(label: String): Boolean {
         return repository.labelIsUnique(label)
+    }
+
+    fun updateShortcutPositions(shortcuts: List<Shortcut>) = viewModelScope.launch(Dispatchers.IO) {
+        repository.updateShortcutPositions(shortcuts)
     }
 }

@@ -48,10 +48,9 @@ class SettingsView(private val viewModel: SettingsViewModel) : Fragment(),
         context?.theme?.resolveAttribute(R.attr.colorAccent, value, true)
         adapter = ShortcutListAdapter(
             removeCallback = { label -> viewModel.removeCallback(label) },
-            updatePositionCallback = { label, pos ->
-                viewModel.updateShortcutPositionCallback(
-                    label,
-                    pos
+            updateShortcutPositions = { shortcuts ->
+                viewModel.updateShortcutPositions(
+                    shortcuts
                 )
             },
             editCallback = { shortcut ->
