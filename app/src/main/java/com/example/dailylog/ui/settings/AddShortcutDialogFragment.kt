@@ -28,18 +28,27 @@ class AddShortcutDialogFragment : ModifyShortcutDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.btnSaveShortcut.setOnClickListener {
-            val label = view.labelInput
-            val text = view.textInput
-            val cursor = view.cursorSlider
-            if (isValid(view)) {
-                val listener: AddShortcutDialogListener = targetFragment as AddShortcutDialogListener
-                listener.onFinishAddShortcutDialog(
-                    label.text.toString(),
-                    text.text.toString(),
-                    cursor.value.toInt()
-                )
-                dismiss()
-            }
+            numLabelsBeingValidated = 0
+            validateView(view)
+            submit()
+        }
+    }
+
+    override fun submit() {
+        if (view == null) {
+            return
+        }
+        val label = view!!.labelInput
+        val text = view!!.textInput
+        val cursor = view!!.cursorSlider
+        if (canSubmit()) {
+            val listener: AddShortcutDialogListener = targetFragment as AddShortcutDialogListener
+            listener.onFinishAddShortcutDialog(
+                label.text.toString(),
+                text.text.toString(),
+                cursor.value.toInt()
+            )
+            dismiss()
         }
     }
 }

@@ -62,7 +62,6 @@ class SettingsView(private val viewModel: SettingsViewModel) : Fragment(),
             // Update the cached copy of the words in the adapter.
             shortcuts.let {
                 adapter.updateItems(it)
-                viewModel.updateShortcutList(it)
                 renderShortcutInstructions()
             }
         })
@@ -179,16 +178,17 @@ class SettingsView(private val viewModel: SettingsViewModel) : Fragment(),
         viewModel.bulkAddShortcuts(info)
     }
 
-    override fun onFinishEditShortcutDialog(label: String, text: String, cursor: Int) {
+    override fun onFinishEditShortcutDialog(label: String, text: String, cursor: Int, position: Int) {
         viewModel.updateShortcut(
             label,
             text,
-            cursor
+            cursor,
+            position
         )
     }
 
-    override fun labelIsUnique(label: String): Boolean {
-        return viewModel.labelIsUnique(label)
+    override fun labelExists(label: String): LiveData<Boolean> {
+        return viewModel.labelExists(label)
     }
 
 }

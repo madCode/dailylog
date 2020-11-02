@@ -27,4 +27,10 @@ interface ShortcutDao {
 
     @Query("DELETE FROM shortcut WHERE label = :label")
     suspend fun deleteByLabel(label: String)
+
+    @Query("SELECT EXISTS(SELECT * FROM shortcut WHERE label = :label)")
+    fun labelExists(label: String): LiveData<Boolean>
+
+    @Query("SELECT EXISTS(SELECT * FROM shortcut WHERE label = :label)")
+    suspend fun labelExistsSuspend(label: String): Boolean
 }
