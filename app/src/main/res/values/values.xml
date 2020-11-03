@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="SecondarySlider" parent="@style/Widget.MaterialComponents.Slider">
+        <item name="haloColor">@color/secondary_material_slider_halo_color</item>
+        <item name="thumbColor">@color/secondary_material_slider_thumb_color</item>
+        <item name="tickColorActive">@color/secondary_material_slider_active_tick_marks_color</item>
+        <item name="tickColorInactive">@color/secondary_material_slider_inactive_tick_marks_color
+        </item>
+        <item name="trackColorActive">@color/secondary_material_slider_active_track_color</item>
+        <item name="trackColorInactive">@color/secondary_material_slider_inactive_track_color</item>
+        <item name="labelStyle">@style/SecondaryTooltip</item>
+    </style>
+
+    <style name="SecondaryTooltip" parent="Widget.MaterialComponents.Tooltip">
+        <item name="android:textAppearance">@style/SecondaryTooltipText</item>
+    </style>
+
+    <style name="SecondaryTooltipText" parent="TextAppearance.MaterialComponents.Tooltip">
+        <item name="android:textColor">?attr/colorBackgroundFloating</item>
+    </style>
+
+    <style name="SecondaryTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="endIconTint">@color/secondary_mtrl_outlined_icon_tint</item>
+        <item name="startIconTint">@color/secondary_mtrl_outlined_icon_tint</item>
+        <item name="boxStrokeColor">@color/secondary_mtrl_outlined_stroke_color</item>
+        <item name="hintTextColor">?attr/colorSecondary</item>
+        <item name="materialThemeOverlay">@style/SecondaryCursor</item>
+    </style>
+    <style name="SecondaryCursor" parent="ThemeOverlay.MaterialComponents.TextInputEditText.OutlinedBox">
+        <item name="colorControlActivated">?attr/colorSecondary</item>
+    </style>
+    <style name="SecondaryButton" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">?attr/colorSecondary</item>
+        <item name="android:textColor">?attr/colorOnSecondary</item>
+    </style>
+
+    <style name="SecondaryTextButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">?attr/colorSecondary</item>
+    </style>
+
+    <style name="TextHeadline" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="TextCaption" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">20sp</item>
+    </style>
+</resources>

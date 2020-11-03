@@ -1,0 +1,21 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="colorPrimary">#BEE3DB</item>
+        <item name="colorOnPrimary">#000000</item>
+        <item name="colorPrimaryDark">#BEE3DB</item>
+        <item name="colorPrimaryVariant">#BEE3DB</item>
+        <item name="colorSecondary">#F4C09C</item>
+        <item name="colorAccent">#F8A46B</item>
+        <item name="colorSecondaryVariant">#FFD6BA</item>
+
+        <!--        <item name="colorPrimary">#83C5BE</item>-->
+        <!--        <item name="colorOnPrimary">#000000</item>-->
+        <!--        <item name="colorPrimaryDark">#83C5BE</item>-->
+        <!--        <item name="colorPrimaryVariant">#006D77</item>-->
+        <!--        <item name="colorSecondary">#CD7D96</item>-->
+        <!--        <item name="colorAccent">#B5647D</item>-->
+        <!--        <item name="colorSecondaryVariant">#DDAABA</item>-->
+    </style>
+</resources>
