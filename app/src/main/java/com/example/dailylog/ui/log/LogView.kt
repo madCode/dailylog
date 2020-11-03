@@ -11,7 +11,8 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.dailylog.R
 import kotlinx.android.synthetic.main.add_to_log_view.view.*
 
@@ -19,7 +20,10 @@ import kotlinx.android.synthetic.main.add_to_log_view.view.*
 class LogView(private val viewModel: LogViewModel, private val goToSettings: () -> Unit) : Fragment() {
 
     companion object {
-        fun newInstance(viewModel: LogViewModel, goToSettings: () -> Unit) = LogView(viewModel, goToSettings)
+        fun newInstance(viewModel: LogViewModel, goToSettings: () -> Unit) = LogView(
+            viewModel,
+            goToSettings
+        )
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -87,9 +91,10 @@ class LogView(private val viewModel: LogViewModel, private val goToSettings: () 
         }
         val shortcutsLiveData = viewModel.getAllShortcuts()
         val tray = view!!.shortcutTray
-        tray.layoutManager = GridLayoutManager(context, 5)
+        tray.layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.HORIZONTAL)
+        //tray.layoutManager = GridLayoutManager(context, 5)
         val adapter = ShortcutTrayAdapter(view!!.todayLog)
-        shortcutsLiveData.observe(viewLifecycleOwner, Observer{ shortcuts ->
+        shortcutsLiveData.observe(viewLifecycleOwner, Observer { shortcuts ->
             // Update the cached copy of the words in the adapter.
             shortcuts.let { adapter.itemList = it; }
         })
