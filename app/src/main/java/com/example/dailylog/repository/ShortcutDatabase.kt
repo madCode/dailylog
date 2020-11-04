@@ -1,11 +1,15 @@
 package com.example.dailylog.repository
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [Shortcut::class], version = 3, exportSchema = false)
+
+@Database(entities = [Shortcut::class], version = 4, exportSchema = true)
 abstract class ShortcutDatabase : RoomDatabase() {
     abstract fun shortcutDao(): ShortcutDao
 
@@ -15,6 +19,24 @@ abstract class ShortcutDatabase : RoomDatabase() {
         // same time.
         @Volatile
         private var INSTANCE: ShortcutDatabase? = null
+
+        /**
+         * Migrate from:
+         * version 3 - no shortcut "type"
+         * to
+         * version 4 - type column added to shortcut table
+         */
+        @VisibleForTesting
+        val MIGRATION_3_4: Migration = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Shout out to Google for not supporting the column rename SQL command yet
+                database.execSQL("ALTER TABLE Shortcut ADD COLUMN type STRING DEFAULT 'TEXT';")
+                database.execSQL("CREATE TABLE shortcut_tmp(label TEXT NOT NULL, value TEXT NOT NULL, cursorIndex INTEGER NOT NULL, type TEXT NOT NULL DEFAULT 'TEXT', position INTEGER NOT NULL, PRIMARY KEY(label));")
+                database.execSQL("INSERT INTO shortcut_tmp(label, value, cursorIndex, type, position) SELECT label, text, cursorIndex, type, position FROM Shortcut;")
+                database.execSQL("DROP TABLE Shortcut;")
+                database.execSQL("ALTER TABLE shortcut_tmp RENAME TO Shortcut;")
+            }
+        }
 
         fun getDatabase(context: Context): ShortcutDatabase {
             val tempInstance = INSTANCE
@@ -34,7 +56,7 @@ abstract class ShortcutDatabase : RoomDatabase() {
                         context,
                         ShortcutDatabase::class.java,
                         "shortcut_database"
-                    ).build()
+                    ).addMigrations(MIGRATION_3_4).build()
                     INSTANCE = instance
                     return instance
                 }
