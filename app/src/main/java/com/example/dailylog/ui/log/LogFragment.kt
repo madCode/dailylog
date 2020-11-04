@@ -17,10 +17,10 @@ import com.example.dailylog.R
 import kotlinx.android.synthetic.main.add_to_log_view.view.*
 
 
-class LogView(private val viewModel: LogViewModel, private val goToSettings: () -> Unit) : Fragment() {
+class LogFragment(private val viewModel: LogViewModel, private val goToSettings: () -> Unit) : Fragment() {
 
     companion object {
-        fun newInstance(viewModel: LogViewModel, goToSettings: () -> Unit) = LogView(
+        fun newInstance(viewModel: LogViewModel, goToSettings: () -> Unit) = LogFragment(
             viewModel,
             goToSettings
         )

@@ -5,39 +5,51 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.example.dailylog.repository.Repository
 import com.example.dailylog.ui.permissions.PermissionChecker
-import com.example.dailylog.ui.log.LogView
+import com.example.dailylog.ui.log.LogFragment
 import com.example.dailylog.ui.log.LogViewModel
-import com.example.dailylog.ui.settings.SettingsView
+import com.example.dailylog.ui.settings.SettingsFragment
 import com.example.dailylog.ui.settings.SettingsViewModel
 import com.example.dailylog.ui.settings.SettingsViewModelFactory
+import com.example.dailylog.ui.welcome.WelcomeFragment
+import com.example.dailylog.ui.welcome.WelcomeViewModel
 import com.example.dailylog.utils.DetermineBuild
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var logViewModel: LogViewModel
-    lateinit var settingsViewModel: SettingsViewModel
+    lateinit var repository: Repository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
-        val repository = Repository(applicationContext, PermissionChecker(this))
-        logViewModel = LogViewModel(repository)
-        settingsViewModel = ViewModelProvider(this, SettingsViewModelFactory(application, repository, DetermineBuild)).get(
-            SettingsViewModel::class.java)
+        repository = Repository(applicationContext, PermissionChecker(this))
         if (savedInstanceState == null) {
-            openLog()
+            if (repository.userHasSelectedFile()) {
+                openWelcome()
+            } else {
+                openLog()
+            }
         }
     }
 
-    private fun openLog() {
+    private fun openWelcome() {
+        val welcomeViewModel = WelcomeViewModel(repository) { openLog() }
         supportFragmentManager.beginTransaction()
-            .replace(R.id.container, LogView.newInstance(logViewModel) { openSettings() })
+            .replace(R.id.container, WelcomeFragment.newInstance(welcomeViewModel))
+            .commitNow()
+    }
+
+    private fun openLog() {
+        val logViewModel = LogViewModel(repository)
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.container, LogFragment.newInstance(logViewModel) { openSettings() })
             .commitNow()
     }
 
     private fun openSettings() {
+        val settingsViewModel = ViewModelProvider(this, SettingsViewModelFactory(application, repository, DetermineBuild)).get(
+            SettingsViewModel::class.java)
         supportFragmentManager.beginTransaction()
-            .replace(R.id.container, SettingsView.newInstance(settingsViewModel))
+            .replace(R.id.container, SettingsFragment.newInstance(settingsViewModel))
             .addToBackStack(null)
             .commit()
     }
