@@ -22,7 +22,7 @@ import com.example.dailylog.repository.Constants
 import com.example.dailylog.repository.Shortcut
 import kotlinx.android.synthetic.main.settings_view.view.*
 
-class SettingsView(private val viewModel: SettingsViewModel) : Fragment(),
+class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
     AddShortcutDialogFragment.AddShortcutDialogListener,
     BulkAddShortcutsDialogFragment.BulkAddListener,
     EditShortcutDialogFragment.EditShortcutDialogListener,
@@ -32,7 +32,7 @@ class SettingsView(private val viewModel: SettingsViewModel) : Fragment(),
     private lateinit var adapter: ShortcutListAdapter
 
     companion object {
-        fun newInstance(viewModel: SettingsViewModel) = SettingsView(viewModel)
+        fun newInstance(viewModel: SettingsViewModel) = SettingsFragment(viewModel)
     }
 
     override fun onCreateView(
@@ -123,9 +123,7 @@ class SettingsView(private val viewModel: SettingsViewModel) : Fragment(),
             val intent =
                 Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                     addCategory(Intent.CATEGORY_OPENABLE)
-                    type = "*/*"
-                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    type = "text/*"
                 }
             startActivityForResult(Intent.createChooser(intent, "Select a file"), 111)
         }

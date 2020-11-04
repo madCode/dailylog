@@ -16,15 +16,10 @@ interface FileRepositoryInterface {
 
     fun initializeFilename() {
         filename = retrieveFilename()
-        if (filename == Constants.FILENAME_DEFAULT) {
-            val dir = context.getDir("log_files", Context.MODE_PRIVATE)
-            val file = File(dir, filename)
-            file.createNewFile()
-            val fileUri = file.toURI().toString()
-            storeFilename(fileUri)
-            filename = fileUri
-            saveToFile("")
-        }
+    }
+
+    fun userHasSelectedFile(): Boolean {
+        return filename == Constants.NO_FILE_SELECTED
     }
 
     fun retrieveFilename(): String {
@@ -33,8 +28,8 @@ interface FileRepositoryInterface {
                 context.getString(R.string.preference_file_key),
                 Context.MODE_PRIVATE
             )
-        return preferences.getString(Constants.FILENAME_PREF_KEY, Constants.FILENAME_DEFAULT)
-            ?: Constants.FILENAME_DEFAULT
+        return preferences.getString(Constants.FILENAME_PREF_KEY, Constants.NO_FILE_SELECTED)
+            ?: Constants.NO_FILE_SELECTED
     }
 
     fun storeFilename(filename: String) {

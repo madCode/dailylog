@@ -41,4 +41,7 @@
     <string name="bulk_add_shortcuts">bulk add</string>
     <string name="add_a_shortcut">Add a shortcut. Long press for bulk add screen.</string>
     <string name="saving">saving...</string>
+    <string name="welcome">Welcome!</string>
+    <string name="or">or</string>
+    <string name="create_a_file">Create file</string>
 </resources>
