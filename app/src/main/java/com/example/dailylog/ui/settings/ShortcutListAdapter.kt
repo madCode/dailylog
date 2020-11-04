@@ -60,7 +60,7 @@ class ShortcutListAdapter(private var removeCallback: (String) -> Unit, private 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val shortcut: Shortcut = items[position]
         holder.label.text = shortcut.label
-        holder.text.text = getText(shortcut.text, shortcut.cursorIndex)
+        holder.text.text = getText(shortcut.value, shortcut.cursorIndex)
         holder.removeButton.setOnClickListener { onDelete(shortcut) }
         holder.itemView.setOnClickListener { editCallback(shortcut) }
     }

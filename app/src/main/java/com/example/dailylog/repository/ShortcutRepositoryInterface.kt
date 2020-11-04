@@ -1,7 +1,6 @@
 package com.example.dailylog.repository
 
 import androidx.lifecycle.LiveData
-import com.example.dailylog.BuildConfig
 
 interface ShortcutRepositoryInterface {
     val shortcutDao: ShortcutDao
@@ -14,7 +13,7 @@ interface ShortcutRepositoryInterface {
     }
 
     private fun createShortcut(label: String, text: String, cursorIndex: Int): Shortcut {
-        return  Shortcut(label = label, text = text, cursorIndex = cursorIndex, position = nextShortcutPosition())
+        return  Shortcut(label = label, value = text, cursorIndex = cursorIndex, position = nextShortcutPosition(), type=ShortcutType.TEXT)
     }
 
     private suspend fun deleteShortcutFromDB(label: String): Boolean {
@@ -27,7 +26,7 @@ interface ShortcutRepositoryInterface {
     }
 
     suspend fun updateShortcut(label: String, text: String, cursorIndex: Int, position: Int): Boolean {
-        val shortcut = Shortcut(label = label, text = text, cursorIndex = cursorIndex, position = position)
+        val shortcut = Shortcut(label = label, value = text, cursorIndex = cursorIndex, position = position, type=ShortcutType.TEXT)
         shortcutDao.updateAll(shortcut)
         return true
     }
@@ -51,9 +50,10 @@ interface ShortcutRepositoryInterface {
                     results.add(
                         Shortcut(
                             label = label,
-                            text = text,
+                            value = text,
                             cursorIndex = cursorIndex,
-                            position = nextShortcutPosition() + index
+                            position = nextShortcutPosition() + index,
+                            type = ShortcutType.TEXT
                         )
                     )
                 }

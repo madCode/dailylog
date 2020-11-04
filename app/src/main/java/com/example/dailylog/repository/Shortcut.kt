@@ -3,12 +3,17 @@ package com.example.dailylog.repository
 import androidx.lifecycle.LiveData
 import androidx.room.*
 
+object ShortcutType {
+    const val TEXT = "TEXT"
+}
+
 @Entity
 data class Shortcut(
     @PrimaryKey val label: String,
-    @ColumnInfo(name = "text") val text: String,
+    @ColumnInfo(name = "value") val value: String,
     @ColumnInfo(name = "cursorIndex") val cursorIndex: Int,
-    @ColumnInfo(name = "position") var position: Int
+    @ColumnInfo(name = "type", defaultValue = ShortcutType.TEXT) var type: String,
+    @ColumnInfo(name = "position") var position: Int,
 )
 
 @Dao
