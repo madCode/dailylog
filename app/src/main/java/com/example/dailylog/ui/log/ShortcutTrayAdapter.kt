@@ -36,7 +36,7 @@ class ShortcutTrayAdapter internal constructor(
 
     // total number of cells
     override fun getItemCount(): Int {
-        return if (itemList.size < 14) itemList.size else 14
+        return itemList.size
     }
 
     // stores and recycles views as they are scrolled off screen
