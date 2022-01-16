@@ -74,7 +74,7 @@
             android:imeOptions="actionDone"
             android:importantForAutofill="no"
             android:inputType="textMultiLine|textCapSentences"
-            android:maxLines="1"
+            android:maxLines="5"
             tools:text="really long text" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -84,7 +84,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingBottom="3dp"
-        app:layout_constraintBottom_toTopOf="@+id/dateTimeCheckbox"
+        app:layout_constraintBottom_toTopOf="@+id/dateTimeGroup"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textInputLayout">
@@ -107,15 +107,22 @@
             android:text="@string/addCursor" />
     </LinearLayout>
 
-    <CheckBox android:id="@+id/dateTimeCheckbox"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/dateTimeGroup"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/isDateTime"
-        android:layout_marginVertical="3dp"
+        android:orientation="vertical"
+        android:paddingBottom="3dp"
         app:layout_constraintBottom_toTopOf="@+id/btnSaveShortcut"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sliderGroup" />
+        app:layout_constraintTop_toBottomOf="@id/sliderGroup">
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/dateTimeCheckbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/isDateTime"/>
+    </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnCancelShortcut"

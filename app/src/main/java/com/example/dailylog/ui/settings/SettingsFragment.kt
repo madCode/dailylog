@@ -78,12 +78,11 @@ class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
             addDialog.setTargetFragment(this, 300)
             addDialog.show(parentFragmentManager, "fragment_add_shortcut")
         }
-        view?.addShortcutButton?.setOnLongClickListener {
+        view?.bulkAddButton?.setOnClickListener {
             val addBulkDialog: BulkAddShortcutsDialogFragment =
                 BulkAddShortcutsDialogFragment.newInstance()
             addBulkDialog.setTargetFragment(this, 300)
             addBulkDialog.show(parentFragmentManager, "fragment_bulk_add")
-            return@setOnLongClickListener true
         }
     }
 

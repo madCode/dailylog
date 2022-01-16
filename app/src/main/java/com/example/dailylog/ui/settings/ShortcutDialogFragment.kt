@@ -39,10 +39,8 @@ open class ModifyShortcutDialogFragment: ShortcutDialogFragment() {
         val textInput = view.textInput
         val cursorSlider = view.cursorSlider
 
-        view.dateTimeCheckbox.setOnClickListener {
-            if (it is CheckBox) {
-                this.isDateTimeType = it.isChecked
-            }
+        view.dateTimeCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            this.isDateTimeType = isChecked
         }
 
         view.labelInput.addTextChangedListener(object : TextWatcher {

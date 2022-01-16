@@ -122,13 +122,27 @@
             app:layout_constraintTop_toBottomOf="@id/shortcutTitle" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/bulkAddButton"
+        app:fabSize="mini"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginVertical="20dp"
+        android:contentDescription="@string/bulk_add_shortcuts"
+        android:src="@drawable/ic_baseline_all_inclusive_24"
+        app:backgroundTint="?attr/colorPrimaryVariant"
+        app:layout_constraintBottom_toTopOf="@id/addShortcutButton"
+        app:layout_constraintStart_toStartOf="@id/addShortcutButton"
+        app:layout_constraintEnd_toEndOf="@id/addShortcutButton" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addShortcutButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:contentDescription="@string/add_a_shortcut"
         android:src="@drawable/ic_add_48"
-        app:backgroundTint="?attr/colorSecondaryVariant"
+        app:backgroundTint="?attr/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
