@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import com.example.dailylog.R
+import com.example.dailylog.repository.ShortcutType
 import kotlinx.android.synthetic.main.bulk_add_shortcuts.view.*
 import kotlinx.android.synthetic.main.create_new_shortcut.view.*
 
@@ -44,15 +45,22 @@ class BulkAddShortcutsDialogFragment : ShortcutDialogFragment()  {
                 val regex = Regex(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)")
                 val splitResults = s.split(regex = regex)
                 val displayIndex = index + 1
-                if (splitResults.size != 3) {
-                    view.bulkInputLayout.error = "Line $displayIndex: need exactly three values"
+                if (splitResults.size != 4) {
+                    view.bulkInputLayout.error = "Line $displayIndex: need exactly four values"
                     valid = false
                     return@forEachIndexed
                 }
-                var (label, text, cursor) = splitResults
+                var (label, text, cursor, type) = splitResults
                 cursor = cursor.trim()
                 text = cleanUpText(text)
                 val validLabel = isLabelValid(label)
+                val validType = ShortcutType.isTypeValid(type)
+                if (validType != null && !validType) {
+                    view.bulkInputLayout.error = "Line $displayIndex: shortcut Type must be one of" +
+                            " the following: ${ShortcutType.validTypes().contentDeepToString()}"
+                    valid = false
+                    return@forEachIndexed
+                }
                 if (validLabel != null && !validLabel) {
                     view.bulkInputLayout.error = "Line $displayIndex: label must be unique and cannot be empty"
                     valid = false
@@ -64,7 +72,8 @@ class BulkAddShortcutsDialogFragment : ShortcutDialogFragment()  {
                     return@forEachIndexed
                 }
                 if (!isCursorValid(cursor, text)) {
-                    view.bulkInputLayout.error = "Line $displayIndex: cursor must be an int. Cursor cannot be less than 0 or greater than the length of text."
+                    view.bulkInputLayout.error = "Line $displayIndex: cursor must be an int. Cursor " +
+                            "cannot be less than 0 or greater than the length of text."
                     valid = false
                     return@forEachIndexed
                 }

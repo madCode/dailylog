@@ -5,6 +5,13 @@ import androidx.room.*
 
 object ShortcutType {
     const val TEXT = "TEXT"
+    const val DATETIME = "DATETIME"
+    fun validTypes(): Array<String> {
+        return arrayOf(TEXT, DATETIME)
+    }
+    fun isTypeValid(type: String): Boolean? {
+        return validTypes().contains(type)
+    }
 }
 
 @Entity

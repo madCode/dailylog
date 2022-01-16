@@ -58,16 +58,16 @@ class SettingsViewModel(application: Application, private var repository: Reposi
         repository.storeFilename(filename)
     }
 
-    fun updateShortcut(label: String, text: String, cursor: Int, position: Int) = viewModelScope.launch(Dispatchers.IO) {
-        repository.updateShortcut(label,text,cursor, position)
+    fun updateShortcut(label: String, text: String, cursor: Int, position: Int, type:String) = viewModelScope.launch(Dispatchers.IO) {
+        repository.updateShortcut(label,text,cursor, position, type)
     }
 
     fun bulkAddShortcuts(shortcutsData: List<List<String>>) = viewModelScope.launch(Dispatchers.IO) {
         repository.bulkAddShortcuts(shortcutsData)
     }
 
-    fun addShortcut(label: String, text: String, cursor: Int) = viewModelScope.launch(Dispatchers.IO) {
-        repository.addShortcut(label, text, cursor)
+    fun addShortcut(label: String, text: String, cursor: Int, type: String) = viewModelScope.launch(Dispatchers.IO) {
+        repository.addShortcut(label, text, cursor, type)
     }
 
     fun getFilename(): String {

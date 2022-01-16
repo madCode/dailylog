@@ -164,11 +164,12 @@ class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
         }
     }
 
-    override fun onFinishAddShortcutDialog(label: String, text: String, cursor: Int) {
+    override fun onFinishAddShortcutDialog(label: String, text: String, cursor: Int, type: String) {
         viewModel.addShortcut(
             label,
             text,
-            cursor
+            cursor,
+            type
         )
     }
 
@@ -176,12 +177,13 @@ class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
         viewModel.bulkAddShortcuts(info)
     }
 
-    override fun onFinishEditShortcutDialog(label: String, text: String, cursor: Int, position: Int) {
+    override fun onFinishEditShortcutDialog(label: String, text: String, cursor: Int, position: Int, type: String) {
         viewModel.updateShortcut(
             label,
             text,
             cursor,
-            position
+            position,
+            type
         )
     }
 

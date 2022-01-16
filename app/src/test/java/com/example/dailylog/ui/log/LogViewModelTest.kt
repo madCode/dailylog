@@ -68,7 +68,7 @@ class LogViewModelTest : TestCase() {
         val repository: Repository = mock(Repository::class.java)
         `when`(repository.getDateTimeFormat()).thenReturn("yyyy")
         val viewModel = LogViewModel(repository)
-        assertEquals("2020", viewModel.getDateString())
+        assertEquals("2022", viewModel.getDateString())
     }
 
     @Test

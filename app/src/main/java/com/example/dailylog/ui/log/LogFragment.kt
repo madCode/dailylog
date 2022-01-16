@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.dailylog.R
+import com.example.dailylog.utils.getDateString
 import kotlinx.android.synthetic.main.add_to_log_view.view.*
 
 

@@ -12,8 +12,8 @@ interface ShortcutRepositoryInterface {
         return true
     }
 
-    private fun createShortcut(label: String, text: String, cursorIndex: Int): Shortcut {
-        return  Shortcut(label = label, value = text, cursorIndex = cursorIndex, position = nextShortcutPosition(), type=ShortcutType.TEXT)
+    private fun createShortcut(label: String, text: String, cursorIndex: Int, type: String): Shortcut {
+        return  Shortcut(label = label, value = text, cursorIndex = cursorIndex, position = nextShortcutPosition(), type=type)
     }
 
     private suspend fun deleteShortcutFromDB(label: String): Boolean {
@@ -25,14 +25,14 @@ interface ShortcutRepositoryInterface {
         shortcutDao.updateAll(*shortcuts.toTypedArray())
     }
 
-    suspend fun updateShortcut(label: String, text: String, cursorIndex: Int, position: Int): Boolean {
-        val shortcut = Shortcut(label = label, value = text, cursorIndex = cursorIndex, position = position, type=ShortcutType.TEXT)
+    suspend fun updateShortcut(label: String, text: String, cursorIndex: Int, position: Int, type: String): Boolean {
+        val shortcut = Shortcut(label = label, value = text, cursorIndex = cursorIndex, position = position, type= type)
         shortcutDao.updateAll(shortcut)
         return true
     }
 
-    suspend fun addShortcut(label: String, text: String, cursorIndex: Int) {
-        val shortcut = createShortcut(label, text, cursorIndex)
+    suspend fun addShortcut(label: String, text: String, cursorIndex: Int, type: String) {
+        val shortcut = createShortcut(label, text, cursorIndex, type)
         if (!shortcutDao.labelExistsSuspend(label) && label.isNotEmpty() && text.isNotEmpty()) {
             saveShortcutToDB(shortcut)
         }
@@ -47,13 +47,14 @@ interface ShortcutRepositoryInterface {
                     val label = list[0]
                     val text = list[1]
                     val cursorIndex = list[2].toInt()
+                    val type = list[3]
                     results.add(
                         Shortcut(
                             label = label,
                             value = text,
                             cursorIndex = cursorIndex,
                             position = nextShortcutPosition() + index,
-                            type = ShortcutType.TEXT
+                            type = type
                         )
                     )
                 }
@@ -76,7 +77,7 @@ interface ShortcutRepositoryInterface {
     }
 
     private fun validateShortcutBulkRow(shortcutInfo: List<String>): Boolean {
-        if (shortcutInfo.size != 3) {
+        if (shortcutInfo.size != 4) {
             throw IllegalArgumentException("Row should contain exactly 3 items.")
         }
         shortcutInfo[2].toInt() // throws error if cannot be converted to int

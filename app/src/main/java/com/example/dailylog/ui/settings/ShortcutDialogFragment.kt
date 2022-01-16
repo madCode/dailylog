@@ -10,9 +10,11 @@ import android.text.style.ForegroundColorSpan
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
+import android.widget.CheckBox
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.LiveData
 import com.example.dailylog.R
+import com.example.dailylog.repository.ShortcutType
 import com.google.android.material.slider.Slider
 import kotlinx.android.synthetic.main.create_new_shortcut.view.*
 import kotlin.properties.Delegates
@@ -36,6 +38,12 @@ open class ModifyShortcutDialogFragment: ShortcutDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         val textInput = view.textInput
         val cursorSlider = view.cursorSlider
+
+        view.dateTimeCheckbox.setOnClickListener {
+            if (it is CheckBox) {
+                this.isDateTimeType = it.isChecked
+            }
+        }
 
         view.labelInput.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
@@ -127,6 +135,7 @@ open class ModifyShortcutDialogFragment: ShortcutDialogFragment() {
 open class ShortcutDialogFragment: DialogFragment() {
     var valid = true
     var numLabelsBeingValidated = 0
+    var isDateTimeType = false
 
     fun getText(text: String, cursorIndex: Int): SpannableStringBuilder {
         if (text.isEmpty()) {

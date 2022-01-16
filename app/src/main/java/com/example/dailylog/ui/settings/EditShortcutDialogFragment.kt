@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.dailylog.R
 import com.example.dailylog.repository.Shortcut
+import com.example.dailylog.repository.ShortcutType
 import kotlinx.android.synthetic.main.create_new_shortcut.view.*
 
 
@@ -13,7 +14,7 @@ class EditShortcutDialogFragment(private var shortcut: Shortcut) : ModifyShortcu
     override var keepCursorValueAtMax = false
 
     interface EditShortcutDialogListener {
-        fun onFinishEditShortcutDialog(label: String, text: String, cursor: Int, position: Int)
+        fun onFinishEditShortcutDialog(label: String, text: String, cursor: Int, position: Int, type: String)
     }
 
     companion object {
@@ -43,6 +44,8 @@ class EditShortcutDialogFragment(private var shortcut: Shortcut) : ModifyShortcu
         updateCursorView(cursorSlider, shortcut.value)
         cursorSlider.value = shortcut.cursorIndex.toFloat()
         textInput.setText(shortcut.value)
+        this.isDateTimeType = shortcut.type == ShortcutType.DATETIME
+        view.dateTimeCheckbox.isChecked = this.isDateTimeType
     }
 
     override fun submit() {
@@ -52,13 +55,19 @@ class EditShortcutDialogFragment(private var shortcut: Shortcut) : ModifyShortcu
         val label = view!!.labelInput
         val text = view!!.textInput
         val cursor = view!!.cursorSlider
+        val type = if (isDateTimeType) {
+            ShortcutType.DATETIME
+        } else {
+            ShortcutType.TEXT
+        }
         if (canSubmit()) {
             val listener: EditShortcutDialogListener = targetFragment as EditShortcutDialogListener
             listener.onFinishEditShortcutDialog(
                 label.text.toString(),
                 text.text.toString(),
                 cursor.value.toInt(),
-                shortcut.position
+                shortcut.position,
+                type
             )
             dismiss()
         }

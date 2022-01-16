@@ -44,4 +44,6 @@
     <string name="welcome">Welcome!</string>
     <string name="or">or</string>
     <string name="create_a_file">Create file</string>
+    <string name="isDateTime">Contains datetime format</string>
+    <string name="dateTimeExplanation"><![CDATA[You can now add timestamps by adding {DATETIME: <date time format>} in your shortcut text. The format will be filled with the current time when the button is pressed.]]></string>
 </resources>
