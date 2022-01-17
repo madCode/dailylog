@@ -19,29 +19,6 @@ class Repository(override val context: Context,
         initializeFilename()
     }
 
-    fun getDateTimeFormat(): String? {
-        val preferences =
-            context.getSharedPreferences(
-                context.getString(R.string.preference_file_key),
-                Context.MODE_PRIVATE
-            )
-        return preferences.getString(
-            Constants.DATE_TIME_PREF_KEY,
-            Constants.DATE_TIME_DEFAULT_FORMAT
-        )
-    }
-
-    fun setDateTimeFormat(format: String) {
-        val preferences =
-            context.getSharedPreferences(
-                context.getString(R.string.preference_file_key),
-                Context.MODE_PRIVATE
-            )
-        val editor = preferences.edit()
-        editor.putString(Constants.DATE_TIME_PREF_KEY, format)
-        editor.apply()
-    }
-
     fun getCursorIndex(): Int {
         val preferences =
             context.getSharedPreferences(

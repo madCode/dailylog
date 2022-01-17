@@ -38,7 +38,8 @@
     <string name="ok">OK</string>
     <string name="no_shortcuts_info">Click on the + button at the bottom of the screen to add a shortcut.</string>
     <string name="bulk_add_shortcuts_instructions">Each row represents one shortcut. Each row should contain three items: shortcut, text, and cursor index.\n\nSample row: four,4,1</string>
-    <string name="bulk_add_shortcuts">bulk add</string>
+    <string name="bulk_add_shortcuts">Import Shortcuts</string>
+    <string name="export_shortcuts">Export Shortcuts</string>
     <string name="add_a_shortcut">Add a shortcut. Long press for bulk add screen.</string>
     <string name="saving">saving...</string>
     <string name="welcome">Welcome!</string>

@@ -77,7 +77,7 @@ class BulkAddShortcutsDialogFragment : ShortcutDialogFragment()  {
                     valid = false
                     return@forEachIndexed
                 }
-                resultLines.add(listOf(label, text, cursor))
+                resultLines.add(listOf(label, text, cursor, type))
             }
             submit()
         }

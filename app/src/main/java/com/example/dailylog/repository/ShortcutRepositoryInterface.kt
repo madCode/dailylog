@@ -78,7 +78,7 @@ interface ShortcutRepositoryInterface {
 
     private fun validateShortcutBulkRow(shortcutInfo: List<String>): Boolean {
         if (shortcutInfo.size != 4) {
-            throw IllegalArgumentException("Row should contain exactly 3 items.")
+            throw IllegalArgumentException("Row should contain exactly 4 items.")
         }
         shortcutInfo[2].toInt() // throws error if cannot be converted to int
         return true

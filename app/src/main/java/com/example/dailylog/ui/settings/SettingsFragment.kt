@@ -1,16 +1,12 @@
 package com.example.dailylog.ui.settings
 
 import android.content.Intent
-import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
-import android.widget.TextView
+import android.view.*
+import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.annotation.MenuRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
@@ -18,7 +14,6 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dailylog.R
-import com.example.dailylog.repository.Constants
 import com.example.dailylog.repository.Shortcut
 import kotlinx.android.synthetic.main.settings_view.view.*
 
@@ -65,11 +60,6 @@ class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
                 renderShortcutInstructions()
             }
         })
-        if (Build.VERSION.SDK_INT >= 26) {
-            renderDateFormatRow()
-        } else {
-           view?.dateFormatRow?.visibility = View.INVISIBLE
-        }
         renderFileNameRow()
         renderShortcutList()
         view?.addShortcutButton?.setOnClickListener {
@@ -78,42 +68,44 @@ class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
             addDialog.setTargetFragment(this, 300)
             addDialog.show(parentFragmentManager, "fragment_add_shortcut")
         }
-        view?.bulkAddButton?.setOnClickListener {
-            val addBulkDialog: BulkAddShortcutsDialogFragment =
-                BulkAddShortcutsDialogFragment.newInstance()
-            addBulkDialog.setTargetFragment(this, 300)
-            addBulkDialog.show(parentFragmentManager, "fragment_bulk_add")
+        view?.addShortcutButton?.setOnLongClickListener {
+            bulkAddShortcuts()
+            return@setOnLongClickListener true
         }
+        view?.shortcutMenuButton?.setOnClickListener { v: View ->
+            showMenu(v, R.menu.shortcut_options_menu)
+        }
+    }
+
+    private fun bulkAddShortcuts() {
+        val addBulkDialog: BulkAddShortcutsDialogFragment =
+            BulkAddShortcutsDialogFragment.newInstance()
+        addBulkDialog.setTargetFragment(this, 300)
+        addBulkDialog.show(parentFragmentManager, "fragment_bulk_add")
+    }
+
+    private fun showMenu(v: View, @MenuRes menuRes: Int) {
+        val popup = PopupMenu(context!!, v)
+        popup.menuInflater.inflate(menuRes, popup.menu)
+
+        popup.setOnMenuItemClickListener { menuItem: MenuItem ->
+            when (menuItem.itemId){
+                R.id.bulkAdd -> bulkAddShortcuts()
+                R.id.exportShortcuts -> Toast.makeText(context!!,"Export Shortcuts feature in progress",Toast.LENGTH_SHORT).show()
+            }
+            return@setOnMenuItemClickListener true
+        }
+        popup.setOnDismissListener {
+            // Respond to popup being dismissed.
+        }
+        // Show the popup menu.
+        popup.show()
     }
 
     private fun onEdit(shortcut: Shortcut) {
         val editDialog: EditShortcutDialogFragment = EditShortcutDialogFragment.newInstance(shortcut)
         editDialog.setTargetFragment(this, 300)
         editDialog.show(parentFragmentManager, "fragment_edit")
-    }
-
-    private fun renderDateFormatRow() {
-        val dateFormatEditText = view?.dateFormat
-        dateFormatEditText?.setText(viewModel.dateTimeFormat, TextView.BufferType.EDITABLE)
-        dateFormatEditText?.hint = context?.resources?.getString(
-            R.string.defaultStringPlaceholder,
-            Constants.DATE_TIME_DEFAULT_FORMAT
-        )
-        dateFormatEditText?.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val saved = viewModel.saveDateTimeFormat(v.text.toString())
-                if (!saved) {
-                    dateFormatEditText.setTextColor(Color.RED)
-                    Toast.makeText(
-                        context,
-                        "Unsupported date format, try something else",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    return@OnEditorActionListener true
-                }
-            }
-            false
-        })
     }
 
     private fun renderFileNameRow() {

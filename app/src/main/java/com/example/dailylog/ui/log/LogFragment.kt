@@ -1,6 +1,5 @@
 package com.example.dailylog.ui.log
 
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +13,6 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.dailylog.R
-import com.example.dailylog.utils.getDateString
 import kotlinx.android.synthetic.main.add_to_log_view.view.*
 
 
@@ -32,22 +30,9 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
         if (view == null || context == null || activity == null) {
             error("view or context or activity is null")
         }
-        val todayLog = view!!.todayLog
 
         view!!.btnSave.setOnClickListener {
             save()
-        }
-
-        if (Build.VERSION.SDK_INT >= 26) {
-            view!!.btnDate.visibility = View.VISIBLE
-            view!!.btnDate.setOnClickListener {
-                val start: Int = todayLog.selectionStart
-                val dateString: String = viewModel.getDateString()
-                todayLog.text?.insert(start, dateString)
-                todayLog.setSelection(start + dateString.length)
-            }
-        } else {
-            view!!.btnDate.visibility = View.GONE
         }
 
         view!!.btnSettings.setOnClickListener {
