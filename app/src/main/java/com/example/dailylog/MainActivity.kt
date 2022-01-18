@@ -1,7 +1,10 @@
 package com.example.dailylog
 
+import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import com.example.dailylog.repository.Repository
 import com.example.dailylog.ui.permissions.PermissionChecker
@@ -46,11 +49,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openSettings() {
-        val settingsViewModel = ViewModelProvider(this, SettingsViewModelFactory(application, repository, DetermineBuild)).get(
+        val settingsViewModel = ViewModelProvider(this, SettingsViewModelFactory(application,
+            repository, DetermineBuild, ::showErrorDialog)).get(
             SettingsViewModel::class.java)
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, SettingsFragment.newInstance(settingsViewModel))
             .addToBackStack(null)
             .commit()
+    }
+
+    fun showErrorDialog(message: String) {
+        runOnUiThread(Runnable {
+            ErrorDialogFragment(message).show(supportFragmentManager, "error")
+        })
     }
 }

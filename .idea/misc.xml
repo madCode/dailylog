@@ -15,10 +15,11 @@
         <entry key="app/src/main/res/layout/settings_view.xml" value="0.45" />
         <entry key="app/src/main/res/layout/shortcut_layout.xml" value="0.24547101449275363" />
         <entry key="app/src/main/res/layout/shortcut_options_menu.xml" value="0.35572916666666665" />
+        <entry key="app/src/main/res/menu/shortcut_options_menu.xml" value="0.35572916666666665" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

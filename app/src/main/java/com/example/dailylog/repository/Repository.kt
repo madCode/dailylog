@@ -1,6 +1,9 @@
 package com.example.dailylog.repository
 
 import android.content.Context
+import android.net.Uri
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import com.example.dailylog.R
 import com.example.dailylog.ui.permissions.PermissionChecker
@@ -48,5 +51,18 @@ class Repository(override val context: Context,
 
     fun labelExists(label: String): LiveData<Boolean> {
         return shortcutDao.labelExists(label)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun exportShortcuts(uri: Uri) {
+        shortcutLiveData.value?.let { exportShortcuts(uri, getExportRows()) }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun importShortcuts(uri: Uri) {
+        val results = importShortcutValuesFromCSV(uri)
+        if (results != null) {
+            bulkAddShortcuts(shortcutInfoList = results)
+        }
     }
 }

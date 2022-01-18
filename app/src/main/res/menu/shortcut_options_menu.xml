@@ -7,4 +7,6 @@
             android:title="@string/bulk_add_shortcuts" />
         <item android:id="@+id/exportShortcuts"
             android:title="@string/export_shortcuts" />
+        <item android:id="@+id/importShortcuts"
+            android:title="@string/import_shortcuts" />
 </menu>

@@ -47,7 +47,7 @@ object ShortcutUtils {
         return "type ${shortcut.type} not found. Value: $rawValue"
     }
 
-    fun getAppliedShortcutCursorIndex(shortcut: Shortcut, calculatedValue: String): Int {
+    fun getAppliedShortcutCursorIndex(shortcut: Shortcut): Int {
         val defaultIndex = shortcut.cursorIndex
         when (shortcut.type) {
             ShortcutType.TEXT -> return defaultIndex

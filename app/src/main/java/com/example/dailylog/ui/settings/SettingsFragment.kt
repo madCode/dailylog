@@ -1,11 +1,12 @@
 package com.example.dailylog.ui.settings
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.DocumentsContract
 import android.util.TypedValue
 import android.view.*
 import android.widget.PopupMenu
-import android.widget.Toast
 import androidx.annotation.MenuRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -14,7 +15,9 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dailylog.R
+import com.example.dailylog.repository.Constants
 import com.example.dailylog.repository.Shortcut
+import com.example.dailylog.utils.DetermineBuild
 import kotlinx.android.synthetic.main.settings_view.view.*
 
 class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
@@ -51,7 +54,7 @@ class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
             editCallback = { shortcut ->
                 onEdit(shortcut)
             },
-            cursorColor = if (value.type == TypedValue.TYPE_INT_COLOR_RGB8 || value.type == TypedValue.TYPE_INT_COLOR_RGB4  || value.type == TypedValue.TYPE_INT_COLOR_ARGB4   || value.type == TypedValue.TYPE_INT_COLOR_ARGB8) value.data else -0x10000
+            cursorColor = if (value.type == TypedValue.TYPE_INT_COLOR_RGB8 || value.type == TypedValue.TYPE_INT_COLOR_RGB4 || value.type == TypedValue.TYPE_INT_COLOR_ARGB4 || value.type == TypedValue.TYPE_INT_COLOR_ARGB8) value.data else -0x10000
         )
         shortcutsLiveData.observe(viewLifecycleOwner, Observer { shortcuts ->
             // Update the cached copy of the words in the adapter.
@@ -64,7 +67,7 @@ class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
         renderShortcutList()
         view?.addShortcutButton?.setOnClickListener {
             val addDialog: AddShortcutDialogFragment =
-                AddShortcutDialogFragment.newInstance()
+                AddShortcutDialogFragment.newInstance(viewModel.createShortcutDialogViewModel())
             addDialog.setTargetFragment(this, 300)
             addDialog.show(parentFragmentManager, "fragment_add_shortcut")
         }
@@ -79,9 +82,37 @@ class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
 
     private fun bulkAddShortcuts() {
         val addBulkDialog: BulkAddShortcutsDialogFragment =
-            BulkAddShortcutsDialogFragment.newInstance()
+            BulkAddShortcutsDialogFragment.newInstance(viewModel.createShortcutDialogViewModel())
         addBulkDialog.setTargetFragment(this, 300)
         addBulkDialog.show(parentFragmentManager, "fragment_bulk_add")
+    }
+
+    private fun selectImportFile() {
+        val intent =
+            Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "text/*"
+            }
+        startActivityForResult(
+            Intent.createChooser(intent, "Select file"),
+            Constants.SELECT_SHORTCUT_FILE_CODE
+        )
+    }
+
+    private fun selectExportFile() {
+        val intent =
+            Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "text/csv"
+                putExtra(Intent.EXTRA_TITLE, "shortcuts.csv")
+            }
+        if (DetermineBuild.isOreoOrGreater()) {
+            intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse("/Documents"));
+        }
+        startActivityForResult(
+            Intent.createChooser(intent, "Create file"),
+            Constants.CREATE_FILE_CODE
+        )
     }
 
     private fun showMenu(v: View, @MenuRes menuRes: Int) {
@@ -89,9 +120,10 @@ class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
         popup.menuInflater.inflate(menuRes, popup.menu)
 
         popup.setOnMenuItemClickListener { menuItem: MenuItem ->
-            when (menuItem.itemId){
+            when (menuItem.itemId) {
                 R.id.bulkAdd -> bulkAddShortcuts()
-                R.id.exportShortcuts -> Toast.makeText(context!!,"Export Shortcuts feature in progress",Toast.LENGTH_SHORT).show()
+                R.id.exportShortcuts -> selectExportFile()
+                R.id.importShortcuts -> selectImportFile()
             }
             return@setOnMenuItemClickListener true
         }
@@ -103,7 +135,8 @@ class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
     }
 
     private fun onEdit(shortcut: Shortcut) {
-        val editDialog: EditShortcutDialogFragment = EditShortcutDialogFragment.newInstance(shortcut)
+        val editDialog: EditShortcutDialogFragment =
+            EditShortcutDialogFragment.newInstance(shortcut, viewModel.createShortcutDialogViewModel())
         editDialog.setTargetFragment(this, 300)
         editDialog.show(parentFragmentManager, "fragment_edit")
     }
@@ -133,7 +166,7 @@ class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 111 && resultCode == AppCompatActivity.RESULT_OK && data != null) {
+        if (requestCode == Constants.SELECT_FILE_CODE && resultCode == AppCompatActivity.RESULT_OK && data != null) {
             val selectedFileUri = data.data;
             if (selectedFileUri != null) {
                 viewModel.saveFilename(selectedFileUri.toString())
@@ -142,6 +175,29 @@ class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
                         Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 contentResolver.takePersistableUriPermission(selectedFileUri, takeFlags)
                 view?.fileName?.text = viewModel.getFilename()
+//                TODO("if we didn't get the permissions we needed, ask for permission or have the user select a different file")
+            }
+        }
+        if ((requestCode == Constants.CREATE_FILE_CODE) && resultCode == AppCompatActivity.RESULT_OK && data != null) {
+            val selectedFileUri = data.data;
+            if (selectedFileUri != null) {
+                viewModel.exportFileUri = selectedFileUri
+                val contentResolver = context!!.contentResolver
+                val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                contentResolver.takePersistableUriPermission(selectedFileUri, takeFlags)
+//                TODO("if we didn't get the permissions we needed, ask for permission or have the user select a different file")
+                viewModel.exportShortcuts(context!!)
+            }
+        }
+        if (requestCode == Constants.SELECT_SHORTCUT_FILE_CODE && resultCode == AppCompatActivity.RESULT_OK && data != null) {
+            val selectedFileUri = data.data;
+            if (selectedFileUri != null) {
+                viewModel.importShortcuts(selectedFileUri)
+                val contentResolver = context!!.contentResolver
+                val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                contentResolver.takePersistableUriPermission(selectedFileUri, takeFlags)
 //                TODO("if we didn't get the permissions we needed, ask for permission or have the user select a different file")
             }
         }
@@ -164,11 +220,17 @@ class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
         )
     }
 
-    override fun onBulkAddShortcuts(info: List<List<String>>) {
+    override fun onBulkAddShortcuts(info: List<Array<String>>) {
         viewModel.bulkAddShortcuts(info)
     }
 
-    override fun onFinishEditShortcutDialog(label: String, text: String, cursor: Int, position: Int, type: String) {
+    override fun onFinishEditShortcutDialog(
+        label: String,
+        text: String,
+        cursor: Int,
+        position: Int,
+        type: String
+    ) {
         viewModel.updateShortcut(
             label,
             text,

@@ -9,14 +9,14 @@ import com.example.dailylog.repository.ShortcutType
 import kotlinx.android.synthetic.main.create_new_shortcut.view.*
 
 
-class AddShortcutDialogFragment : ModifyShortcutDialogFragment() {
+class AddShortcutDialogFragment(viewModel: ShortcutDialogViewModel) : ModifyShortcutDialogFragment(viewModel) {
 
     interface AddShortcutDialogListener {
         fun onFinishAddShortcutDialog(label: String, text: String, cursor: Int, type: String)
     }
 
     companion object {
-        fun newInstance() = AddShortcutDialogFragment()
+        fun newInstance(viewModel: ShortcutDialogViewModel) = AddShortcutDialogFragment(viewModel)
     }
 
     override fun onCreateView(

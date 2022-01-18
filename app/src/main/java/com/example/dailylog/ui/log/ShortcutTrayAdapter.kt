@@ -32,7 +32,7 @@ class ShortcutTrayAdapter internal constructor(
         holder.shortcutChip.setOnClickListener {
             val start: Int = inputView.selectionStart
             val value = ShortcutUtils.getValueOfShortcut(shortcut)
-            val appliedCursorIndex = getAppliedShortcutCursorIndex(shortcut, value)
+            val appliedCursorIndex = getAppliedShortcutCursorIndex(shortcut)
             inputView.text.insert(start, value)
             inputView.setSelection(start + appliedCursorIndex)
         }

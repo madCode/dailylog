@@ -10,15 +10,18 @@ import com.example.dailylog.repository.ShortcutType
 import kotlinx.android.synthetic.main.create_new_shortcut.view.*
 
 
-class EditShortcutDialogFragment(private var shortcut: Shortcut) : ModifyShortcutDialogFragment() {
+class EditShortcutDialogFragment(private var shortcut: Shortcut,
+                                 viewModel: ShortcutDialogViewModel) : ModifyShortcutDialogFragment(viewModel) {
     override var keepCursorValueAtMax = false
+    override var skipUniqueCheck = true
 
     interface EditShortcutDialogListener {
         fun onFinishEditShortcutDialog(label: String, text: String, cursor: Int, position: Int, type: String)
     }
 
     companion object {
-        fun newInstance(shortcut: Shortcut) = EditShortcutDialogFragment(shortcut)
+        fun newInstance(shortcut: Shortcut, viewModel: ShortcutDialogViewModel) =
+            EditShortcutDialogFragment(shortcut, viewModel)
     }
 
     override fun onCreateView(
@@ -71,10 +74,6 @@ class EditShortcutDialogFragment(private var shortcut: Shortcut) : ModifyShortcu
             )
             dismiss()
         }
-    }
-
-    override fun isLabelValid(label: String): Boolean {
-        return label.isNotEmpty()
     }
 
 }

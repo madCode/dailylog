@@ -38,8 +38,9 @@
     <string name="ok">OK</string>
     <string name="no_shortcuts_info">Click on the + button at the bottom of the screen to add a shortcut.</string>
     <string name="bulk_add_shortcuts_instructions">Each row represents one shortcut. Each row should contain three items: shortcut, text, and cursor index.\n\nSample row: four,4,1</string>
-    <string name="bulk_add_shortcuts">Import Shortcuts</string>
+    <string name="bulk_add_shortcuts">Bulk Add Shortcuts</string>
     <string name="export_shortcuts">Export Shortcuts</string>
+    <string name="import_shortcuts">Import Shortcuts From CSV</string>
     <string name="add_a_shortcut">Add a shortcut. Long press for bulk add screen.</string>
     <string name="saving">saving...</string>
     <string name="welcome">Welcome!</string>
@@ -47,4 +48,5 @@
     <string name="create_a_file">Create file</string>
     <string name="isDateTime"><![CDATA[Contains datetime format ({DATETIME: <format>})]]></string>
     <string name="dateTimeExplanation"><![CDATA[Add timestamps using {DATETIME: <datetime format>} in your shortcut text. The current time will be inserted on shortcut selection.]]></string>
+    <string name="errorPerformingActivity">Error performing task</string>
 </resources>

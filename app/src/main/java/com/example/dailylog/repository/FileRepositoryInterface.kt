@@ -2,12 +2,18 @@ package com.example.dailylog.repository
 
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.example.dailylog.R
 import com.example.dailylog.ui.permissions.PermissionChecker
+import com.opencsv.CSVWriter
 import java.io.*
-import java.io.File
 import java.lang.Exception
+import com.opencsv.CSVReader
+
+
+
 
 interface FileRepositoryInterface {
     var filename: String
@@ -91,5 +97,59 @@ interface FileRepositoryInterface {
         }
         Toast.makeText(context, "File write permissions not granted.", Toast.LENGTH_LONG).show()
         return false
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun exportShortcuts(uri: Uri, rows: List<List<String>>): Boolean {
+        if (permissionChecker.doIfExtStoragePermissionGranted()) {
+            return try {
+                val fileDescriptor =
+                    context.contentResolver.openFileDescriptor(uri, "rwt")?.fileDescriptor
+                val fileStream = FileOutputStream(fileDescriptor)
+                val writer = CSVWriter(OutputStreamWriter(fileStream))
+                for (row in rows) {
+                    writer.writeNext(row.toTypedArray());
+                }
+                writer.close();
+                fileStream.close()
+                true
+            } catch (ex: IllegalArgumentException) {
+                Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show()
+                false
+            } catch (ex: Exception) {
+                print(ex.stackTrace)
+                Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show()
+                false
+            }
+        }
+        Toast.makeText(context, "File write permissions not granted.", Toast.LENGTH_LONG).show()
+        return false
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun importShortcutValuesFromCSV(uri: Uri): List<Array<String>>? {
+        var results: List<Array<String>>? = null
+        if (permissionChecker.doIfExtStoragePermissionGranted()) {
+            return try {
+                val fileDescriptor =
+                    context.contentResolver.openFileDescriptor(uri, "r")?.fileDescriptor
+                val fileStream = FileInputStream(fileDescriptor)
+                val reader = CSVReader(InputStreamReader(fileStream))
+                results = reader.readAll()
+                reader.close()
+                fileStream.close()
+                results
+            } catch (ex: IllegalArgumentException) {
+                Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show()
+                null
+            } catch (ex: Exception) {
+                print(ex.stackTrace)
+                Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show()
+                null
+            }
+        }
+        Toast.makeText(context, "File write permissions not granted.", Toast.LENGTH_LONG).show()
+        return results
     }
 }

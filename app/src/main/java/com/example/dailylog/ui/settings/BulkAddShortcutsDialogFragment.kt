@@ -6,19 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import com.example.dailylog.R
+import com.example.dailylog.repository.Repository
 import com.example.dailylog.repository.ShortcutType
 import kotlinx.android.synthetic.main.bulk_add_shortcuts.view.*
 import kotlinx.android.synthetic.main.create_new_shortcut.view.*
 
-class BulkAddShortcutsDialogFragment : ShortcutDialogFragment()  {
+class BulkAddShortcutsDialogFragment(viewModel: ShortcutDialogViewModel) : ShortcutDialogFragment(viewModel)  {
     interface BulkAddListener {
-        fun onBulkAddShortcuts(info: List<List<String>>)
+        fun onBulkAddShortcuts(info: List<Array<String>>)
     }
 
     companion object {
-        fun newInstance() = BulkAddShortcutsDialogFragment()
+        fun newInstance(viewModel: ShortcutDialogViewModel) = BulkAddShortcutsDialogFragment(viewModel)
     }
-    private var resultLines = ArrayList<List<String>>()
+    private var resultLines = ArrayList<Array<String>>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,39 +46,12 @@ class BulkAddShortcutsDialogFragment : ShortcutDialogFragment()  {
                 val regex = Regex(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)")
                 val splitResults = s.split(regex = regex)
                 val displayIndex = index + 1
-                if (splitResults.size != 4) {
-                    view.bulkInputLayout.error = "Line $displayIndex: need exactly four values"
-                    valid = false
-                    return@forEachIndexed
+                try {
+                    viewModel.validateShortcutRow(splitResults.toTypedArray(), displayIndex)
+                } catch(ex: Exception) {
+                    view.bulkInputLayout.error = ex.message
                 }
-                var (label, text, cursor, type) = splitResults
-                cursor = cursor.trim()
-                text = cleanUpText(text)
-                val validLabel = isLabelValid(label)
-                val validType = ShortcutType.isTypeValid(type)
-                if (validType != null && !validType) {
-                    view.bulkInputLayout.error = "Line $displayIndex: shortcut Type must be one of" +
-                            " the following: ${ShortcutType.validTypes().contentDeepToString()}"
-                    valid = false
-                    return@forEachIndexed
-                }
-                if (validLabel != null && !validLabel) {
-                    view.bulkInputLayout.error = "Line $displayIndex: label must be unique and cannot be empty"
-                    valid = false
-                    return@forEachIndexed
-                }
-                if (!isTextValid(text)) {
-                    view.bulkInputLayout.error = "Line $displayIndex: text cannot be empty"
-                    valid = false
-                    return@forEachIndexed
-                }
-                if (!isCursorValid(cursor, text)) {
-                    view.bulkInputLayout.error = "Line $displayIndex: cursor must be an int. Cursor " +
-                            "cannot be less than 0 or greater than the length of text."
-                    valid = false
-                    return@forEachIndexed
-                }
-                resultLines.add(listOf(label, text, cursor, type))
+                resultLines.add(splitResults.toTypedArray())
             }
             submit()
         }
@@ -97,26 +71,6 @@ class BulkAddShortcutsDialogFragment : ShortcutDialogFragment()  {
 
     private fun clearInvalidLabelMessage() {
         view?.bulkInputLayout?.error = null
-    }
-
-    private fun cleanUpText(text: String): String {
-        // If it contains a comma and is surrounded by quotes, remove the quotes
-        val containsComma = text.contains(',')
-        val startsAndEndsWithQuotes = text.startsWith('"') && text.endsWith('"')
-        return if (!containsComma || !startsAndEndsWithQuotes) {
-            text
-        } else {
-            text.substring(1, text.length-2)
-        }
-    }
-
-    private fun isCursorValid(cursor: String, text: String): Boolean {
-        return try {
-            val value = cursor.toInt()
-            value >= 0 && value <= text.length
-        } catch (e: NumberFormatException) {
-            false
-        }
     }
 
     override fun savingIndicator() {

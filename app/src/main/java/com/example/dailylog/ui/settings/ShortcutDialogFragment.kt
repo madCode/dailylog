@@ -10,24 +10,19 @@ import android.text.style.ForegroundColorSpan
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
-import android.widget.CheckBox
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.LiveData
 import com.example.dailylog.R
-import com.example.dailylog.repository.ShortcutType
 import com.google.android.material.slider.Slider
 import kotlinx.android.synthetic.main.create_new_shortcut.view.*
-import kotlin.properties.Delegates
-import kotlin.properties.ReadOnlyProperty
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 interface ShortcutDialogListener {
     fun labelExists(label: String): LiveData<Boolean>
 }
 
-open class ModifyShortcutDialogFragment: ShortcutDialogFragment() {
+open class ModifyShortcutDialogFragment(viewModel: ShortcutDialogViewModel): ShortcutDialogFragment(viewModel) {
     open var keepCursorValueAtMax = true // keep the cursor value at the max it can be
+    open var skipUniqueCheck = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -63,7 +58,7 @@ open class ModifyShortcutDialogFragment: ShortcutDialogFragment() {
                 }
                 updateCursorView(cursorSlider, string)
                 view.previewText.text = getText(string, cursorSlider.value.toInt())
-                if (isTextValid(string)) {
+                if (viewModel.isTextValid(string)) {
                     view.textInputLayout.error = null
                 }
             }
@@ -110,12 +105,12 @@ open class ModifyShortcutDialogFragment: ShortcutDialogFragment() {
         clearInvalidLabelMessage()
         val label = view.labelInput
         val text = view.textInput
-        val isLabelValid = isLabelValid(label.text.toString())
-        if (isLabelValid != null && !isLabelValid) {
+        val isLabelValid = viewModel.isLabelValid(label.text.toString(), skipUniqueCheck)
+        if (!isLabelValid) {
             view.labelInputLayout.error = "Label must be unique and cannot be empty"
             valid = false
         }
-        if (!isTextValid(text.text.toString())) {
+        if (!viewModel.isTextValid(text.text.toString())) {
             view.textInputLayout.error = "Text cannot be empty"
             valid = false
         }
@@ -130,10 +125,14 @@ open class ModifyShortcutDialogFragment: ShortcutDialogFragment() {
     }
 }
 
-open class ShortcutDialogFragment: DialogFragment() {
+open class ShortcutDialogFragment(var viewModel: ShortcutDialogViewModel): DialogFragment() {
     var valid = true
     var numLabelsBeingValidated = 0
     var isDateTimeType = false
+
+    companion object {
+        fun newInstance(viewModel: ShortcutDialogViewModel) = ShortcutDialogFragment(viewModel)
+    }
 
     fun getText(text: String, cursorIndex: Int): SpannableStringBuilder {
         if (text.isEmpty()) {
@@ -157,32 +156,6 @@ open class ShortcutDialogFragment: DialogFragment() {
 
     open fun canSubmit(): Boolean {
         return valid && numLabelsBeingValidated == 0
-    }
-
-    open fun isLabelValid(label: String): Boolean? {
-        numLabelsBeingValidated += 1
-        if (label.isEmpty()) {
-            numLabelsBeingValidated -= 1
-            return false
-        }
-        savingIndicator()
-        val listener: ShortcutDialogListener = targetFragment as ShortcutDialogListener
-        listener.labelExists(label).observe(viewLifecycleOwner){
-            val alreadyExists = it
-            numLabelsBeingValidated -= 1
-            savingIndicator()
-            if (alreadyExists) {
-                alertOnInvalidLabel(label)
-                valid = false
-            } else {
-                submit()
-            }
-        }
-        return null
-    }
-
-    fun isTextValid(text: String): Boolean {
-        return text.isNotEmpty()
     }
 
     open fun alertOnInvalidLabel(label: String) {

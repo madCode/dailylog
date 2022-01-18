@@ -1,6 +1,8 @@
 package com.example.dailylog.repository
 
 import androidx.lifecycle.LiveData
+import com.example.dailylog.ui.settings.ShortcutDialogListener
+import kotlinx.android.synthetic.main.bulk_add_shortcuts.view.*
 
 interface ShortcutRepositoryInterface {
     val shortcutDao: ShortcutDao
@@ -38,30 +40,24 @@ interface ShortcutRepositoryInterface {
         }
     }
 
-    suspend fun bulkAddShortcuts(shortcutInfoList: List<List<String>>): Boolean {
+    suspend fun bulkAddShortcuts(shortcutInfoList: List<Array<String>>): Boolean {
         val results = ArrayList<Shortcut>()
         shortcutInfoList.forEachIndexed {
-                index, list ->
-            try {
-                if (validateShortcutBulkRow(list)) {
-                    val label = list[0]
-                    val text = list[1]
-                    val cursorIndex = list[2].toInt()
-                    val type = list[3]
-                    results.add(
-                        Shortcut(
-                            label = label,
-                            value = text,
-                            cursorIndex = cursorIndex,
-                            position = nextShortcutPosition() + index,
-                            type = type
-                        )
+            index, list ->
+            if (validateShortcutRow(list, index)) {
+                val label = list[0]
+                val text = list[1]
+                val cursorIndex = list[2].toInt()
+                val type = list[3]
+                results.add(
+                    Shortcut(
+                        label = label,
+                        value = text,
+                        cursorIndex = cursorIndex,
+                        position = nextShortcutPosition() + index,
+                        type = type
                     )
-                }
-            } catch (e: java.lang.IllegalArgumentException) {
-                throw java.lang.IllegalArgumentException("row " + index + ": " + e.message)
-            } catch (e: NumberFormatException) {
-                throw java.lang.IllegalArgumentException("row " + index + ": " + e.message)
+                )
             }
         }
         shortcutDao.addAll(*results.toTypedArray())
@@ -76,11 +72,67 @@ interface ShortcutRepositoryInterface {
         }
     }
 
-    private fun validateShortcutBulkRow(shortcutInfo: List<String>): Boolean {
-        if (shortcutInfo.size != 4) {
-            throw IllegalArgumentException("Row should contain exactly 4 items.")
+    fun cleanUpText(text: String): String {
+        // If it contains a comma and is surrounded by quotes, remove the quotes
+        val containsComma = text.contains(',')
+        val startsAndEndsWithQuotes = text.startsWith('"') && text.endsWith('"')
+        return if (!containsComma || !startsAndEndsWithQuotes) {
+            text
+        } else {
+            text.substring(1, text.length-2)
         }
-        shortcutInfo[2].toInt() // throws error if cannot be converted to int
+    }
+
+    fun isCursorValid(cursor: String, text: String): Boolean {
+        return try {
+            val value = cursor.toInt()
+            value >= 0 && value <= text.length
+        } catch (e: NumberFormatException) {
+            false
+        }
+    }
+
+    fun isTextValid(text: String): Boolean {
+        return text.isNotEmpty()
+    }
+
+    fun isLabelValid(label: String, skipUniqueCheck: Boolean = false): Boolean {
+        if (label.isEmpty()) {
+            return false
+        }
+        if (!skipUniqueCheck) {
+            for (shortcut in shortcutLiveData.value!!) {
+                if (shortcut.label == label) {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+
+    fun validateShortcutRow(shortcutInfo: Array<String>, index: Int): Boolean {
+        if (shortcutInfo.size != 4) {
+            throw java.lang.IllegalArgumentException("Line $index: need exactly four values")
+        }
+        var (label, text, cursor, type) = shortcutInfo
+        cursor = cursor.trim()
+        text = cleanUpText(text)
+        val validLabel = isLabelValid(label)
+        val validType = ShortcutType.isTypeValid(type)
+        if (validType != null && !validType) {
+            throw java.lang.IllegalArgumentException("Line $index: shortcut Type must be one of" +
+                    " the following: ${ShortcutType.validTypes().contentDeepToString()}")
+        }
+        if (!validLabel) {
+            throw java.lang.IllegalArgumentException("Line $index: label must be unique and cannot be empty")
+        }
+        if (!isTextValid(text)) {
+            throw java.lang.IllegalArgumentException("Line $index: text cannot be empty")
+        }
+        if (!isCursorValid(cursor, text)) {
+            throw java.lang.IllegalArgumentException("Line $index: cursor must be an int. Cursor " +
+                    "cannot be less than 0 or greater than the length of text.")
+        }
         return true
     }
 
@@ -94,5 +146,23 @@ interface ShortcutRepositoryInterface {
             shortcut.position = index
         }
         saveAllShortcutsToDb(shortcuts)
+    }
+
+    fun getExportRows(): List<List<String>> {
+        val results = arrayListOf<List<String>>()
+        if (shortcutLiveData.value != null && shortcutLiveData.value!!.isNotEmpty()) {
+            val shortcuts = shortcutLiveData.value
+            if (shortcuts != null) {
+                for (shortcut in shortcuts) {
+                    val row = arrayListOf<String>()
+                    row.add(shortcut.label)
+                    row.add(shortcut.value)
+                    row.add(shortcut.cursorIndex.toString())
+                    row.add(shortcut.type)
+                    results.add(row)
+                }
+            }
+        }
+        return results
     }
 }
