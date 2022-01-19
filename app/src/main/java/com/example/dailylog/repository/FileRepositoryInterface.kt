@@ -73,7 +73,7 @@ interface FileRepositoryInterface {
                     .show()
             }
         }
-        Toast.makeText(context, "File read permissions not granted", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "File read permissions not granted.", Toast.LENGTH_LONG).show()
         return ""
     }
 

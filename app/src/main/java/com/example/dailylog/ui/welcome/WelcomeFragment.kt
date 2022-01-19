@@ -31,7 +31,7 @@ class WelcomeFragment(private val viewModel: WelcomeViewModel) : Fragment() {
             Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type = "text/markdown"
-                putExtra("Intent.EXTRA_TITLE", "journal.md")
+                putExtra(Intent.EXTRA_TITLE, "journal.md")
             }
             startActivityForResult(Intent.createChooser(intent, "Create file"), Constants.CREATE_FILE_CODE)
         }
