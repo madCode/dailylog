@@ -26,6 +26,9 @@ Once you've selected or created the file, the app will take you to the log scree
 
 <img alt="Blank typing area as described above." src="/README_screenshots/blank_log_screen.png" width="40%"/>
 
+Type something and hit the save button. You should see a Toast message saying "Saved file." If you get the "Saved file." message but the changes did _not_ persist (aka the file went back to how it was when you opened it), then you likely did not open the file from the Internal Storage section as outlined above. Check out [I can't edit the file I selected! When I edit and hit save, all my edits disappear!
+](#i-cant-edit-the-file-i-selected-when-i-edit-and-hit-save-all-my-edits-disappear) or [Step 1: Select Your File](#step-1-select-your-file) for more.
+
 # Step 3: Create your first shortcut
 If you're using dailyLog, it's likely because you have a format you like to journal in and you need keyboard shortcuts to keep it fast and easy on your phone. Hit the gear icon on the log screen to navigate to the settings page:
 
