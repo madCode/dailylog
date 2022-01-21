@@ -45,7 +45,7 @@ class ShortcutUtilsTest : TestCase() {
             type = ShortcutType.DATETIME
         )
         val result = ShortcutUtils.getValueOfShortcut(shortcut, clock, buildMock)
-        assertEquals("Wed Aug-22-2018 10:00 AM PDT", result)
+        assertEquals("Wed Aug-22-2018 10:00 AM UTC", result)
     }
 
     @Test
@@ -64,7 +64,7 @@ class ShortcutUtilsTest : TestCase() {
             type = ShortcutType.DATETIME
         )
         val dateString = ShortcutUtils.getValueOfShortcut(shortcut, clock, buildMock)
-        assertEquals("Wed Aug-22-2018 10:00 AM PDT", dateString)
+        assertEquals("Wed Aug-22-2018 10:00 AM UTC", dateString)
     }
 
     @Test
