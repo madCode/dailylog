@@ -1,6 +1,5 @@
 package com.example.dailylog.ui.settings
 
-import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.net.Uri
@@ -11,11 +10,10 @@ import com.example.dailylog.repository.Shortcut
 import com.example.dailylog.utils.DetermineBuild
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
 
 class SettingsViewModelFactory(private val application: Application, private var repository: Repository, private var build: DetermineBuild, private var showToastOnActivity: (String) -> Unit): ViewModelProvider.Factory {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return SettingsViewModel(application, repository, build, showToastOnActivity) as T
     }
 
