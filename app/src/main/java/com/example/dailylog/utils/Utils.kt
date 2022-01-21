@@ -15,6 +15,9 @@ object DetermineBuild {
     fun isOreoOrGreater(): Boolean {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
     }
+    fun isROrGreater(): Boolean {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
+    }
 }
 
 object ShortcutUtils {

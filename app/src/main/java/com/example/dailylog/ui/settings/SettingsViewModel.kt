@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 
 class SettingsViewModelFactory(private val application: Application, private var repository: Repository, private var build: DetermineBuild, private var showToastOnActivity: (String) -> Unit): ViewModelProvider.Factory {
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return SettingsViewModel(application, repository, build, showToastOnActivity) as T
     }

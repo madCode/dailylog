@@ -14,7 +14,7 @@ class ErrorDialogFragment(private val message: String): DialogFragment() {
             val builder = AlertDialog.Builder(it)
             builder.apply {
                 setPositiveButton(R.string.ok,
-                    DialogInterface.OnClickListener { dialog, id ->
+                    DialogInterface.OnClickListener { _, _ ->
                         // User clicked OK button
                     })
             }

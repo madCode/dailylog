@@ -1,15 +1,11 @@
 package com.example.dailylog.ui.settings
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
+import androidx.core.view.ViewCompat
 import com.example.dailylog.R
-import com.example.dailylog.repository.Repository
-import com.example.dailylog.repository.ShortcutType
+import com.example.dailylog.utils.DetermineBuild
 import kotlinx.android.synthetic.main.bulk_add_shortcuts.view.*
-import kotlinx.android.synthetic.main.create_new_shortcut.view.*
 
 class BulkAddShortcutsDialogFragment(viewModel: ShortcutDialogViewModel) : ShortcutDialogFragment(viewModel)  {
     interface BulkAddListener {
@@ -29,7 +25,11 @@ class BulkAddShortcutsDialogFragment(viewModel: ShortcutDialogViewModel) : Short
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        if (!DetermineBuild.isROrGreater()) {
+            // We don't seem to need to worry about keeping above
+            // the keyboard in the dialog anyway if we're at API 30.
+            dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        }
         super.onViewCreated(view, savedInstanceState)
 
         view.btnCancelBulkShortcut.setOnClickListener {
