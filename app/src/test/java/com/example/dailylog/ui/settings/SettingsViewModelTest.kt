@@ -3,6 +3,7 @@ package com.example.dailylog.ui.settings
 import android.app.Application
 import com.example.dailylog.repository.Constants
 import com.example.dailylog.repository.Repository
+import com.example.dailylog.repository.Shortcut
 import com.example.dailylog.utils.DetermineBuild
 import junit.framework.TestCase
 import org.junit.Test
@@ -36,50 +37,55 @@ class SettingsViewModelTest : TestCase() {
         verify(repository).storeFilename("hello")
     }
 
-//    @Test
-//    fun `test repository called when updateShortcutCallbackPosition called`() {
-//        init()
-//        `when`(buildMock.isOreoOrGreater()).thenReturn(false)
-//        settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock)
-//        settingsViewModel!!.getFilename()
-//        verify(repository).retrieveFilename()
-//    }
-//
-//    @Test
-//    fun `test repository called when removeCallback called`() {
-//        init()
-//        `when`(buildMock.isOreoOrGreater()).thenReturn(false)
-//        settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock)
-//        settingsViewModel!!.getFilename()
-//        verify(repository).retrieveFilename()
-//    }
-//
-//    @Test
-//    fun `test repository called when updateShortcut called`() {
-//        init()
-//        `when`(buildMock.isOreoOrGreater()).thenReturn(false)
-//        settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock)
-//        settingsViewModel!!.getFilename()
-//        verify(repository).retrieveFilename()
-//    }
+    @Test
+    suspend fun `test repository called when updateShortcutPositions called`() {
+        init()
+        `when`(buildMock.isOreoOrGreater()).thenReturn(false)
+        settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock) { _: String -> }
+        var shortcutList = arrayListOf<Shortcut>(
+            Shortcut(label = "test", value = "test", cursorIndex = 3, type = "TEXT", position = 1),
+            Shortcut(label = "test2", value = "test", cursorIndex = 3, type = "TEXT", position = 2),
+            Shortcut(label = "test3", value = "test", cursorIndex = 3, type = "TEXT", position = 3),
+            Shortcut(label = "test4", value = "test", cursorIndex = 3, type = "TEXT", position = 4))
+        settingsViewModel!!.updateShortcutPositions(shortcutList)
+        verify(repository).updateShortcutPositions(shortcutList)
+    }
 
-//    @Test
-//    fun `test repository called when bulkAddShortcuts called`() {
-//        init()
-//        `when`(buildMock.isOreoOrGreater()).thenReturn(false)
-//        settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock)
-//        settingsViewModel!!.bulkAddShortcuts(listOf(listOf("hello,hello,1")))
-//        verify(repository).bulkAddShortcuts(listOf(listOf("hello,hello,1")))
-//    }
+    @Test
+    suspend fun `test repository called when removeCallback called`() {
+        init()
+        `when`(buildMock.isOreoOrGreater()).thenReturn(false)
+        settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock) { _: String -> }
+        settingsViewModel!!.removeCallback("test")
+        verify(repository).removeShortcut("test")
+    }
 
-//    @Test
-//    fun `test repository called when addShortcut called`() {
-//        init()
-//        `when`(buildMock.isOreoOrGreater()).thenReturn(false)
-//        settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock)
-//        settingsViewModel!!.addShortcut("hello", "hello", 1)
-//        verify(repository).addShortcut("hello", "hello", 1)
-//    }
+    @Test
+    suspend fun `test repository called when updateShortcut called`() {
+        init()
+        `when`(buildMock.isOreoOrGreater()).thenReturn(false)
+        settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock) { _: String -> }
+        settingsViewModel!!.updateShortcut("test","testTExt",0,1,"TEXT")
+        verify(repository).updateShortcut("test","testTExt",0,1,"TEXT")
+    }
+
+    @Test
+    suspend fun `test repository called when bulkAddShortcuts called`() {
+        init()
+        `when`(buildMock.isOreoOrGreater()).thenReturn(false)
+        settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock) { _: String -> }
+        settingsViewModel!!.bulkAddShortcuts(listOf(arrayOf("hello,hello,1,TEXT")))
+        verify(repository).bulkAddShortcuts(listOf(arrayOf("hello,hello,1,TEXT")))
+    }
+
+    @Test
+    suspend fun `test repository called when addShortcut called`() {
+        init()
+        `when`(buildMock.isOreoOrGreater()).thenReturn(false)
+        settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock) { _: String -> }
+        settingsViewModel!!.addShortcut("hello", "hello", 1,"TEXT")
+        verify(repository).addShortcut("hello", "hello", 1,"TEXT")
+    }
 
     @Test
     fun `test repository called when getFilename called`() {
@@ -98,5 +104,4 @@ class SettingsViewModelTest : TestCase() {
         settingsViewModel!!.getAllShortcuts()
         verify(repository).getAllShortcuts()
     }
-
 }
