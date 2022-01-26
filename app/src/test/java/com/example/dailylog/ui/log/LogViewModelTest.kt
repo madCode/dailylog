@@ -23,7 +23,7 @@ class LogViewModelTest : TestCase() {
         val repository: Repository = mock(Repository::class.java)
         val viewModel = LogViewModel(repository)
         viewModel.getLog()
-        verify(repository).readFile()
+        verify(repository).readFile(true)
     }
 
     @Test
@@ -35,10 +35,19 @@ class LogViewModelTest : TestCase() {
     }
 
     @Test
-    fun `test repository called when save called`() {
+    fun `test repository called when force save called`() {
         val repository: Repository = mock(Repository::class.java)
         val viewModel = LogViewModel(repository)
-        viewModel.save("hello")
-        verify(repository).saveToFile("hello")
+        viewModel.forceSave("hello")
+        verify(repository).saveToFile("hello", true)
     }
+
+    @Test
+    fun `test repository called when smart save called`() {
+        val repository: Repository = mock(Repository::class.java)
+        val viewModel = LogViewModel(repository)
+        viewModel.smartSave("hello")
+        verify(repository).saveToFile("hello", false)
+    }
+
 }

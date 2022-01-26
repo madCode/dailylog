@@ -7,11 +7,12 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.example.dailylog.R
 import com.example.dailylog.ui.permissions.PermissionChecker
+import com.opencsv.CSVReader
 import com.opencsv.CSVWriter
 import java.io.*
 import java.lang.Exception
-import com.opencsv.CSVReader
-
+import java.math.BigInteger
+import java.security.MessageDigest
 
 
 
@@ -19,6 +20,7 @@ interface FileRepositoryInterface {
     var filename: String
     val context: Context
     val permissionChecker: PermissionChecker
+    var lastSavedContentsHash: String
 
     fun initializeFilename() {
         filename = retrieveFilename()
@@ -51,7 +53,7 @@ interface FileRepositoryInterface {
         this.filename = filename
     }
 
-    fun readFile(): String {
+    fun readFile(firstTime: Boolean): String {
         if (permissionChecker.doIfExtStoragePermissionGranted()) {
             try {
                 val stringBuilder = StringBuilder()
@@ -67,7 +69,11 @@ interface FileRepositoryInterface {
                     }
                     inputStream.close()
                 }
-                return stringBuilder.toString()
+                val fileData = stringBuilder.toString()
+                if (firstTime) {
+                    updateLastSavedHash(fileData)
+                }
+                return fileData
             } catch (ex: Exception) {
                 Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG)
                     .show()
@@ -77,7 +83,24 @@ interface FileRepositoryInterface {
         return ""
     }
 
-    fun saveToFile(data: String): Boolean {
+    private fun md5(data: String): String {
+        val md = MessageDigest.getInstance("MD5")
+        val hash = BigInteger(1, md.digest(data.toByteArray())).toString(16)
+        return hash
+    }
+
+    private fun updateLastSavedHash(data: String) {
+        lastSavedContentsHash = md5(data)
+    }
+
+    private fun shouldSave(data: String): Boolean {
+        return md5(data) != lastSavedContentsHash
+    }
+
+    fun saveToFile(data: String, overrideSmartSave: Boolean): Boolean {
+        if (!overrideSmartSave && !shouldSave(data)) {
+            return false
+        }
         if (permissionChecker.doIfExtStoragePermissionGranted()) {
             return try {
                 val uri = Uri.parse(filename)
@@ -86,6 +109,7 @@ interface FileRepositoryInterface {
                 val fileStream = FileOutputStream(fileDescriptor)
                 fileStream.write((data).toByteArray())
                 fileStream.close()
+                updateLastSavedHash(data)
                 true
             } catch (ex: IllegalArgumentException) {
                 Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show()

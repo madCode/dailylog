@@ -7,9 +7,10 @@ import com.example.dailylog.repository.Shortcut
 
 class LogViewModel(var repository: Repository) : ViewModel() {
     var cursorIndex = repository.getCursorIndex()
+    var loadedFileForFirstTime = false
 
     fun getLog(): String {
-        return repository.readFile()
+        return repository.readFile(!loadedFileForFirstTime)
     }
 
     fun getAllShortcuts(): LiveData<List<Shortcut>> {
@@ -21,7 +22,11 @@ class LogViewModel(var repository: Repository) : ViewModel() {
         cursorIndex = index
     }
 
-    fun save(text: String) {
-        repository.saveToFile(text)
+    fun smartSave(text: String): Boolean {
+        return repository.saveToFile(text, false)
+    }
+
+    fun forceSave(text:String): Boolean {
+        return repository.saveToFile(text, true)
     }
 }

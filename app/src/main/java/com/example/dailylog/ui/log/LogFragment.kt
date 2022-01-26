@@ -32,11 +32,12 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
         }
 
         view!!.btnSave.setOnClickListener {
-            save()
+            // If the save button is pressed, force-save
+            save(true)
         }
 
         view!!.btnSettings.setOnClickListener {
-            save()
+            save(false)
             goToSettings()
         }
         renderShortcutTray()
@@ -44,7 +45,7 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
 
     override fun onPause() {
         super.onPause()
-        save()
+        save(false)
     }
 
     override fun onResume() {
@@ -57,18 +58,25 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
     }
 
-    private fun save() {
+    private fun save(forceSave: Boolean) {
         if (view == null) {
+            Toast.makeText(context, "Could not save. View not loaded yet.", Toast.LENGTH_SHORT).show()
             return
         }
         val todayLog = view!!.todayLog
         if (todayLog.text != null && todayLog.text!!.isNotEmpty()) {
             viewModel.saveCursorIndex(todayLog.selectionStart)
         }
-        viewModel.save(todayLog.text.toString())
-        todayLog.setText(viewModel.getLog(), TextView.BufferType.EDITABLE)
-        todayLog.setSelection(getCursorIndex(todayLog.text.toString()))
-        Toast.makeText(context, "Saved file", Toast.LENGTH_SHORT).show()
+        val saved = if (forceSave) {
+            viewModel.forceSave(todayLog.text.toString())
+        } else {
+            viewModel.smartSave(todayLog.text.toString())
+        }
+        if (saved) {
+            todayLog.setText(viewModel.getLog(), TextView.BufferType.EDITABLE)
+            todayLog.setSelection(getCursorIndex(todayLog.text.toString()))
+            Toast.makeText(context, "Saved file", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun renderShortcutTray() {
@@ -78,7 +86,6 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
         val shortcutsLiveData = viewModel.getAllShortcuts()
         val tray = view!!.shortcutTray
         tray.layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.HORIZONTAL)
-        //tray.layoutManager = GridLayoutManager(context, 5)
         val adapter = ShortcutTrayAdapter(view!!.todayLog)
         shortcutsLiveData.observe(viewLifecycleOwner, Observer { shortcuts ->
             // Update the cached copy of the words in the adapter.
