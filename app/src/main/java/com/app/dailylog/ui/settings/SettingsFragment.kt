@@ -7,6 +7,7 @@ import android.provider.DocumentsContract
 import android.util.TypedValue
 import android.view.*
 import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.annotation.MenuRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -19,6 +20,7 @@ import com.app.dailylog.repository.Constants
 import com.app.dailylog.repository.Shortcut
 import com.app.dailylog.utils.DetermineBuild
 import kotlinx.android.synthetic.main.settings_view.view.*
+import java.util.Objects.isNull
 
 class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
     AddShortcutDialogFragment.AddShortcutDialogListener,
@@ -187,7 +189,8 @@ class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
                         Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 contentResolver.takePersistableUriPermission(selectedFileUri, takeFlags)
 //                TODO("if we didn't get the permissions we needed, ask for permission or have the user select a different file")
-                viewModel.exportShortcuts(context!!)
+                val error = viewModel.exportShortcuts()
+                if (error != null) Toast.makeText(context!!, error.message, Toast.LENGTH_LONG)
             }
         }
         if (requestCode == Constants.SELECT_SHORTCUT_FILE_CODE && resultCode == AppCompatActivity.RESULT_OK && data != null) {

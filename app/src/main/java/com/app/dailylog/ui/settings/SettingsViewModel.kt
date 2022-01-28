@@ -8,22 +8,34 @@ import androidx.lifecycle.*
 import com.app.dailylog.repository.Repository
 import com.app.dailylog.repository.Shortcut
 import com.app.dailylog.utils.DetermineBuild
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class SettingsViewModelFactory(private val application: Application, private var repository: Repository, private var build: DetermineBuild, private var showToastOnActivity: (String) -> Unit): ViewModelProvider.Factory {
+class SettingsViewModelFactory(private val application: Application,
+                               private var repository: Repository,
+                               private var build: DetermineBuild,
+                               private var showToastOnActivity: (String) -> Unit,
+                               private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+): ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SettingsViewModel(application, repository, build, showToastOnActivity) as T
+        return SettingsViewModel(application, repository, build, showToastOnActivity, dispatcher) as T
     }
 
 }
 
-class SettingsViewModel(application: Application, private var repository: Repository, private var build: DetermineBuild, private var showToastOnActivity: (String) -> Unit) : AndroidViewModel(application) {
+class SettingsViewModel(
+    application: Application,
+    private var repository: Repository,
+    private var build: DetermineBuild,
+    private var showToastOnActivity: (String) -> Unit,
+    private var dispatcher: CoroutineDispatcher
+) : AndroidViewModel(application) {
     var exportFileUri: Uri? = null
 
-    fun removeCallback(label: String) = viewModelScope.launch(Dispatchers.IO) {
+    fun removeCallback(label: String) = viewModelScope.launch(dispatcher) {
         repository.removeShortcut(label)
     }
 
@@ -31,15 +43,15 @@ class SettingsViewModel(application: Application, private var repository: Reposi
         repository.storeFilename(filename)
     }
 
-    fun updateShortcut(label: String, text: String, cursor: Int, position: Int, type:String) = viewModelScope.launch(Dispatchers.IO) {
+    fun updateShortcut(label: String, text: String, cursor: Int, position: Int, type:String) = viewModelScope.launch(dispatcher) {
         repository.updateShortcut(label,text,cursor, position, type)
     }
 
-    fun bulkAddShortcuts(shortcutsData: List<Array<String>>) = viewModelScope.launch(Dispatchers.IO) {
+    fun bulkAddShortcuts(shortcutsData: List<Array<String>>) = viewModelScope.launch(dispatcher) {
         repository.bulkAddShortcuts(shortcutsData)
     }
 
-    fun addShortcut(label: String, text: String, cursor: Int, type: String) = viewModelScope.launch(Dispatchers.IO) {
+    fun addShortcut(label: String, text: String, cursor: Int, type: String) = viewModelScope.launch(dispatcher) {
         repository.addShortcut(label, text, cursor, type)
     }
 
@@ -55,29 +67,27 @@ class SettingsViewModel(application: Application, private var repository: Reposi
         return repository.labelExists(label)
     }
 
-    fun updateShortcutPositions(shortcuts: List<Shortcut>) = viewModelScope.launch(Dispatchers.IO) {
+    fun updateShortcutPositions(shortcuts: List<Shortcut>) = viewModelScope.launch(dispatcher) {
         repository.updateShortcutPositions(shortcuts)
     }
 
-    fun exportShortcuts(context: Context) {
+    fun exportShortcuts(): Error? {
         if (this.exportFileUri == null) {
-            Toast.makeText(context, "No export file selected", Toast.LENGTH_LONG).show()
-            return
+            return Error("No export file selected")
         }
         if (build.isOreoOrGreater()) {
             try {
                 this.exportFileUri?.let { repository.exportShortcuts(it) }
             } catch(ex: Exception) {
-                Toast.makeText(context, "Error: ${ex.printStackTrace()}", Toast.LENGTH_LONG).show()
-                return
+                return Error("Error: ${ex.printStackTrace()}")
             }
         } else {
-            Toast.makeText(context, "Need OS of Oreo or greater to export to CSV", Toast.LENGTH_LONG).show()
-            return
+            return Error("Need OS of Oreo or greater to export to CSV")
         }
+        return null
     }
 
-    fun importShortcuts(uri: Uri) = viewModelScope.launch(Dispatchers.IO) {
+    fun importShortcuts(uri: Uri) = viewModelScope.launch(dispatcher) {
         if (build.isOreoOrGreater()) {
             try {
                 repository.importShortcuts(uri)

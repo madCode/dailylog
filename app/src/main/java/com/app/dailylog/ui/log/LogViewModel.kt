@@ -10,7 +10,9 @@ class LogViewModel(var repository: Repository) : ViewModel() {
     var loadedFileForFirstTime = false
 
     fun getLog(): String {
-        return repository.readFile(!loadedFileForFirstTime)
+        val fileContents = repository.readFile(!loadedFileForFirstTime)
+        loadedFileForFirstTime = true
+        return fileContents;
     }
 
     fun getAllShortcuts(): LiveData<List<Shortcut>> {

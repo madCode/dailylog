@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.dailylog.R
 import com.app.dailylog.repository.Shortcut
 import com.app.dailylog.utils.ShortcutUtils
-import com.app.dailylog.utils.ShortcutUtils.getAppliedShortcutCursorIndex
 
 
 class ShortcutTrayAdapter internal constructor(
@@ -32,7 +31,7 @@ class ShortcutTrayAdapter internal constructor(
         holder.shortcutChip.setOnClickListener {
             val start: Int = inputView.selectionStart
             val value = ShortcutUtils.getValueOfShortcut(shortcut)
-            val appliedCursorIndex = getAppliedShortcutCursorIndex(shortcut)
+            val appliedCursorIndex = ShortcutUtils.getAppliedShortcutCursorIndex(shortcut)
             inputView.text.insert(start, value)
             inputView.setSelection(start + appliedCursorIndex)
         }
