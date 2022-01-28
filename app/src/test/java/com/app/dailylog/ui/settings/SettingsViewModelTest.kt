@@ -122,7 +122,7 @@ class SettingsViewModelTest : TestCase() {
     }
 
     @Test
-    fun `when export called and not right OS version, error`() {
+    fun `when export called and not right OS version error`() {
         `when`(buildMock.isOreoOrGreater()).thenReturn(false)
         val settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock, { _: String -> }, testDispatcher)
         settingsViewModel.exportFileUri = Uri.EMPTY
@@ -131,7 +131,7 @@ class SettingsViewModelTest : TestCase() {
     }
 
     @Test
-    fun `when export called and no export file selected, error`() {
+    fun `when export called and no export file selected error`() {
         `when`(buildMock.isOreoOrGreater()).thenReturn(true)
         val settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock, { _: String -> }, testDispatcher)
         val error = settingsViewModel.exportShortcuts()
@@ -140,7 +140,7 @@ class SettingsViewModelTest : TestCase() {
     }
 
     @Test
-    fun `when export called correctly, call repository`() {
+    fun `when export called correctly call repository`() {
         `when`(buildMock.isOreoOrGreater()).thenReturn(true)
         val settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock, { _: String -> }, testDispatcher)
         settingsViewModel.exportFileUri = Uri.EMPTY

@@ -51,7 +51,7 @@ class LogViewModelTest : TestCase() {
     }
 
     @Test
-    fun `when getLog() called for the first time loadedFileForFirstTime is true Second time loadedFileForFirstTime is false`() {
+    fun `loadedFileForFirstTime goes from true to false after first log load`() {
         val repository: Repository = mock(Repository::class.java)
         val viewModel = LogViewModel(repository)
         viewModel.getLog()
