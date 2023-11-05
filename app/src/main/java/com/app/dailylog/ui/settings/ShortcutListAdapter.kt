@@ -98,13 +98,13 @@ class ShortcutListAdapter(private var removeCallback: (String) -> Unit, private 
 
         override fun onItemSelected() {
             if (itemView is MaterialCardView) {
-                itemView.isDragged = true
+                (itemView as MaterialCardView).isDragged = true
             }
         }
 
         override fun onItemClear() {
             if (itemView is MaterialCardView) {
-                itemView.isDragged = false
+                (itemView as MaterialCardView).isDragged = false
                 updateShortcutPositions()
             }
         }
