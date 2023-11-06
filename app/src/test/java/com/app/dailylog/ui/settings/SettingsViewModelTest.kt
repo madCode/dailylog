@@ -1,10 +1,9 @@
 package com.app.dailylog.ui.settings
 
-import android.app.Application
 import android.net.Uri
-import com.app.dailylog.repository.Repository
+import com.app.dailylog.repository.RepositoryInterface
 import com.app.dailylog.repository.Shortcut
-import com.app.dailylog.utils.DetermineBuild
+import com.app.dailylog.utils.DetermineBuildInterface
 import junit.framework.TestCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,9 +22,8 @@ class SettingsViewModelTest : TestCase() {
 
     private val testDispatcher = TestCoroutineDispatcher()
     private var settingsViewModel: SettingsViewModel? = null
-    private var applicationMock: Application = mock(Application::class.java)
-    private var buildMock: DetermineBuild = mock(DetermineBuild::class.java)
-    private var repository: Repository = mock(Repository::class.java)
+    private var buildMock: DetermineBuildInterface = mock(DetermineBuildInterface::class.java)
+    private var repository: RepositoryInterface = mock(RepositoryInterface::class.java)
 
     private fun finalize() {
         settingsViewModel = null
@@ -36,9 +34,8 @@ class SettingsViewModelTest : TestCase() {
         // Sets the given [dispatcher] as an underlying dispatcher of [Dispatchers.Main].
         // All consecutive usages of [Dispatchers.Main] will use given [dispatcher] under the hood.
         Dispatchers.setMain(testDispatcher)
-        applicationMock = mock(Application::class.java)
-        buildMock = mock(DetermineBuild::class.java)
-        repository = mock(Repository::class.java)
+        buildMock = mock(DetermineBuildInterface::class.java)
+        repository = mock(RepositoryInterface::class.java)
     }
 
     @After
@@ -54,7 +51,7 @@ class SettingsViewModelTest : TestCase() {
     @Test
     fun `test repository called when saveFilename called`() {
         `when`(buildMock.isOreoOrGreater()).thenReturn(false)
-        settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock, { _: String -> }, testDispatcher)
+        settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
         settingsViewModel!!.saveFilename("hello")
         verify(repository).storeFilename("hello")
     }
@@ -62,7 +59,7 @@ class SettingsViewModelTest : TestCase() {
     @Test
     fun `test repository called when updateShortcutPositions called`() = runBlocking {
         `when`(buildMock.isOreoOrGreater()).thenReturn(false)
-        settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock, { _: String -> }, testDispatcher)
+        settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
         val shortcutList = arrayListOf<Shortcut>(
             Shortcut(label = "test", value = "test", cursorIndex = 3, type = "TEXT", position = 1),
             Shortcut(label = "test2", value = "test", cursorIndex = 3, type = "TEXT", position = 2),
@@ -75,7 +72,7 @@ class SettingsViewModelTest : TestCase() {
     @Test
     fun `test repository called when removeCallback called`(): Unit = runBlocking {
         `when`(buildMock.isOreoOrGreater()).thenReturn(false)
-        settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock, { _: String -> }, testDispatcher)
+        settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
         settingsViewModel!!.removeCallback("test")
         verify(repository).removeShortcut("test")
     }
@@ -83,7 +80,7 @@ class SettingsViewModelTest : TestCase() {
     @Test
     fun `test repository called when updateShortcut called`(): Unit = runBlocking {
         `when`(buildMock.isOreoOrGreater()).thenReturn(false)
-        settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock, { _: String -> }, testDispatcher)
+        settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
         settingsViewModel!!.updateShortcut("test","testTExt",0,1,"TEXT")
         verify(repository).updateShortcut("test","testTExt",0,1,"TEXT")
     }
@@ -91,7 +88,7 @@ class SettingsViewModelTest : TestCase() {
     @Test
     fun `test repository called when bulkAddShortcuts called`(): Unit = runBlocking {
         `when`(buildMock.isOreoOrGreater()).thenReturn(false)
-        settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock, { _: String -> }, testDispatcher)
+        settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
         val shortcut = listOf(arrayOf("hello,hello,1,TEXT"))
         settingsViewModel!!.bulkAddShortcuts(shortcut)
         verify(repository).bulkAddShortcuts(shortcut)
@@ -100,7 +97,7 @@ class SettingsViewModelTest : TestCase() {
     @Test
     fun `test repository called when addShortcut called`(): Unit = runBlocking  {
         `when`(buildMock.isOreoOrGreater()).thenReturn(false)
-        settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock, { _: String -> }, testDispatcher)
+        settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
         settingsViewModel!!.addShortcut("hello", "hello", 1,"TEXT")
         verify(repository).addShortcut("hello", "hello", 1,"TEXT")
     }
@@ -108,7 +105,7 @@ class SettingsViewModelTest : TestCase() {
     @Test
     fun `test repository called when getFilename called`() {
         `when`(buildMock.isOreoOrGreater()).thenReturn(false)
-        settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock, { _: String -> }, testDispatcher)
+        settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
         settingsViewModel!!.getFilename()
         verify(repository).retrieveFilename()
     }
@@ -116,7 +113,7 @@ class SettingsViewModelTest : TestCase() {
     @Test
     fun `test repository called when getAllShortcuts called`() {
         `when`(buildMock.isOreoOrGreater()).thenReturn(false)
-        settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock, { _: String -> }, testDispatcher)
+        settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
         settingsViewModel!!.getAllShortcuts()
         verify(repository).getAllShortcuts()
     }
@@ -124,7 +121,7 @@ class SettingsViewModelTest : TestCase() {
     @Test
     fun `when export called and not right OS version error`() {
         `when`(buildMock.isOreoOrGreater()).thenReturn(false)
-        val settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock, { _: String -> }, testDispatcher)
+        val settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
         settingsViewModel.exportFileUri = Uri.EMPTY
         val error = settingsViewModel.exportShortcuts()
         assertEquals("Need OS of Oreo or greater to export to CSV", error?.message)
@@ -133,7 +130,7 @@ class SettingsViewModelTest : TestCase() {
     @Test
     fun `when export called and no export file selected error`() {
         `when`(buildMock.isOreoOrGreater()).thenReturn(true)
-        val settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock, { _: String -> }, testDispatcher)
+        val settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
         val error = settingsViewModel.exportShortcuts()
         assertEquals("No export file selected", error?.message)
 
@@ -142,7 +139,7 @@ class SettingsViewModelTest : TestCase() {
     @Test
     fun `when export called correctly call repository`() {
         `when`(buildMock.isOreoOrGreater()).thenReturn(true)
-        val settingsViewModel = SettingsViewModel(applicationMock, repository, buildMock, { _: String -> }, testDispatcher)
+        val settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
         settingsViewModel.exportFileUri = Uri.EMPTY
         val error = settingsViewModel.exportShortcuts()
         assertNull(error);

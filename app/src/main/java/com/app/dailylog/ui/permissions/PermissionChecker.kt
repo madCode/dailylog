@@ -16,14 +16,15 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.app.dailylog.repository.Constants
 
 
 class PermissionChecker(private var activity: Activity?) {
 
     private fun getPermissionsBasedOnAppVersion(): List<String> {
         return when (Build.VERSION.SDK_INT) {
-            in 0..18 -> listOf("android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.READ_EXTERNAL_STORAGE")
-            in 19..29 -> listOf("android.permission.WRITE_EXTERNAL_STORAGE")
+            in 0..18 -> listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
+            in 19..29 -> listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             else -> emptyList() // No additional permissions required for modern Android versions.
         }
     }
@@ -40,14 +41,10 @@ class PermissionChecker(private var activity: Activity?) {
             }
 
             if (permissionsToRequest.isNotEmpty()) {
-                ActivityCompat.requestPermissions(activity!!, permissionsToRequest.toTypedArray(), CODE_PERMISSION_FILE_READ_WRITE_ACCESS)
+                ActivityCompat.requestPermissions(activity!!, permissionsToRequest.toTypedArray(), Constants.FILE_READ_WRITE_PERMISSION_CODE)
                 return false // Permissions were not granted.
             }
         }
         return true
-    }
-
-    companion object {
-        private const val CODE_PERMISSION_FILE_READ_WRITE_ACCESS = 4000
     }
 }

@@ -9,4 +9,5 @@ object Constants {
     const val CREATE_FILE_CODE = 112
     const val SELECT_FILE_CODE = 111
     const val SELECT_SHORTCUT_FILE_CODE = 113
+    const val FILE_READ_WRITE_PERMISSION_CODE = 4000
 }

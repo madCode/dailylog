@@ -8,10 +8,22 @@ import androidx.lifecycle.LiveData
 import com.app.dailylog.R
 import com.app.dailylog.ui.permissions.PermissionChecker
 
+interface RepositoryInterface: FileRepositoryInterface, ShortcutRepositoryInterface {
+    fun getCursorIndex(): Int
+    fun setCursorIndex(index: Int)
+    fun getAllShortcuts(): LiveData<List<Shortcut>>
+    fun labelExists(label: String): LiveData<Boolean>
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun exportShortcuts(uri: Uri)
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun importShortcuts(uri: Uri)
+}
 
 class Repository(override val context: Context,
                  override val permissionChecker: PermissionChecker
-): FileRepositoryInterface, ShortcutRepositoryInterface {
+): RepositoryInterface {
     override lateinit var filename : String
     override var lastSavedContentsHash: String = ""
     override var shortcutDao = ShortcutDatabase.getDatabase(context).shortcutDao()
@@ -21,7 +33,7 @@ class Repository(override val context: Context,
         initializeFilename()
     }
 
-    fun getCursorIndex(): Int {
+    override fun getCursorIndex(): Int {
         val preferences =
             context.getSharedPreferences(
                 context.getString(R.string.preference_file_key),
@@ -33,7 +45,7 @@ class Repository(override val context: Context,
         )
     }
 
-    fun setCursorIndex(index: Int) {
+    override fun setCursorIndex(index: Int) {
         val preferences =
             context.getSharedPreferences(
                 context.getString(R.string.preference_file_key),
@@ -44,21 +56,21 @@ class Repository(override val context: Context,
         editor.apply()
     }
 
-    fun getAllShortcuts(): LiveData<List<Shortcut>> {
+    override fun getAllShortcuts(): LiveData<List<Shortcut>> {
         return shortcutLiveData
     }
 
-    fun labelExists(label: String): LiveData<Boolean> {
+    override fun labelExists(label: String): LiveData<Boolean> {
         return shortcutDao.labelExists(label)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun exportShortcuts(uri: Uri) {
+    override fun exportShortcuts(uri: Uri) {
         shortcutLiveData.value?.let { exportShortcuts(uri, getExportRows()) }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun importShortcuts(uri: Uri) {
+    override suspend fun importShortcuts(uri: Uri) {
         val results = importShortcutValuesFromCSV(uri)
         if (results != null) {
             bulkAddShortcuts(shortcutInfoList = results)

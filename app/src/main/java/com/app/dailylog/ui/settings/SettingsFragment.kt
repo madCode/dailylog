@@ -8,6 +8,8 @@ import android.util.TypedValue
 import android.view.*
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MenuRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -18,21 +20,26 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.dailylog.R
 import com.app.dailylog.repository.Constants
 import com.app.dailylog.repository.Shortcut
+import com.app.dailylog.ui.permissions.PermissionChecker
 import com.app.dailylog.utils.DetermineBuild
-import kotlinx.android.synthetic.main.settings_view.view.*
-import java.util.Objects.isNull
+import com.app.dailylog.databinding.SettingsViewBinding
 
-class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
+class SettingsFragment(
+    private val viewModel: SettingsViewModel,
+    private val permissionChecker: PermissionChecker
+) : Fragment(),
     AddShortcutDialogFragment.AddShortcutDialogListener,
     BulkAddShortcutsDialogFragment.BulkAddListener,
     EditShortcutDialogFragment.EditShortcutDialogListener,
     ShortcutDialogListener {
 
-    var shortcutsLiveData: LiveData<List<Shortcut>> = viewModel.getAllShortcuts()
+    private var shortcutsLiveData: LiveData<List<Shortcut>> = viewModel.getAllShortcuts()
     private lateinit var adapter: ShortcutListAdapter
+    private lateinit var binding: SettingsViewBinding
 
     companion object {
-        fun newInstance(viewModel: SettingsViewModel) = SettingsFragment(viewModel)
+        fun newInstance(viewModel: SettingsViewModel, permissionChecker: PermissionChecker) =
+            SettingsFragment(viewModel, permissionChecker)
     }
 
     override fun onCreateView(
@@ -42,8 +49,9 @@ class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
         return inflater.inflate(R.layout.settings_view, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = SettingsViewBinding.bind(view)
         val value = TypedValue()
         context?.theme?.resolveAttribute(R.attr.colorAccent, value, true)
         adapter = ShortcutListAdapter(
@@ -67,41 +75,108 @@ class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
         })
         renderFileNameRow()
         renderShortcutList()
-        view?.addShortcutButton?.setOnClickListener {
+        binding.addShortcutButton.setOnClickListener {
             val addDialog: AddShortcutDialogFragment =
-                AddShortcutDialogFragment.newInstance(viewModel.createShortcutDialogViewModel())
-            addDialog.setTargetFragment(this, 300)
+                AddShortcutDialogFragment.newInstance(
+                    viewModel.createShortcutDialogViewModel(),
+                    this
+                )
             addDialog.show(parentFragmentManager, "fragment_add_shortcut")
         }
-        view?.addShortcutButton?.setOnLongClickListener {
+        binding.addShortcutButton.setOnLongClickListener {
             bulkAddShortcuts()
             return@setOnLongClickListener true
         }
-        view?.shortcutMenuButton?.setOnClickListener { v: View ->
+        binding.shortcutMenuButton.setOnClickListener { v: View ->
             showMenu(v, R.menu.shortcut_options_menu)
         }
     }
 
+    private val selectImportFileLauncher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == AppCompatActivity.RESULT_OK && result.data != null) {
+                val selectedFileUri = result.data?.data
+                if (selectedFileUri != null) {
+                    viewModel.saveFilename(selectedFileUri.toString())
+                    val contentResolver = requireContext().contentResolver
+                    val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    contentResolver.takePersistableUriPermission(selectedFileUri, takeFlags)
+                    //                TODO("if we didn't get the permissions we needed, ask for permission or have the user select a different file")
+                    binding.fileName.text = viewModel.getFilename()
+                }
+            }
+        }
+
+    private val selectExportFileLauncher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == AppCompatActivity.RESULT_OK && result.data != null) {
+                val selectedFileUri = result.data?.data
+                if (selectedFileUri != null) {
+                    viewModel.exportFileUri = selectedFileUri
+                    val contentResolver = requireContext().contentResolver
+                    val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    contentResolver.takePersistableUriPermission(selectedFileUri, takeFlags)
+                    //                TODO("if we didn't get the permissions we needed, ask for permission or have the user select a different file")
+                    val error = viewModel.exportShortcuts()
+                    if (error != null) Toast.makeText(
+                        requireContext(),
+                        error.message,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+
+    private val selectShortcutFileLauncher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == AppCompatActivity.RESULT_OK && result.data != null) {
+                val selectedFileUri = result.data?.data
+                if (selectedFileUri != null) {
+                    viewModel.importShortcuts(selectedFileUri)
+                    val contentResolver = requireContext().contentResolver
+                    val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    contentResolver.takePersistableUriPermission(selectedFileUri, takeFlags)
+                    //                TODO("if we didn't get the permissions we needed, ask for permission or have the user select a different file")
+                }
+            }
+        }
+
     private fun bulkAddShortcuts() {
         val addBulkDialog: BulkAddShortcutsDialogFragment =
-            BulkAddShortcutsDialogFragment.newInstance(viewModel.createShortcutDialogViewModel())
-        addBulkDialog.setTargetFragment(this, 300)
+            BulkAddShortcutsDialogFragment.newInstance(
+                viewModel.createShortcutDialogViewModel(),
+                this
+            )
         addBulkDialog.show(parentFragmentManager, "fragment_bulk_add")
     }
 
     private fun selectImportFile() {
+        if (!permissionChecker.requestPermissionsBasedOnAppVersion()) {
+            return
+        }
         val intent =
             Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type = "text/*"
             }
-        startActivityForResult(
-            Intent.createChooser(intent, "Select file"),
-            Constants.SELECT_SHORTCUT_FILE_CODE
+        selectShortcutFileLauncher.launch(
+            Intent.createChooser(intent, "Select file")
         )
     }
 
     private fun selectExportFile() {
+        if (!permissionChecker.requestPermissionsBasedOnAppVersion()) {
+            return
+        }
         val intent =
             Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
@@ -111,14 +186,13 @@ class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
         if (DetermineBuild.isOreoOrGreater()) {
             intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse("/Documents"));
         }
-        startActivityForResult(
+        selectExportFileLauncher.launch(
             Intent.createChooser(intent, "Create file"),
-            Constants.CREATE_FILE_CODE
         )
     }
 
     private fun showMenu(v: View, @MenuRes menuRes: Int) {
-        val popup = PopupMenu(context!!, v)
+        val popup = PopupMenu(requireContext(), v)
         popup.menuInflater.inflate(menuRes, popup.menu)
 
         popup.setOnMenuItemClickListener { menuItem: MenuItem ->
@@ -138,25 +212,28 @@ class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
 
     private fun onEdit(shortcut: Shortcut) {
         val editDialog: EditShortcutDialogFragment =
-            EditShortcutDialogFragment.newInstance(shortcut, viewModel.createShortcutDialogViewModel())
-        editDialog.setTargetFragment(this, 300)
+            EditShortcutDialogFragment.newInstance(
+                shortcut,
+                viewModel.createShortcutDialogViewModel(),
+                this
+            )
         editDialog.show(parentFragmentManager, "fragment_edit")
     }
 
     private fun renderFileNameRow() {
-        view?.fileName?.text = viewModel.getFilename()
-        view?.selectFileButton?.setOnClickListener {
+        binding.fileName.text = viewModel.getFilename()
+        binding.selectFileButton.setOnClickListener {
             val intent =
                 Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                     addCategory(Intent.CATEGORY_OPENABLE)
                     type = "text/*"
                 }
-            startActivityForResult(Intent.createChooser(intent, "Select a file"), 111)
+            selectImportFileLauncher.launch(Intent.createChooser(intent, "Select a file"))
         }
     }
 
     private fun renderShortcutList() {
-        val recyclerView = view!!.recycler_view
+        val recyclerView = binding.recyclerView
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -166,51 +243,11 @@ class SettingsFragment(private val viewModel: SettingsViewModel) : Fragment(),
         shortcutTouchHelper.attachToRecyclerView(recyclerView)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == Constants.SELECT_FILE_CODE && resultCode == AppCompatActivity.RESULT_OK && data != null) {
-            val selectedFileUri = data.data;
-            if (selectedFileUri != null) {
-                viewModel.saveFilename(selectedFileUri.toString())
-                val contentResolver = context!!.contentResolver
-                val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                contentResolver.takePersistableUriPermission(selectedFileUri, takeFlags)
-                view?.fileName?.text = viewModel.getFilename()
-//                TODO("if we didn't get the permissions we needed, ask for permission or have the user select a different file")
-            }
-        }
-        if ((requestCode == Constants.CREATE_FILE_CODE) && resultCode == AppCompatActivity.RESULT_OK && data != null) {
-            val selectedFileUri = data.data;
-            if (selectedFileUri != null) {
-                viewModel.exportFileUri = selectedFileUri
-                val contentResolver = context!!.contentResolver
-                val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                contentResolver.takePersistableUriPermission(selectedFileUri, takeFlags)
-//                TODO("if we didn't get the permissions we needed, ask for permission or have the user select a different file")
-                val error = viewModel.exportShortcuts()
-                if (error != null) Toast.makeText(context!!, error.message, Toast.LENGTH_LONG)
-            }
-        }
-        if (requestCode == Constants.SELECT_SHORTCUT_FILE_CODE && resultCode == AppCompatActivity.RESULT_OK && data != null) {
-            val selectedFileUri = data.data;
-            if (selectedFileUri != null) {
-                viewModel.importShortcuts(selectedFileUri)
-                val contentResolver = context!!.contentResolver
-                val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                contentResolver.takePersistableUriPermission(selectedFileUri, takeFlags)
-//                TODO("if we didn't get the permissions we needed, ask for permission or have the user select a different file")
-            }
-        }
-    }
-
     private fun renderShortcutInstructions() {
         if (adapter.items.isEmpty()) {
-            view!!.noShortcutsMessage.visibility = View.VISIBLE
+            binding.noShortcutsMessage.visibility = View.VISIBLE
         } else {
-            view!!.noShortcutsMessage.visibility = View.GONE
+            binding.noShortcutsMessage.visibility = View.GONE
         }
     }
 

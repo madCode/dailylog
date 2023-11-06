@@ -1,38 +1,35 @@
 package com.app.dailylog.ui.settings
 
+import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
 import android.net.Uri
-import android.widget.Toast
 import androidx.lifecycle.*
-import com.app.dailylog.repository.Repository
+import com.app.dailylog.repository.RepositoryInterface
 import com.app.dailylog.repository.Shortcut
-import com.app.dailylog.utils.DetermineBuild
+import com.app.dailylog.utils.DetermineBuildInterface
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class SettingsViewModelFactory(private val application: Application,
-                               private var repository: Repository,
-                               private var build: DetermineBuild,
+class SettingsViewModelFactory(private var repository: RepositoryInterface,
+                               private var build: DetermineBuildInterface,
                                private var showToastOnActivity: (String) -> Unit,
                                private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ): ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SettingsViewModel(application, repository, build, showToastOnActivity, dispatcher) as T
+        return SettingsViewModel(repository, build, showToastOnActivity, dispatcher) as T
     }
 
 }
 
 class SettingsViewModel(
-    application: Application,
-    private var repository: Repository,
-    private var build: DetermineBuild,
+    private var repository: RepositoryInterface,
+    private var build: DetermineBuildInterface,
     private var showToastOnActivity: (String) -> Unit,
     private var dispatcher: CoroutineDispatcher
-) : AndroidViewModel(application) {
+) : ViewModel() {
     var exportFileUri: Uri? = null
 
     fun removeCallback(label: String) = viewModelScope.launch(dispatcher) {
@@ -71,6 +68,8 @@ class SettingsViewModel(
         repository.updateShortcutPositions(shortcuts)
     }
 
+    // Suppress NewApi lint here because we know we're checking for the right build
+    @SuppressLint("NewApi")
     fun exportShortcuts(): Error? {
         if (this.exportFileUri == null) {
             return Error("No export file selected")
@@ -87,7 +86,8 @@ class SettingsViewModel(
         return null
     }
 
-    fun importShortcuts(uri: Uri) = viewModelScope.launch(dispatcher) {
+    // Suppress NewApi lint here because we know we're checking for the right build
+    @SuppressLint("NewApi")fun importShortcuts(uri: Uri) = viewModelScope.launch(dispatcher) {
         if (build.isOreoOrGreater()) {
             try {
                 repository.importShortcuts(uri)

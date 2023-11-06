@@ -13,7 +13,7 @@ import org.mockito.Mockito
 class ShortcutUtilsTest : TestCase() {
 
     fun testGetValueOfShortcut() {
-        val buildMock = Mockito.mock(DetermineBuild::class.java)
+        val buildMock = Mockito.mock(DetermineBuildInterface::class.java)
         Mockito.`when`(buildMock.isOreoOrGreater()).thenReturn(true)
         val clock = Clock.fixed(
             Instant.parse("2018-08-22T10:03:02Z"),
@@ -32,7 +32,7 @@ class ShortcutUtilsTest : TestCase() {
 
     @Test
     fun `test date properly formatted using default date string`() {
-        val buildMock = Mockito.mock(DetermineBuild::class.java)
+        val buildMock = Mockito.mock(DetermineBuildInterface::class.java)
         Mockito.`when`(buildMock.isOreoOrGreater()).thenReturn(true)
         val clock = Clock.fixed(
             Instant.parse("2018-08-22T10:00:00Z"),
@@ -50,7 +50,7 @@ class ShortcutUtilsTest : TestCase() {
 
     @Test
     fun `test date properly formatted with timezone`() {
-        val buildMock = Mockito.mock(DetermineBuild::class.java)
+        val buildMock = Mockito.mock(DetermineBuildInterface::class.java)
         Mockito.`when`(buildMock.isOreoOrGreater()).thenReturn(true)
         val format = "E LLL-dd-yyyy h:mm a z"
         val clock = Clock.fixed(
@@ -69,7 +69,7 @@ class ShortcutUtilsTest : TestCase() {
 
     @Test
     fun `test print error message when date can't be formatted`() {
-        val buildMock = Mockito.mock(DetermineBuild::class.java)
+        val buildMock = Mockito.mock(DetermineBuildInterface::class.java)
         Mockito.`when`(buildMock.isOreoOrGreater()).thenReturn(true)
         val format = "EEEEEE"
         val clock = Clock.fixed(

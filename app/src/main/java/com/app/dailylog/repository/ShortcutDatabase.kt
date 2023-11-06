@@ -28,13 +28,13 @@ abstract class ShortcutDatabase : RoomDatabase() {
          */
         @VisibleForTesting
         val MIGRATION_3_4: Migration = object : Migration(3, 4) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 // Shout out to Google for not supporting the column rename SQL command yet
-                database.execSQL("ALTER TABLE Shortcut ADD COLUMN type STRING DEFAULT 'TEXT';")
-                database.execSQL("CREATE TABLE shortcut_tmp(label TEXT NOT NULL, value TEXT NOT NULL, cursorIndex INTEGER NOT NULL, type TEXT NOT NULL DEFAULT 'TEXT', position INTEGER NOT NULL, PRIMARY KEY(label));")
-                database.execSQL("INSERT INTO shortcut_tmp(label, value, cursorIndex, type, position) SELECT label, text, cursorIndex, type, position FROM Shortcut;")
-                database.execSQL("DROP TABLE Shortcut;")
-                database.execSQL("ALTER TABLE shortcut_tmp RENAME TO Shortcut;")
+                db.execSQL("ALTER TABLE Shortcut ADD COLUMN type STRING DEFAULT 'TEXT';")
+                db.execSQL("CREATE TABLE shortcut_tmp(label TEXT NOT NULL, value TEXT NOT NULL, cursorIndex INTEGER NOT NULL, type TEXT NOT NULL DEFAULT 'TEXT', position INTEGER NOT NULL, PRIMARY KEY(label));")
+                db.execSQL("INSERT INTO shortcut_tmp(label, value, cursorIndex, type, position) SELECT label, text, cursorIndex, type, position FROM Shortcut;")
+                db.execSQL("DROP TABLE Shortcut;")
+                db.execSQL("ALTER TABLE shortcut_tmp RENAME TO Shortcut;")
             }
         }
 

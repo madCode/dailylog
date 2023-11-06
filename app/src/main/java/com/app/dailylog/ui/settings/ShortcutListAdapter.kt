@@ -21,7 +21,7 @@ class ShortcutListAdapter(private var removeCallback: (String) -> Unit, private 
     ShortcutTouchHelperAdapter {
 
     var items = emptyList<Shortcut>()
-    var orderedItems: MutableList<Shortcut> = ArrayList()
+    private var orderedItems: MutableList<Shortcut> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val view: View =

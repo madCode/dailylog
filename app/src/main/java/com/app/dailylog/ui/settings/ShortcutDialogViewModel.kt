@@ -1,9 +1,9 @@
 package com.app.dailylog.ui.settings
 
 import androidx.lifecycle.ViewModel
-import com.app.dailylog.repository.Repository
+import com.app.dailylog.repository.RepositoryInterface
 
-class ShortcutDialogViewModel(private var repository: Repository) : ViewModel() {
+class ShortcutDialogViewModel(private var repository: RepositoryInterface) : ViewModel() {
 
     fun isLabelValid(label: String, skipUniqueCheck: Boolean = false): Boolean {
         return repository.isLabelValid(label, skipUniqueCheck)
