@@ -1,0 +1,7 @@
+dailyLog is a distraction-free notepad with customizable shortcut buttons.
+
+Tired of trying to log workouts on your phone? Want to build a custom habit tracker? Do you follow a template for every journal entry? dailyLog can help.
+
+dailyLog works by accessing a single text file of your choosing: keeping your data on your device and accessible in any app you choose. But unlike a blank text file, dailyLog lets you define custom shortcut buttons. Imagine a workout log where tapping the "chest" button pastes "chest press: reps, lbs", allowing you to log your workouts with ease. Or imagine a journal where the "📝" button pastes a list of questions you want to answer every day.
+
+Initially designed as a rapid logging system for journaling, dailyLog allows you to quickly add info to a text file with customizable button shortcuts. See the detailed <a href="https://github.com/madCode/dailylog#dailylog">walkthrough with screenshots</a> on the project homepage.
