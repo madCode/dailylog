@@ -28,6 +28,8 @@ class BulkAddShortcutsDialogFragment(viewModel: ShortcutDialogViewModel, private
         if (!DetermineBuild.isROrGreater()) {
             // We don't seem to need to worry about keeping above
             // the keyboard in the dialog anyway if we're at API 30.
+            // You'll get a build warning that this is deprecated. Ignore it, we're only calling this
+            // if it's not deprecated (Version < 30)
             dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         }
         super.onViewCreated(view, savedInstanceState)

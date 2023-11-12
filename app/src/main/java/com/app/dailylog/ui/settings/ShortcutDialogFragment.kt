@@ -31,6 +31,8 @@ open class ModifyShortcutDialogFragment(viewModel: ShortcutDialogViewModel): Sho
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             dialog?.window?.setDecorFitsSystemWindows(true)
         } else {
+            // You'll get a build warning that this is deprecated. Ignore it, we're only calling this
+            // if it's not deprecated (Version < 30)
             dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         }
         super.onViewCreated(view, savedInstanceState)
