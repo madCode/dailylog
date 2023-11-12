@@ -13,7 +13,10 @@ If you select "Create a File", the app will navigate you to your Documents folde
 
 <img alt="Android's default file creation screen" src="/README_screenshots/create_file.png" width="40%"/>
 
-Alternatively, you can click on "Select a file" if you have a file in mind. When the file selector window opens, navigate to "Internal storage" and _then_ navigate to your file. In order to get write access to the file, the app needs to know the full path of the file. Due to Android shenanigans, the only way to get this is when you navigate to the exact folder the file is in, rather than selecting it from the "Recent" shortcuts menu. Here's what I mean:
+Alternatively, you can click on "Select a file" if you have a file in mind. 
+
+### If Android 11 or below
+When the file selector window opens, navigate to "Internal storage" and _then_ navigate to your file. In order to get write access to the file, the app needs to know the full path of the file. Due to Android shenanigans, in some versions, the only way to get this is when you navigate to the exact folder the file is in, rather than selecting it from the "Recent" shortcuts menu. Here's what I mean:
 
 <img alt="The Android file selection menu. The navigation menu is open and the 'SD Card' option is selected, not the 'Recent' option at the top." src="/README_screenshots/open_from_internal_storage.png" width="40%"/>
 
@@ -107,7 +110,7 @@ This allows you to import shortcuts via a csv file. The csv file should not have
 ## Bulk add shortcuts
 The other option is to use the bulk add feature. This shows you a text box and allows you to type in values. You don't need to wrap everything in quotes, but you do still need to follow the label, text, cursorIndex, shortcutType order.
 
-# Known Shenanigans
+# Known Issues
 ## I can't edit the file I selected! When I edit and hit save, all my edits disappear!
 You probably selected the file from the "Recents" menu or some other shortcut folder conveniently provided to you by Android's file picker. Android has some weird bug where in order for the app to get the full path to the file (and therefore write to the file), you _must_ select it via the Internal Storage directory. You must navigate to the file's exact location. See [Step 1: Select Your File](#step-1-select-your-file) for more details.
 ## I just selected a file and I'm seeing "File read permissions not granted.". But I definitely did grant permissions!

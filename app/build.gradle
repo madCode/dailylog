@@ -9,8 +9,8 @@ android {
         applicationId "com.app.dailylog"
         minSdkVersion 23
         targetSdkVersion 34
-        versionCode 2
-        versionName "2.0"
+        versionCode 200
+        versionName "2.0.0"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -50,7 +50,7 @@ dependencies {
     implementation "androidx.room:room-ktx:2.6.0"
     implementation 'androidx.test:core-ktx:1.5.0'
     implementation 'androidx.test.ext:junit-ktx:1.1.5'
-    kapt "androidx.room:room-compiler:2.6.0"
+    kapt "androidx.room:room-compiler:2.6.0" // I need kapt for data binding anyway, no point updating this to kapt
     androidTestImplementation "androidx.room:room-testing:2.6.0"
 
     // Lifecycle components
