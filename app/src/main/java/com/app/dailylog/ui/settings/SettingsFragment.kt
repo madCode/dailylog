@@ -18,7 +18,6 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.dailylog.R
-import com.app.dailylog.repository.Constants
 import com.app.dailylog.repository.Shortcut
 import com.app.dailylog.ui.permissions.PermissionChecker
 import com.app.dailylog.utils.DetermineBuild

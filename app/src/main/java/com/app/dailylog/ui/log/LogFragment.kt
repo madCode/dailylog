@@ -41,8 +41,6 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
             save(false)
             goToSettings()
         }
-
-        renderShortcutTray()
     }
 
     override fun onPause() {
@@ -57,6 +55,7 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
 
         val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.showSoftInput(binding.todayLog, InputMethodManager.SHOW_IMPLICIT)
+        renderShortcutTray()
     }
 
     private fun save(forceSave: Boolean) {

@@ -1,13 +1,11 @@
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/logView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        tools:context=".ui.log.LogFragment">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/logView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    tools:context=".ui.log.LogFragment">
 
     <ScrollView
         android:id="@+id/logScrollView"
@@ -37,13 +35,12 @@
         android:layout_height="40dp"
         android:layout_margin="10dp"
         android:alpha="0.4"
-        android:scaleType="fitCenter"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/settings"
+        android:scaleType="fitCenter"
         android:src="@drawable/ic_settings_48"
         app:layout_constraintBottom_toTopOf="@id/btnSave"
-        app:layout_constraintEnd_toEndOf="@id/logScrollView"
-        />
+        app:layout_constraintEnd_toEndOf="@id/logScrollView" />
 
     <ImageButton
         android:id="@+id/btnSave"
@@ -51,9 +48,9 @@
         android:layout_height="40dp"
         android:layout_margin="10dp"
         android:alpha="0.4"
-        android:scaleType="fitCenter"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/save"
+        android:scaleType="fitCenter"
         android:src="@drawable/ic_save_48"
         app:layout_constraintBottom_toBottomOf="@id/logScrollView"
         app:layout_constraintEnd_toEndOf="@id/logScrollView" />
@@ -64,7 +61,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/logScrollView" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+        app:layout_constraintTop_toBottomOf="@id/logScrollView"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
