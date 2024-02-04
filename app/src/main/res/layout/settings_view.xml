@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -6,61 +5,61 @@
     android:layout_height="match_parent"
     tools:context=".ui.settings.SettingsFragment">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/fileRow"
-            android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fileRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/shortcutTitleGroup"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/fileNameTitle"
+            style="@style/TextHeadline"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/shortcutTitleGroup"
+            android:layout_margin="10dp"
+            android:text="@string/fileNameTitle"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/fileNameTitle"
-                style="@style/TextHeadline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="@string/fileNameTitle"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/fileName"
+            style="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:ellipsize="start"
+            android:singleLine="true"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="@id/fileNameTitle"
+            app:layout_constraintEnd_toStartOf="@+id/selectFileButton"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/fileNameTitle"
+            app:layout_constraintTop_toTopOf="@id/fileNameTitle"
+            tools:text="really really really really long text really really really really long text" />
 
-            <TextView
-                android:id="@+id/fileName"
-                style="@style/TextAppearance.MaterialComponents.Subtitle1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:ellipsize="start"
-                android:singleLine="true"
-                app:layout_constrainedWidth="true"
-                app:layout_constraintBottom_toBottomOf="@id/fileNameTitle"
-                app:layout_constraintEnd_toStartOf="@+id/selectFileButton"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@id/fileNameTitle"
-                app:layout_constraintTop_toTopOf="@id/fileNameTitle"
-                tools:text="really really really really long text really really really really long text" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/selectFileButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/select_file"
+            app:layout_constraintBottom_toBottomOf="@id/fileNameTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/fileNameTitle" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/selectFileButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="@string/select_file"
-                app:layout_constraintBottom_toBottomOf="@id/fileNameTitle"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/fileNameTitle" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/shortcutTitleGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fileRow"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/fileRow">
 
         <TextView
             android:id="@+id/shortcutTitle"
@@ -71,40 +70,39 @@
             android:text="@string/shortcutsTitle"
             android:textStyle="normal"
             app:layout_constraintBottom_toBottomOf="@id/shortcutMenuButton"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageButton
-            android:background="@null"
             android:id="@+id/shortcutMenuButton"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/shortcutTitle"
-            app:layout_constraintBottom_toBottomOf="@id/shortcutTitle"
+            android:background="@null"
             android:src="@drawable/ic_baseline_more_vert_48"
-            />
+            app:layout_constraintBottom_toBottomOf="@id/shortcutTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/shortcutTitle" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TextView
-            android:id="@+id/noShortcutsMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="40dp"
-            android:paddingVertical="20dp"
-            android:text="@string/no_shortcuts_info"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/shortcutTitleGroup" />
+    <TextView
+        android:id="@+id/noShortcutsMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="40dp"
+        android:paddingVertical="20dp"
+        android:text="@string/no_shortcuts_info"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/shortcutTitleGroup" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="5dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/shortcutTitleGroup" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/shortcutTitleGroup" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addShortcutButton"

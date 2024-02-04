@@ -6,17 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import com.app.dailylog.R
 import com.app.dailylog.repository.ShortcutType
-import kotlinx.android.synthetic.main.create_new_shortcut.view.*
 
-
-class AddShortcutDialogFragment(viewModel: ShortcutDialogViewModel) : ModifyShortcutDialogFragment(viewModel) {
-
+class AddShortcutDialogFragment(viewModel: ShortcutDialogViewModel, private val listener: AddShortcutDialogListener) : ModifyShortcutDialogFragment(viewModel) {
     interface AddShortcutDialogListener {
         fun onFinishAddShortcutDialog(label: String, text: String, cursor: Int, type: String)
     }
 
     companion object {
-        fun newInstance(viewModel: ShortcutDialogViewModel) = AddShortcutDialogFragment(viewModel)
+        fun newInstance(viewModel: ShortcutDialogViewModel, listener: AddShortcutDialogListener) = AddShortcutDialogFragment(viewModel, listener)
     }
 
     override fun onCreateView(
@@ -28,9 +25,9 @@ class AddShortcutDialogFragment(viewModel: ShortcutDialogViewModel) : ModifyShor
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.btnSaveShortcut.setOnClickListener {
+        binding.btnSaveShortcut.setOnClickListener {
             numLabelsBeingValidated = 0
-            validateView(view)
+            validateView()
             submit()
         }
     }
@@ -39,16 +36,15 @@ class AddShortcutDialogFragment(viewModel: ShortcutDialogViewModel) : ModifyShor
         if (view == null) {
             return
         }
-        val label = view!!.labelInput
-        val text = view!!.textInput
-        val cursor = view!!.cursorSlider
+        val label = binding.labelInput
+        val text = binding.textInput
+        val cursor = binding.cursorSlider
         val type = if (isDateTimeType) {
             ShortcutType.DATETIME
         } else {
             ShortcutType.TEXT
         }
         if (canSubmit()) {
-            val listener: AddShortcutDialogListener = targetFragment as AddShortcutDialogListener
             listener.onFinishAddShortcutDialog(
                 label.text.toString(),
                 text.text.toString(),

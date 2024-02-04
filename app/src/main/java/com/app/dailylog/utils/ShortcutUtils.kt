@@ -1,5 +1,6 @@
 package com.app.dailylog.utils
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.app.dailylog.repository.Shortcut
@@ -13,8 +14,9 @@ object ShortcutUtils {
         return getDateString(clock, format)
     }
 
+    @SuppressLint("NewApi")
     private fun replaceDateTimePatterns(value: String, clock: Clock? = null,
-                                        determineBuild: DetermineBuild = DetermineBuild): String {
+                                        determineBuild: DetermineBuildInterface = DetermineBuild): String {
         return value.replace(Regex("\\{DATETIME: (.*)\\}"),
             transform = { matchResult: MatchResult ->
                 if (determineBuild.isOreoOrGreater()) {
@@ -26,7 +28,7 @@ object ShortcutUtils {
     }
 
     fun getValueOfShortcut(shortcut: Shortcut, clock: Clock? = null,
-                           determineBuild: DetermineBuild = DetermineBuild): String {
+                           determineBuild: DetermineBuildInterface = DetermineBuild): String {
         val rawValue = shortcut.value
 
         when (shortcut.type) {

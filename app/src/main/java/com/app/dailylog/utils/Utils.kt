@@ -8,11 +8,15 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-object DetermineBuild {
-    fun isOreoOrGreater(): Boolean {
+interface DetermineBuildInterface {
+    fun isOreoOrGreater(): Boolean
+    fun isROrGreater(): Boolean
+}
+object DetermineBuild: DetermineBuildInterface {
+    override fun isOreoOrGreater(): Boolean {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
     }
-    fun isROrGreater(): Boolean {
+    override fun isROrGreater(): Boolean {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
     }
 }

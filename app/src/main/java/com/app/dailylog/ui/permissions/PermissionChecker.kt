@@ -16,58 +16,35 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.app.dailylog.repository.Constants
 
 
 class PermissionChecker(private var activity: Activity?) {
 
-    fun doIfExtStoragePermissionGranted(): Boolean {
-        return if (Build.VERSION.SDK_INT < 30) {
-            doIfExtStoragePermissionGrantedOld()
-        } else {
-            doIfExtStoragePermissionGrantedOld()
+    private fun getPermissionsBasedOnAppVersion(): List<String> {
+        return when (Build.VERSION.SDK_INT) {
+            in 0..18 -> listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
+            in 19..29 -> listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            else -> emptyList() // No additional permissions required for modern Android versions.
         }
     }
 
-    private fun doIfExtStoragePermissionGrantedOld(): Boolean {
+    fun requestPermissionsBasedOnAppVersion(): Boolean {
         if (activity == null) {
             return false
         }
-        if (ContextCompat.checkSelfPermission(
-                activity!!,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
-                activity!!,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                activity!!,
-                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                CODE_PERMISSION_EXTERNAL_STORAGE
-            )
-            return false
+        val permissionsNeeded = getPermissionsBasedOnAppVersion()
+
+        if (permissionsNeeded.isNotEmpty()) {
+            val permissionsToRequest = permissionsNeeded.filter { permission ->
+                ContextCompat.checkSelfPermission(activity!!, permission) != PackageManager.PERMISSION_GRANTED
+            }
+
+            if (permissionsToRequest.isNotEmpty()) {
+                ActivityCompat.requestPermissions(activity!!, permissionsToRequest.toTypedArray(), Constants.FILE_READ_WRITE_PERMISSION_CODE)
+                return false // Permissions were not granted.
+            }
         }
         return true
-    }
-
-//    fun getAndroid10WritePermissions() {
-//        if (Build.VERSION.SDK_INT >= 29) {
-//            MaterialAlertDialogBuilder(activity)
-//                .setTitle(activity.resources.getString(R.string.permissionNeeded))
-//                .setMessage(activity.resources.getString(R.string.permissionNeededExplanation))
-//                .setNeutralButton(activity.resources.getString(R.string.cancel)) { dialog, _ ->
-//                    dialog.dismiss()
-//                }
-//                .setPositiveButton(activity.resources.getString(R.string.ok)) { dialog, _ ->
-//                    val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
-//                    dialog.dismiss()
-//                    activity.startActivity(intent)
-//                }
-//                .show()
-//        }
-//    }
-
-    companion object {
-        private const val CODE_PERMISSION_EXTERNAL_STORAGE = 4000
     }
 }

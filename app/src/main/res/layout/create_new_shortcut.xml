@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -14,21 +13,21 @@
         android:layout_height="wrap_content"
         android:text="@string/addShortcut"
         android:textColor="?attr/colorSecondary"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/previewText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/previewText"
         style="@style/TextAppearance.MaterialComponents.Headline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="5dp"
         app:layout_constraintBottom_toTopOf="@id/labelInputLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/addShortcutTitle"
-        android:padding="5dp"
         tools:text="hello" />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -91,9 +90,9 @@
 
         <com.google.android.material.slider.Slider
             android:id="@+id/cursorSlider"
+            style="@style/SecondarySlider"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/SecondarySlider"
             android:contentDescription="@string/cursorIndexExplanation"
             android:stepSize="1"
             android:valueFrom="0" />
@@ -117,11 +116,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sliderGroup">
+
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/dateTimeCheckbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/isDateTime"/>
+            android:text="@string/isDateTime" />
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton

@@ -1,0 +1,6 @@
+Android SDK 34 Upgrade:
+- This release is compatible with Android 6 through 14.
+- Permission requests in-line with scoped storage recommendations
+
+No user impact:
+- Use new SDK functionality like view binding, data binding, etc.

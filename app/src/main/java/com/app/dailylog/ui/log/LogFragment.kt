@@ -1,5 +1,6 @@
 package com.app.dailylog.ui.log
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,17 +8,15 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.app.dailylog.R
-import kotlinx.android.synthetic.main.add_to_log_view.view.*
-
+import com.app.dailylog.databinding.AddToLogViewBinding
 
 class LogFragment(private val viewModel: LogViewModel, private val goToSettings: () -> Unit) : Fragment() {
-
+    private lateinit var binding: AddToLogViewBinding
     companion object {
         fun newInstance(viewModel: LogViewModel, goToSettings: () -> Unit) = LogFragment(
             viewModel,
@@ -25,22 +24,23 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
         )
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        if (view == null || context == null || activity == null) {
-            error("view or context or activity is null")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (context == null || activity == null) {
+            error("context or activity is null")
         }
 
-        view!!.btnSave.setOnClickListener {
+        binding = AddToLogViewBinding.bind(view)
+
+        binding.btnSave.setOnClickListener {
             // If the save button is pressed, force-save
             save(true)
         }
 
-        view!!.btnSettings.setOnClickListener {
+        binding.btnSettings.setOnClickListener {
             save(false)
             goToSettings()
         }
-        renderShortcutTray()
     }
 
     override fun onPause() {
@@ -49,13 +49,13 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
     }
 
     override fun onResume() {
-        // gets called onResume but also after onActivityCreated
         super.onResume()
         loadFile()
-        view!!.todayLog.requestFocus()
-        val inputMethodManager =
-            getSystemService(context!!, InputMethodManager::class.java) as InputMethodManager
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+        binding.todayLog.requestFocus()
+
+        val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.showSoftInput(binding.todayLog, InputMethodManager.SHOW_IMPLICIT)
+        renderShortcutTray()
     }
 
     private fun save(forceSave: Boolean) {
@@ -63,7 +63,7 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
             Toast.makeText(context, "Could not save. View not loaded yet.", Toast.LENGTH_SHORT).show()
             return
         }
-        val todayLog = view!!.todayLog
+        val todayLog = binding.todayLog
         if (todayLog.text != null && todayLog.text!!.isNotEmpty()) {
             viewModel.saveCursorIndex(todayLog.selectionStart)
         }
@@ -84,9 +84,9 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
             return
         }
         val shortcutsLiveData = viewModel.getAllShortcuts()
-        val tray = view!!.shortcutTray
+        val tray = binding.shortcutTray
         tray.layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.HORIZONTAL)
-        val adapter = ShortcutTrayAdapter(view!!.todayLog)
+        val adapter = ShortcutTrayAdapter(binding.todayLog)
         shortcutsLiveData.observe(viewLifecycleOwner, Observer { shortcuts ->
             // Update the cached copy of the words in the adapter.
             shortcuts.let { adapter.itemList = it; }
@@ -99,7 +99,7 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
     }
 
     private fun loadFile() {
-        val todayLog = view!!.todayLog
+        val todayLog = binding.todayLog
         todayLog.setText(viewModel.getLog(), TextView.BufferType.EDITABLE)
         val cursorIndex = getCursorIndex(todayLog.text!!.toString())
         todayLog.setSelection(cursorIndex)

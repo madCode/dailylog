@@ -54,7 +54,7 @@ interface FileRepositoryInterface {
     }
 
     fun readFile(firstTime: Boolean): String {
-        if (permissionChecker.doIfExtStoragePermissionGranted()) {
+        if (permissionChecker.requestPermissionsBasedOnAppVersion()) {
             try {
                 val stringBuilder = StringBuilder()
                 val uri = Uri.parse(filename)
@@ -79,7 +79,7 @@ interface FileRepositoryInterface {
                     .show()
             }
         }
-        Toast.makeText(context, "File read permissions not granted.", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "File read permissions not yet granted.", Toast.LENGTH_LONG).show()
         return ""
     }
 
@@ -101,14 +101,15 @@ interface FileRepositoryInterface {
         if (!overrideSmartSave && !shouldSave(data)) {
             return false
         }
-        if (permissionChecker.doIfExtStoragePermissionGranted()) {
+        if (permissionChecker.requestPermissionsBasedOnAppVersion()) {
             return try {
                 val uri = Uri.parse(filename)
-                val fileDescriptor =
-                    context.contentResolver.openFileDescriptor(uri, "rwt")?.fileDescriptor
+                val openFileDescriptor = context.contentResolver.openFileDescriptor(uri, "rwt")
+                val fileDescriptor = openFileDescriptor?.fileDescriptor
                 val fileStream = FileOutputStream(fileDescriptor)
                 fileStream.write((data).toByteArray())
                 fileStream.close()
+                openFileDescriptor?.close()
                 updateLastSavedHash(data)
                 true
             } catch (ex: IllegalArgumentException) {
@@ -119,16 +120,16 @@ interface FileRepositoryInterface {
                 false
             }
         }
-        Toast.makeText(context, "File write permissions not granted.", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "File write permissions not yet granted.", Toast.LENGTH_LONG).show()
         return false
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun exportShortcuts(uri: Uri, rows: List<List<String>>): Boolean {
-        if (permissionChecker.doIfExtStoragePermissionGranted()) {
+        if (permissionChecker.requestPermissionsBasedOnAppVersion()) {
             return try {
-                val fileDescriptor =
-                    context.contentResolver.openFileDescriptor(uri, "rwt")?.fileDescriptor
+                val openFileDescriptor = context.contentResolver.openFileDescriptor(uri, "rwt")
+                val fileDescriptor = openFileDescriptor?.fileDescriptor
                 val fileStream = FileOutputStream(fileDescriptor)
                 val writer = CSVWriter(OutputStreamWriter(fileStream))
                 for (row in rows) {
@@ -136,6 +137,7 @@ interface FileRepositoryInterface {
                 }
                 writer.close();
                 fileStream.close()
+                openFileDescriptor?.close()
                 true
             } catch (ex: IllegalArgumentException) {
                 Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show()
@@ -146,7 +148,7 @@ interface FileRepositoryInterface {
                 false
             }
         }
-        Toast.makeText(context, "File write permissions not granted.", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "File write permissions not yet granted.", Toast.LENGTH_LONG).show()
         return false
     }
 
@@ -154,15 +156,16 @@ interface FileRepositoryInterface {
     @RequiresApi(Build.VERSION_CODES.O)
     fun importShortcutValuesFromCSV(uri: Uri): List<Array<String>>? {
         var results: List<Array<String>>? = null
-        if (permissionChecker.doIfExtStoragePermissionGranted()) {
+        if (permissionChecker.requestPermissionsBasedOnAppVersion()) {
             return try {
-                val fileDescriptor =
-                    context.contentResolver.openFileDescriptor(uri, "r")?.fileDescriptor
+                val openFileDescriptor = context.contentResolver.openFileDescriptor(uri, "r")
+                val fileDescriptor = openFileDescriptor?.fileDescriptor
                 val fileStream = FileInputStream(fileDescriptor)
                 val reader = CSVReader(InputStreamReader(fileStream))
                 results = reader.readAll()
                 reader.close()
                 fileStream.close()
+                openFileDescriptor?.close()
                 results
             } catch (ex: IllegalArgumentException) {
                 Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show()
@@ -173,7 +176,7 @@ interface FileRepositoryInterface {
                 null
             }
         }
-        Toast.makeText(context, "File write permissions not granted.", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "File write permissions not yet granted.", Toast.LENGTH_LONG).show()
         return results
     }
 }

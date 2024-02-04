@@ -10,11 +10,13 @@ import android.text.style.ForegroundColorSpan
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
+import android.widget.Button
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.LiveData
 import com.app.dailylog.R
+import com.app.dailylog.databinding.CreateNewShortcutBinding
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.slider.Slider
-import kotlinx.android.synthetic.main.create_new_shortcut.view.*
 
 interface ShortcutDialogListener {
     fun labelExists(label: String): LiveData<Boolean>
@@ -23,26 +25,33 @@ interface ShortcutDialogListener {
 open class ModifyShortcutDialogFragment(viewModel: ShortcutDialogViewModel): ShortcutDialogFragment(viewModel) {
     open var keepCursorValueAtMax = true // keep the cursor value at the max it can be
     open var skipUniqueCheck = false
+    lateinit var binding: CreateNewShortcutBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             dialog?.window?.setDecorFitsSystemWindows(true)
         } else {
+            // You'll get a build warning that this is deprecated. Ignore it, we're only calling this
+            // if it's not deprecated (Version < 30)
             dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         }
         super.onViewCreated(view, savedInstanceState)
-        val textInput = view.textInput
-        val cursorSlider = view.cursorSlider
+        // Reminder for future devs: binding is defined on the parent class ShortcutDialogFragment
+        binding = CreateNewShortcutBinding.bind(view)
+        saveButton = binding.btnSaveShortcut
 
-        view.dateTimeCheckbox.setOnCheckedChangeListener { _, isChecked ->
+        val textInput = binding.textInput
+        val cursorSlider = binding.cursorSlider
+
+        binding.dateTimeCheckbox.setOnCheckedChangeListener { _, isChecked ->
             this.isDateTimeType = isChecked
         }
 
-        view.labelInput.addTextChangedListener(object : TextWatcher {
+        binding.labelInput.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable) {
-                view.labelInputLayout.error = null
+                binding.labelInputLayout.error = null
             }
         })
 
@@ -57,15 +66,15 @@ open class ModifyShortcutDialogFragment(viewModel: ShortcutDialogViewModel): Sho
                     keepCursorValueAtMax = true
                 }
                 updateCursorView(cursorSlider, string)
-                view.previewText.text = getText(string, cursorSlider.value.toInt())
+                binding.previewText.text = getText(string, cursorSlider.value.toInt())
                 if (viewModel.isTextValid(string)) {
-                    view.textInputLayout.error = null
+                    binding.textInputLayout.error = null
                 }
             }
         })
 
         cursorSlider.addOnChangeListener { _, value, _ ->
-            view.previewText.text = getText(textInput.text.toString(), value.toInt())
+            binding.previewText.text = getText(textInput.text.toString(), value.toInt())
         }
 
         cursorSlider.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
@@ -79,7 +88,7 @@ open class ModifyShortcutDialogFragment(viewModel: ShortcutDialogViewModel): Sho
             }
         })
 
-        view.btnCancelShortcut.setOnClickListener {
+        binding.btnCancelShortcut.setOnClickListener {
             dismiss()
         }
     }
@@ -100,28 +109,28 @@ open class ModifyShortcutDialogFragment(viewModel: ShortcutDialogViewModel): Sho
         }
     }
 
-    fun validateView(view: View) {
+    fun validateView() {
         valid = true
         clearInvalidLabelMessage()
-        val label = view.labelInput
-        val text = view.textInput
+        val label = binding.labelInput
+        val text = binding.textInput
         val isLabelValid = viewModel.isLabelValid(label.text.toString(), skipUniqueCheck)
         if (!isLabelValid) {
-            view.labelInputLayout.error = "Label must be unique and cannot be empty"
+            binding.labelInputLayout.error = "Label must be unique and cannot be empty"
             valid = false
         }
         if (!viewModel.isTextValid(text.text.toString())) {
-            view.textInputLayout.error = "Text cannot be empty"
+            binding.textInputLayout.error = "Text cannot be empty"
             valid = false
         }
     }
 
     override fun alertOnInvalidLabel(label: String) {
-        view?.labelInputLayout?.error = "Label must be unique and cannot be empty"
+        binding.labelInputLayout.error = "Label must be unique and cannot be empty"
     }
 
     private fun clearInvalidLabelMessage() {
-        view?.labelInputLayout?.error = null
+        binding.labelInputLayout.error = null
     }
 }
 
@@ -129,6 +138,7 @@ open class ShortcutDialogFragment(var viewModel: ShortcutDialogViewModel): Dialo
     var valid = true
     var numLabelsBeingValidated = 0
     var isDateTimeType = false
+    lateinit var saveButton: MaterialButton
 
     companion object {
         fun newInstance(viewModel: ShortcutDialogViewModel) = ShortcutDialogFragment(viewModel)
@@ -144,7 +154,7 @@ open class ShortcutDialogFragment(var viewModel: ShortcutDialogViewModel): Dialo
         val start = firstHalf.length
         val end = start + 1
         val value = TypedValue()
-        context!!.theme.resolveAttribute(R.attr.colorAccent, value, true)
+        requireContext().theme.resolveAttribute(R.attr.colorAccent, value, true)
         result.setSpan(
             ForegroundColorSpan(value.data),
             start,
@@ -167,13 +177,12 @@ open class ShortcutDialogFragment(var viewModel: ShortcutDialogViewModel): Dialo
     }
 
     open fun savingIndicator() {
-        val button = view?.btnSaveShortcut
         if (numLabelsBeingValidated != 0) {
-            button?.isEnabled = false
-            button?.text = getString(R.string.saving)
+            saveButton.isEnabled = false
+            saveButton.text = getString(R.string.saving)
         } else {
-            button?.isEnabled = true
-            button?.text = getString(R.string.save)
+            saveButton.isEnabled = true
+            saveButton.text = getString(R.string.save)
         }
     }
 }

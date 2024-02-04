@@ -17,11 +17,13 @@ import com.app.dailylog.utils.DetermineBuild
 class MainActivity : AppCompatActivity() {
 
     lateinit var repository: Repository
+    private lateinit var permissionChecker: PermissionChecker
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
-        repository = Repository(applicationContext, PermissionChecker(this))
+        permissionChecker = PermissionChecker(this)
+        repository = Repository(applicationContext, permissionChecker)
         if (savedInstanceState == null) {
             if (repository.userHasSelectedFile()) {
                 openWelcome()
@@ -46,11 +48,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openSettings() {
-        val settingsViewModel = ViewModelProvider(this, SettingsViewModelFactory(application,
-            repository, DetermineBuild, ::showErrorDialog)).get(
-            SettingsViewModel::class.java)
+        val settingsViewModel =
+            ViewModelProvider(this, SettingsViewModelFactory(repository, DetermineBuild, ::showErrorDialog))[SettingsViewModel::class.java]
         supportFragmentManager.beginTransaction()
-            .replace(R.id.container, SettingsFragment.newInstance(settingsViewModel))
+            .replace(R.id.container, SettingsFragment.newInstance(settingsViewModel, permissionChecker))
             .addToBackStack(null)
             .commit()
     }
