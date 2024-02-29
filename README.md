@@ -2,6 +2,12 @@
 
 dailyLog enables you to rapid log with customizable shortcuts. Tired of trying to log workouts on your phone? Want to build a custom habit tracker? Looking for the fastest way to get notes into your Obsidian vault? dailyLog can help.
 
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/com.app.dailylog/)
+
+Or download the latest APK from the [Releases Section](https://github.com/madCode/dailylog/releases/latest).
+
 Initially designed as a rapid logging system for journaling, dailyLog allows you to quickly add info to a text file with customizable button shortcuts. Here's how it works:
 
 ## Step 1: Select Your File
