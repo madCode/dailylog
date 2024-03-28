@@ -49,4 +49,8 @@
     <string name="isDateTime"><![CDATA[Contains datetime format ({DATETIME: <format>})]]></string>
     <string name="dateTimeExplanation"><![CDATA[Add timestamps using {DATETIME: <datetime format>} in your shortcut text. The current time will be inserted on shortcut selection.]]></string>
     <string name="errorPerformingActivity">Error performing task</string>
+    <string name="file_settings_title">File Settings</string>
+    <string name="filename_format">Filename format</string>
+    <string name="update">update</string>
+    <string name="set_filename_format">Set Filename Format</string>
 </resources>

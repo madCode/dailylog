@@ -1,0 +1,150 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.settings.SettingsFragment">
+
+    <TextView
+        android:id="@+id/fileSettingsTitle"
+        style="@style/TextAppearance.MaterialComponents.Headline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/file_settings_title"
+        android:textStyle="normal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fileSettingsTitle"
+        app:layout_constraintBottom_toTopOf="@id/currentFileRow"/>
+
+
+    <!--Current file -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/currentFileRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="20dp"
+        app:layout_constraintBottom_toTopOf="@id/filenameFormatRow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fileSettingsTitle">
+
+        <TextView
+            android:id="@+id/currentFileTitle"
+            style="@style/TextHeadline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fileNameTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/currentFileText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:ellipsize="start"
+            android:singleLine="true"
+            android:layout_marginStart="30dp"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@id/currentFileTitle"
+            app:layout_constraintTop_toBottomOf="@id/currentFileTitle"
+            tools:text="really really really really long text really really really really long text" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/selectFileButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:text="@string/select_file"
+            app:layout_constraintTop_toTopOf="@id/createFileButton"
+            app:layout_constraintBottom_toBottomOf="@id/createFileButton"
+            app:layout_constraintEnd_toStartOf="@id/createFileButton"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/createFileButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/create_a_file"
+            app:layout_constraintTop_toBottomOf="@id/currentFileText"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/currentFileRow"
+        app:layout_constraintBottom_toTopOf="@id/filenameFormatRow"/>
+
+    <!-- Set filename template -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/filenameFormatRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/currentFileRow">
+
+        <TextView
+            android:id="@+id/filenameFormatTitle"
+            style="@style/TextHeadline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/filename_format"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/filenameFormatText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:ellipsize="start"
+            android:singleLine="true"
+            android:layout_marginStart="30dp"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toStartOf="@id/updateButton"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@id/filenameFormatTitle"
+            app:layout_constraintTop_toBottomOf="@id/filenameFormatTitle"
+            tools:text="really really really really long text really really really really long text" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/updateButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/update"
+            app:layout_constraintStart_toEndOf="@id/filenameFormatText"
+            app:layout_constraintBottom_toBottomOf="@id/filenameFormatText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/filenameFormatTitle" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/filenameFormatRow"
+    />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
