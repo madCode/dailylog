@@ -5,16 +5,31 @@
     android:layout_height="match_parent"
     tools:context=".ui.settings.SettingsFragment">
 
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:paddingTop="5dp"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        app:tint="?attr/colorOnPrimary"
+        android:src="@drawable/ic_rounded_arrow_back_48"
+        android:background="@android:color/transparent"
+        android:layout_marginStart="5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/fileSettingsTitle"
+        app:layout_constraintBottom_toBottomOf="@id/fileSettingsTitle"/>
+
     <TextView
         android:id="@+id/fileSettingsTitle"
-        style="@style/TextAppearance.MaterialComponents.Headline4"
+        style="@style/TextHeadline4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_marginVertical="10dp"
         android:text="@string/file_settings_title"
         android:textStyle="normal"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/backButton" />
 
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"

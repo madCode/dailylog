@@ -45,6 +45,13 @@
         <item name="android:textStyle">normal</item>
     </style>
 
+    <style name="TextHeadline4" parent="TextAppearance.MaterialComponents.Headline4">
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+
     <style name="TextCaption" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textSize">20sp</item>
     </style>

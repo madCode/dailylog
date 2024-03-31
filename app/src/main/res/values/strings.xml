@@ -53,4 +53,5 @@
     <string name="filename_format">Filename format</string>
     <string name="update">update</string>
     <string name="set_filename_format">Set Filename Format</string>
+    <string name="settings_title">Settings</string>
 </resources>
