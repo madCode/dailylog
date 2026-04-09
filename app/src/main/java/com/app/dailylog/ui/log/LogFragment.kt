@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,6 +33,18 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
         }
 
         binding = AddToLogViewBinding.bind(view)
+
+        // Apply window insets to handle notch and navigation areas
+        ViewCompat.setOnApplyWindowInsetsListener(view) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                systemBars.left,
+                systemBars.top,    // avoids notch/status bar
+                systemBars.right,
+                systemBars.bottom  // avoids nav buttons
+            )
+            insets
+        }
 
         binding.btnSave.setOnClickListener {
             // If the save button is pressed, force-save
@@ -92,6 +106,23 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
             shortcuts.let { adapter.itemList = it; }
         })
         tray.adapter = adapter
+        
+        // Add keyboard visibility listener to adjust shortcut tray position
+        ViewCompat.setOnApplyWindowInsetsListener(tray) { view, insets ->
+            val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            if (imeHeight > 0) {
+                // Keyboard is visible, adjust the layout
+                val params = view.layoutParams as ViewGroup.MarginLayoutParams
+                params.bottomMargin = imeHeight
+                view.layoutParams = params
+            } else {
+                // Keyboard is hidden, reset margin
+                val params = view.layoutParams as ViewGroup.MarginLayoutParams
+                params.bottomMargin = 0
+                view.layoutParams = params
+            }
+            insets
+        }
     }
 
     private fun getCursorIndex(text: String): Int {

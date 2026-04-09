@@ -1,7 +1,10 @@
 package com.app.dailylog
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import com.app.dailylog.repository.Repository
 import com.app.dailylog.ui.permissions.PermissionChecker
@@ -21,6 +24,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Enable edge-to-edge
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.main_activity)
         permissionChecker = PermissionChecker(this)
         repository = Repository(applicationContext, permissionChecker)
