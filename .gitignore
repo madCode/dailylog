@@ -1,14 +1,25 @@
-*.iml
-.gradle
-/local.properties
+# IntelliJ IDEA files (should be tracked)
+/.idea/gradle.xml
+/.idea/misc.xml
+/.idea/compiler.xml
+/.idea/vcs.xml
+
+# Other IntelliJ IDEA files (should be ignored)
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
-.DS_Store
+.idea/
+
+# Other files
+*.iml
+.gradle
+/local.properties
+*.DS_Store
 /build
 /captures
 .externalNativeBuild
 .cxx
+/.kotlin/errors/*

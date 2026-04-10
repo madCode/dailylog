@@ -3,6 +3,8 @@ package com.app.dailylog.ui.welcome
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -22,7 +24,21 @@ class WelcomeFragment(private val viewModel: WelcomeViewModel) : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.welcome_fragment, container, false)
+        val view = inflater.inflate(R.layout.welcome_fragment, container, false)
+        
+        // Apply window insets to handle notch and navigation areas
+        ViewCompat.setOnApplyWindowInsetsListener(view) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                systemBars.left,
+                systemBars.top,    // avoids notch/status bar
+                systemBars.right,
+                systemBars.bottom  // avoids nav buttons
+            )
+            insets
+        }
+        
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

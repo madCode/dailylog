@@ -12,6 +12,8 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MenuRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -51,6 +53,19 @@ class SettingsFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = SettingsViewBinding.bind(view)
+        
+        // Apply window insets to handle notch and navigation areas
+        ViewCompat.setOnApplyWindowInsetsListener(view) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                systemBars.left,
+                systemBars.top,    // avoids notch/status bar
+                systemBars.right,
+                systemBars.bottom  // avoids nav buttons
+            )
+            insets
+        }
+        
         val value = TypedValue()
         context?.theme?.resolveAttribute(R.attr.colorAccent, value, true)
         adapter = ShortcutListAdapter(
