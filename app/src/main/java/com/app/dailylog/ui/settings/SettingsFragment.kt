@@ -72,7 +72,7 @@ class SettingsFragment(
                 renderShortcutInstructions()
             }
         })
-        renderFileNameRow()
+        binding.filename.text = viewModel.getFilename()
         renderShortcutList()
         binding.addShortcutButton.setOnClickListener {
             val addDialog: AddShortcutDialogFragment =
@@ -90,24 +90,6 @@ class SettingsFragment(
             showMenu(v, R.menu.shortcut_options_menu)
         }
     }
-
-    private val selectImportFileLauncher: ActivityResultLauncher<Intent> =
-        registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) { result ->
-            if (result.resultCode == AppCompatActivity.RESULT_OK && result.data != null) {
-                val selectedFileUri = result.data?.data
-                if (selectedFileUri != null) {
-                    viewModel.saveFilename(selectedFileUri.toString())
-                    val contentResolver = requireContext().contentResolver
-                    val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                    contentResolver.takePersistableUriPermission(selectedFileUri, takeFlags)
-                    //                TODO("if we didn't get the permissions we needed, ask for permission or have the user select a different file")
-                    binding.fileName.text = viewModel.getFilename()
-                }
-            }
-        }
 
     private val selectExportFileLauncher: ActivityResultLauncher<Intent> =
         registerForActivityResult(
@@ -217,18 +199,6 @@ class SettingsFragment(
                 this
             )
         editDialog.show(parentFragmentManager, "fragment_edit")
-    }
-
-    private fun renderFileNameRow() {
-        binding.fileName.text = viewModel.getFilename()
-        binding.selectFileButton.setOnClickListener {
-            val intent =
-                Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                    addCategory(Intent.CATEGORY_OPENABLE)
-                    type = "text/*"
-                }
-            selectImportFileLauncher.launch(Intent.createChooser(intent, "Select a file"))
-        }
     }
 
     private fun renderShortcutList() {

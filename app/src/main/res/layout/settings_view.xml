@@ -60,7 +60,7 @@
 
 
         <TextView
-            android:id="@+id/fileName"
+            android:id="@+id/filename"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackgroundBorderless"
@@ -81,7 +81,7 @@
             android:layout_height="30dp"
             android:src="@drawable/ic_rounded_arrow_forward_ios_48"
             app:layout_constraintTop_toTopOf="@id/fileSettingsText"
-            app:layout_constraintBottom_toBottomOf="@id/fileName"
+            app:layout_constraintBottom_toBottomOf="@id/filename"
             app:layout_constraintEnd_toEndOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
