@@ -25,7 +25,7 @@ jobs:
       # koverVerify checks coverage against your defined rules
       # koverXmlReport is often needed by the reporting action
       - name: Run Kover Report & Verify
-        run: ./gradlew koverHtmlReport koverXmlReport koverVerify
+        run: ./gradlew koverXmlReport
 
       # 2. Post Results as PR Comment
       - name: Post Kover Report
@@ -36,4 +36,5 @@ jobs:
             ${{ github.workspace }}/app/build/reports/kover/report.xml
           title: "Code Coverage Report"
           update-comment: true # Updates existing comment on new pushes
-          min-coverage-overall: 3 # Optional: will fail the step if below this
+          min-coverage-overall: 3
+          min-coverage-changed-files: 20
