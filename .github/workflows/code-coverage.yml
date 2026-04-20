@@ -33,7 +33,7 @@ jobs:
         with:
           # Path to the generated XML report(s)
           path: |
-            ${{ github.workspace }}/**/build/reports/kover/report.xml
+            ${{ github.workspace }}/app/build/reports/kover/report.xml
           title: "Code Coverage Report"
           update-comment: true # Updates existing comment on new pushes
           min-coverage-overall: 3 # Optional: will fail the step if below this
