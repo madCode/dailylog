@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.devtools.ksp'
+apply plugin: 'org.jetbrains.kotlinx.kover'
 
 android {
     compileSdk 36
@@ -73,4 +74,16 @@ dependencies {
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3'
     androidTestImplementation 'org.mockito:mockito-android:3.12.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+kover {
+    reports {
+        verify {
+            rule {
+                bound {
+                    minValue = 3 // Fails build if line coverage is < 3%
+                }
+            }
+        }
+    }
 }

@@ -11,6 +11,8 @@
   - Gradle build system
   - Java-based Android development
 
+- When recommending tools and libraries, pick those optimized for Kotlin-native apps that don't use the java plugin.
+
 ## Architecture Overview
 - **High-level architecture**: This is a standard Android mobile application with a single activity (MainActivity) that manages the logging interface and shortcut functionality.
 

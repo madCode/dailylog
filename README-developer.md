@@ -124,6 +124,27 @@ After publishing a new release, wait at least 24 hours, then check the following
 ./gradlew connectedAndroidTest
 ```
 
+### Running Coverage Reports
+```bash
+# Generate HTML coverage report
+./gradlew koverHtmlReport
+
+# Generate XML coverage report  
+./gradlew koverXmlReport
+
+# Verify coverage requirements
+./gradlew koverVerify
+```
+- Report Locations
+  - HTML: `app/build/reports/kover/html/index.html`
+  - XML: `app/build/reports/kover/xml/report.xml`
+
+### Pre-commit Hook
+The pre-commit hook automatically runs when committing code:
+1. Runs unit tests with coverage instrumentation
+2. Generates Kover HTML and XML reports
+3. Displays report locations and OS-specific open instructions
+
 ## Code Style and Formatting
 
 ### Kotlin Formatting
