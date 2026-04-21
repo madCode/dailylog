@@ -57,7 +57,7 @@ class SettingsViewModelTest : TestCase() {
     }
 
     @Test
-    fun `test repository called when updateShortcutPositions called`() = runBlocking {
+    fun `test repository called when updateShortcutPositions called`(): Unit = runBlocking {
         `when`(buildMock.isOreoOrGreater()).thenReturn(false)
         settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
         val shortcutList = arrayListOf<Shortcut>(
@@ -119,6 +119,14 @@ class SettingsViewModelTest : TestCase() {
     }
 
     @Test
+    fun `test repository called when labelExists called`() {
+        `when`(buildMock.isOreoOrGreater()).thenReturn(false)
+        settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
+        settingsViewModel!!.labelExists("test")
+        verify(repository).labelExists("test")
+    }
+
+    @Test
     fun `when export called and not right OS version error`() {
         `when`(buildMock.isOreoOrGreater()).thenReturn(false)
         val settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
@@ -145,5 +153,47 @@ class SettingsViewModelTest : TestCase() {
         assertNull(error);
         verify(repository).exportShortcuts(Uri.EMPTY)
 
+    }
+
+    @Test
+    fun `when exportShortcuts called with exception`() {
+        `when`(buildMock.isOreoOrGreater()).thenReturn(true)
+        val settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
+        settingsViewModel.exportFileUri = Uri.EMPTY
+        // Mock repository to throw exception
+        doThrow(Exception("Export failed")).`when`(repository).exportShortcutsAsJson(any())
+        val error = settingsViewModel.exportShortcuts()
+        assertNotNull(error)
+        assertTrue(error?.message?.contains("Error:") == true)
+    }
+
+    @Test
+    fun `when getFilename called then returns proper value from repository`() {
+        `when`(buildMock.isOreoOrGreater()).thenReturn(false)
+        `when`(repository.retrieveFilename()).thenReturn("test_filename.md")
+        settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
+        val result = settingsViewModel!!.getFilename()
+        assertEquals("test_filename.md", result)
+        verify(repository).retrieveFilename()
+    }
+
+    @Test
+    fun `when exportShortcuts called with exception then returns proper error`() {
+        `when`(buildMock.isOreoOrGreater()).thenReturn(true)
+        val settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
+        settingsViewModel.exportFileUri = Uri.EMPTY
+        // Mock repository to throw exception
+        doThrow(Exception("Export failed")).`when`(repository).exportShortcuts(any())
+        val error = settingsViewModel.exportShortcuts()
+        assertNotNull(error)
+        assertTrue(error?.message?.contains("Error:") == true)
+    }
+
+    @Test
+    fun `when createShortcutDialogViewModel called then returns proper instance`() {
+        settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
+        val dialogViewModel = settingsViewModel!!.createShortcutDialogViewModel()
+        assertNotNull(dialogViewModel)
+        assertTrue(dialogViewModel is ShortcutDialogViewModel)
     }
 }

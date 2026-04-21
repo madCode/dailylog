@@ -9,4 +9,6 @@
             android:title="@string/export_shortcuts" />
         <item android:id="@+id/importShortcuts"
             android:title="@string/import_shortcuts" />
+        <item android:id="@+id/importShortcutsLegacy"
+            android:title="@string/import_shortcuts_csv" />
 </menu>

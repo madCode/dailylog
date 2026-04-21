@@ -124,25 +124,19 @@ class SettingsFragment(
             }
         }
 
-    private val selectExportFileLauncher: ActivityResultLauncher<Intent> =
+    private val selectLegacyShortcutFileLauncher: ActivityResultLauncher<Intent> =
         registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == AppCompatActivity.RESULT_OK && result.data != null) {
                 val selectedFileUri = result.data?.data
                 if (selectedFileUri != null) {
-                    viewModel.exportFileUri = selectedFileUri
+                    viewModel.importShortcutsLegacy(selectedFileUri)
                     val contentResolver = requireContext().contentResolver
                     val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
                             Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     contentResolver.takePersistableUriPermission(selectedFileUri, takeFlags)
                     //                TODO("if we didn't get the permissions we needed, ask for permission or have the user select a different file")
-                    val error = viewModel.exportShortcuts()
-                    if (error != null) Toast.makeText(
-                        requireContext(),
-                        error.message,
-                        Toast.LENGTH_LONG
-                    ).show()
                 }
             }
         }
@@ -173,7 +167,7 @@ class SettingsFragment(
         addBulkDialog.show(parentFragmentManager, "fragment_bulk_add")
     }
 
-    private fun selectImportFile() {
+    private fun selectImportFileLegacyCSV() {
         if (!permissionChecker.requestPermissionsBasedOnAppVersion()) {
             return
         }
@@ -182,10 +176,42 @@ class SettingsFragment(
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type = "text/*"
             }
-        selectShortcutFileLauncher.launch(
+        selectLegacyShortcutFileLauncher.launch(
             Intent.createChooser(intent, "Select file")
         )
     }
+
+    private val selectExportFileLauncher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == AppCompatActivity.RESULT_OK && result.data != null) {
+                val selectedFileUri = result.data?.data
+                if (selectedFileUri != null) {
+                    viewModel.exportFileUri = selectedFileUri
+                    val contentResolver = requireContext().contentResolver
+                    val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    contentResolver.takePersistableUriPermission(selectedFileUri, takeFlags)
+                    
+                    // Perform the actual JSON export after file selection
+                    val error = viewModel.exportShortcuts()
+                    if (error != null) {
+                        Toast.makeText(
+                            requireContext(),
+                            error.message,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Exported shortcuts to JSON successfully",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        }
 
     private fun selectExportFile() {
         if (!permissionChecker.requestPermissionsBasedOnAppVersion()) {
@@ -194,14 +220,28 @@ class SettingsFragment(
         val intent =
             Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
-                type = "text/csv"
-                putExtra(Intent.EXTRA_TITLE, "shortcuts.csv")
+                type = "application/json"
+                putExtra(Intent.EXTRA_TITLE, "shortcuts.json")
             }
         if (DetermineBuild.isOreoOrGreater()) {
             intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse("/Documents"));
         }
         selectExportFileLauncher.launch(
-            Intent.createChooser(intent, "Create file"),
+            Intent.createChooser(intent, "Create JSON file"),
+        )
+    }
+
+    private fun selectImportFile() {
+        if (!permissionChecker.requestPermissionsBasedOnAppVersion()) {
+            return
+        }
+        val intent =
+            Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "application/json"
+            }
+        selectShortcutFileLauncher.launch(
+            Intent.createChooser(intent, "Select JSON file")
         )
     }
 
@@ -214,6 +254,7 @@ class SettingsFragment(
                 R.id.bulkAdd -> bulkAddShortcuts()
                 R.id.exportShortcuts -> selectExportFile()
                 R.id.importShortcuts -> selectImportFile()
+                R.id.importShortcutsLegacy -> selectImportFileLegacyCSV()
             }
             return@setOnMenuItemClickListener true
         }

@@ -40,7 +40,8 @@
     <string name="bulk_add_shortcuts_instructions">Each row represents one shortcut. Each row should contain three items: shortcut, text, and cursor index.\n\nSample row: four,4,1</string>
     <string name="bulk_add_shortcuts">Bulk Add Shortcuts</string>
     <string name="export_shortcuts">Export Shortcuts</string>
-    <string name="import_shortcuts">Import Shortcuts From CSV</string>
+    <string name="import_shortcuts">Import Shortcuts Backup</string>
+    <string name="import_shortcuts_csv">Import Legacy Shortcuts Backup (csv)</string>
     <string name="add_a_shortcut">Add a shortcut. Long press for bulk add screen.</string>
     <string name="saving">saving...</string>
     <string name="welcome">Welcome!</string>
