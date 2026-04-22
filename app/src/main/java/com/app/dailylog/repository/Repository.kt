@@ -7,6 +7,15 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import com.app.dailylog.R
 import com.app.dailylog.ui.permissions.PermissionChecker
+import com.app.dailylog.utils.JsonShortcutUtils
+import com.opencsv.CSVReader
+import com.opencsv.CSVWriter
+import java.io.*
+import java.lang.Exception
+import java.math.BigInteger
+import java.security.MessageDigest
+
+
 
 interface RepositoryInterface: FileRepositoryInterface, ShortcutRepositoryInterface {
     fun getCursorIndex(): Int
@@ -19,6 +28,12 @@ interface RepositoryInterface: FileRepositoryInterface, ShortcutRepositoryInterf
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun importShortcuts(uri: Uri)
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun exportShortcutsAsJson(uri: Uri)
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun importShortcutsFromJson(uri: Uri)
 }
 
 class Repository(override val context: Context,
@@ -31,6 +46,11 @@ class Repository(override val context: Context,
 
     init {
         initializeFilename()
+    }
+
+    private fun getDatabaseSchemaVersion(): Int {
+        // Get the schema version directly from the @Database annotation
+        return ShortcutDatabase::class.java.getAnnotation(androidx.room.Database::class.java)?.version ?: 4
     }
 
     override fun getCursorIndex(): Int {
@@ -75,5 +95,66 @@ class Repository(override val context: Context,
         if (results != null) {
             bulkAddShortcuts(shortcutInfoList = results)
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun exportShortcutsAsJson(uri: Uri) {
+        shortcutLiveData.value?.let { shortcuts ->
+            val schemaVersion = getDatabaseSchemaVersion()
+            val jsonContent = JsonShortcutUtils.exportShortcutsAsJson(shortcuts, schemaVersion)
+            exportShortcutsAsJson(uri, jsonContent)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override suspend fun importShortcutsFromJson(uri: Uri) {
+            val jsonContent = readJsonFile(uri)
+            val shortcuts = JsonShortcutUtils.importShortcutsFromJson(jsonContent)
+            
+            if (shortcuts != null) {
+                // Add all shortcuts to the database
+                bulkAddShortcuts(shortcuts.map { 
+                    arrayOf(it.label, it.value, it.cursorIndex.toString(), it.type) 
+                })
+            }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun exportShortcutsAsJson(uri: Uri, jsonContent: String) {
+        if (permissionChecker.requestPermissionsBasedOnAppVersion()) {
+            try {
+                val openFileDescriptor = context.contentResolver.openFileDescriptor(uri, "rwt")
+                val fileDescriptor = openFileDescriptor?.fileDescriptor
+                val fileStream = FileOutputStream(fileDescriptor)
+                fileStream.write(jsonContent.toByteArray())
+                fileStream.close()
+                openFileDescriptor?.close()
+            } catch (ex: IllegalArgumentException) {
+                ex.printStackTrace()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun readJsonFile(uri: Uri): String {
+        val openFileDescriptor = context.contentResolver.openFileDescriptor(uri, "r")
+        val fileDescriptor = openFileDescriptor?.fileDescriptor
+        val fileStream = FileInputStream(fileDescriptor)
+        
+        val reader = BufferedReader(InputStreamReader(fileStream))
+        val content = StringBuilder()
+        var line: String?
+        
+        while (reader.readLine().also { line = it } != null) {
+            content.append(line).append("\n")
+        }
+        
+        reader.close()
+        fileStream.close()
+        openFileDescriptor?.close()
+        
+        return content.toString()
     }
 }

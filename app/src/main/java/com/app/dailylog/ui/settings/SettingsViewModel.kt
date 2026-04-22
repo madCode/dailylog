@@ -1,7 +1,6 @@
 package com.app.dailylog.ui.settings
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.*
 import com.app.dailylog.repository.RepositoryInterface
@@ -76,21 +75,34 @@ class SettingsViewModel(
         }
         if (build.isOreoOrGreater()) {
             try {
-                this.exportFileUri?.let { repository.exportShortcuts(it) }
+                this.exportFileUri?.let { repository.exportShortcutsAsJson(it) }
             } catch(ex: Exception) {
                 return Error("Error: ${ex.printStackTrace()}")
             }
         } else {
-            return Error("Need OS of Oreo or greater to export to CSV")
+            return Error("Need OS of Oreo or greater to export to JSON")
         }
         return null
     }
 
     // Suppress NewApi lint here because we know we're checking for the right build
-    @SuppressLint("NewApi")fun importShortcuts(uri: Uri) = viewModelScope.launch(dispatcher) {
+    @SuppressLint("NewApi") fun importShortcutsLegacy(uri: Uri) = viewModelScope.launch(dispatcher) {
         if (build.isOreoOrGreater()) {
             try {
                 repository.importShortcuts(uri)
+            } catch(ex: java.lang.Exception) {
+                ex.message?.let { showToastOnActivity(it) }
+            }
+        } else {
+            showToastOnActivity("Need OS of Oreo or greater to import from CSV")
+        }
+    }
+
+    // Suppress NewApi lint here because we know we're checking for the right build
+    @SuppressLint("NewApi") fun importShortcuts(uri: Uri) = viewModelScope.launch(dispatcher) {
+        if (build.isOreoOrGreater()) {
+            try {
+                repository.importShortcutsFromJson(uri)
             } catch(ex: java.lang.Exception) {
                 ex.message?.let { showToastOnActivity(it) }
             }
