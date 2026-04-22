@@ -109,13 +109,15 @@ A description of the available datetime patterns can be found in the [Java docum
 ## Drag to reorder shortcuts
 When you have a list of shortcuts in the settings page, you can drag them around to reorder them. This will also change the order by which they appear in the shortcuts tray.
 ## Export shortcuts
-You can export your shortcuts to a csv file by hitting the three-dot menu next to "Shortcuts" in the settings page.
+**New in version 3.1.0**: Version 3.1.0 switched to JSON-based shortcut exports compared to the previous CSV format. Until 3.2.0 you'll be able to import the legacy CSV format. We recommend you re-export any existing shortcuts to have a json-based backup.
+You can export your shortcuts to a JSON file by hitting the three-dot menu next to "Shortcuts" in the settings page.
 
-<img alt="An options menu has popped up with three options: Bulk add shortcuts, Export shortcuts, and Import Shortcuts from CSV" src="/README_screenshots/three_dot_menu.png" height="500px"/>
-
-It will prompt you to select a place to create the csv file.
+<img alt="An options menu has popped up with three options: Bulk add shortcuts, Export shortcuts, Import Shortcuts Backup, Import Legacy Shortcuts Backup (csv)" src="/README_screenshots/three_dot_menu.png" height="500px"/>
+It will prompt you to select a place to create the JSON file.
 ## Import shortcuts
-This allows you to import shortcuts via a csv file. The csv file should not have a header and should have quotes around all values. The order of the row should be: label, text, cursorIndex, shortcutType. Valid types are either "TEXT" or "DATETIME". If you want to make a csv file from scratch, I recommend first making a few shortcuts in the app, exporting that file, and then looking at the file as you design your own.
+This allows you to import shortcuts via a JSON file. The JSON file should contain your shortcuts in the proper format. If you want to make a JSON file from scratch, I recommend first making a few shortcuts in the app, exporting that file, and then looking at the file as you design your own.
+
+There is also an option to import from the legacy CSV format ("Import Legacy Shortcuts Backup (csv)") which will be removed in a future version.
 ## Bulk add shortcuts
 The other option is to use the bulk add feature. This shows you a text box and allows you to type in values. You don't need to wrap everything in quotes, but you do still need to follow the label, text, cursorIndex, shortcutType order.
 
