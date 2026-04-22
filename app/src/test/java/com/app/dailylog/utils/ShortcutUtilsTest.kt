@@ -35,7 +35,7 @@ class ShortcutUtilsTest : TestCase() {
         val buildMock = Mockito.mock(DetermineBuildInterface::class.java)
         Mockito.`when`(buildMock.isOreoOrGreater()).thenReturn(true)
         val clock = Clock.fixed(
-            Instant.parse("2018-08-22T10:00:00Z"),
+            Instant.parse("2018-08-22T10:03:02Z"),
             ZoneId.of("UTC"))
         val shortcut = Shortcut(
             label = "TEST",
@@ -49,7 +49,7 @@ class ShortcutUtilsTest : TestCase() {
         // Check that the result contains the expected date format and time
         // This test is environment-aware - it accepts both UTC and local timezone formats
         assertTrue("Result should contain the expected date format: $result", 
-            result.contains("Wed Aug-22-2018 10:00 AM"))
+            result.contains("Wed Aug-22-2018 10:03 AM"))
     }
 
     @Test
@@ -94,5 +94,79 @@ class ShortcutUtilsTest : TestCase() {
             "Issue with date time string. Please change Date Format in settings " +
                     "screen. Error message: Too many pattern letters: E",
             dateString)
+    }
+
+    // Task 3 tests - Additional tests for branch coverage
+
+    fun testGetValueOfShortcutWithTEXTType() {
+        val buildMock = Mockito.mock(DetermineBuildInterface::class.java)
+        Mockito.`when`(buildMock.isOreoOrGreater()).thenReturn(true)
+        val shortcut = Shortcut(
+            label = "TEST",
+            value = "plain text",
+            cursorIndex = 0,
+            position = 0,
+            type = ShortcutType.TEXT
+        )
+        val result = ShortcutUtils.getValueOfShortcut(shortcut, null, buildMock)
+        assertEquals("plain text", result)
+    }
+
+    fun testGetValueOfShortcutWithUnknownType() {
+        val buildMock = Mockito.mock(DetermineBuildInterface::class.java)
+        Mockito.`when`(buildMock.isOreoOrGreater()).thenReturn(true)
+        val shortcut = Shortcut(
+            label = "TEST",
+            value = "val",
+            cursorIndex = 0,
+            position = 0,
+            type = "UNKNOWN"
+        )
+        val result = ShortcutUtils.getValueOfShortcut(shortcut, null, buildMock)
+        assertTrue(result.contains("UNKNOWN"))
+        assertTrue(result.contains("val"))
+    }
+
+    fun testGetAppliedShortcutCursorIndexWithTEXTType() {
+        val buildMock = Mockito.mock(DetermineBuildInterface::class.java)
+        Mockito.`when`(buildMock.isOreoOrGreater()).thenReturn(true)
+        val shortcut = Shortcut(
+            label = "TEST",
+            value = "plain text",
+            cursorIndex = 3,
+            position = 0,
+            type = ShortcutType.TEXT
+        )
+        val result = ShortcutUtils.getAppliedShortcutCursorIndex(shortcut)
+        assertEquals(3, result)
+    }
+
+    fun testGetAppliedShortcutCursorIndexWithDATETIMETypeBeforeToken() {
+        val buildMock = Mockito.mock(DetermineBuildInterface::class.java)
+        Mockito.`when`(buildMock.isOreoOrGreater()).thenReturn(true)
+        val shortcut = Shortcut(
+            label = "TEST",
+            value = "AB{DATETIME: HH:mm:ss}CD",
+            cursorIndex = 2,
+            position = 0,
+            type = ShortcutType.DATETIME
+        )
+        val result = ShortcutUtils.getAppliedShortcutCursorIndex(shortcut)
+        assertEquals(2, result) // Substring "AB" before cursor is 2 chars
+    }
+
+    fun testGetAppliedShortcutCursorIndexWithDATETIMETypeAfterToken() {
+        val buildMock = Mockito.mock(DetermineBuildInterface::class.java)
+        Mockito.`when`(buildMock.isOreoOrGreater()).thenReturn(true)
+        val shortcut = Shortcut(
+            label = "TEST",
+            value = "{DATETIME: HH:mm:ss}AB",
+            cursorIndex = 20,
+            position = 0,
+            type = ShortcutType.DATETIME
+        )
+        val result = ShortcutUtils.getAppliedShortcutCursorIndex(shortcut)
+        // The substring before cursor is "{DATETIME: HH:mm:ss}" which expands to 8 chars (e.g. "10:03:02")
+        assertTrue(result >= 8) // Should be at least 8 chars (the expanded time string)
     }
 }

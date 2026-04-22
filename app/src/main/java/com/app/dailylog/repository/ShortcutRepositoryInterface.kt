@@ -42,6 +42,7 @@ interface ShortcutRepositoryInterface {
         val results = ArrayList<Shortcut>()
         shortcutInfoList.forEachIndexed {
             index, list ->
+            //TODO: create popup or Toast with failures
             if (validateShortcutRow(list, index)) {
                 val label = list[0]
                 val text = list[1]
@@ -71,13 +72,18 @@ interface ShortcutRepositoryInterface {
     }
 
     fun cleanUpText(text: String): String {
-        // If it contains a comma and is surrounded by quotes, remove the quotes
+        // Commas are the field separator in the bulk-add format. If a shortcut's text value
+        // contains a comma, the user must wrap it in quotes (standard CSV escaping) so the
+        // parser doesn't treat that comma as a field boundary. A simple split-on-comma parser
+        // leaves those surrounding quotes in place, so we strip them here to recover the
+        // actual text. We only strip quotes when a comma is present: quotes around text with
+        // no comma are intentional content, not CSV escaping.
         val containsComma = text.contains(',')
         val startsAndEndsWithQuotes = text.startsWith('"') && text.endsWith('"')
         return if (!containsComma || !startsAndEndsWithQuotes) {
             text
         } else {
-            text.substring(1, text.length-2)
+            text.substring(1, text.length-1)
         }
     }
 

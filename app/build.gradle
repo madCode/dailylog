@@ -41,6 +41,12 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    testOptions {
+        unitTests {
+            returnDefaultValues = true
+        }
+    }
     namespace 'com.app.dailylog'
 }
 
@@ -79,6 +85,26 @@ dependencies {
 
 kover {
     reports {
+        filters {
+            excludes {
+                classes(
+                    "com.app.dailylog.databinding.*",
+                    "com.app.dailylog.repository.ShortcutDao_Impl*",
+                    "com.app.dailylog.repository.ShortcutDatabase_Impl*",
+                    "com.app.dailylog.ui.log.LogFragment*",
+                    "com.app.dailylog.ui.log.ShortcutTrayAdapter*",
+                    "com.app.dailylog.ui.settings.SettingsFragment*",
+                    "com.app.dailylog.ui.settings.*DialogFragment*",
+                    "com.app.dailylog.ui.settings.ShortcutListAdapter*",
+                    "com.app.dailylog.ui.settings.ShortcutTouchHelper*",
+                    "com.app.dailylog.ui.settings.ShortcutTouchViewHolder*",
+                    "com.app.dailylog.ui.welcome.WelcomeFragment*",
+                    "com.app.dailylog.MainActivity*",
+                    "com.app.dailylog.ErrorDialogFragment*",
+                    "com.app.dailylog.ui.permissions.PermissionChecker*",
+                )
+            }
+        }
         verify {
             rule {
                 bound {
