@@ -26,7 +26,7 @@ interface FileRepositoryInterface {
         filename = retrieveFilename()
     }
 
-    fun userHasSelectedFile(): Boolean {
+    fun userMustSelectFile(): Boolean {
         return filename == Constants.NO_FILE_SELECTED
     }
 
