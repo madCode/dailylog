@@ -115,6 +115,7 @@ You can export your shortcuts to a JSON file by hitting the three-dot menu next 
 
 <img alt="An options menu has popped up with three options: Bulk add shortcuts, Export shortcuts, Import Shortcuts Backup, Import Legacy Shortcuts Backup (csv)" src="/README_screenshots/three_dot_menu.png" height="500px"/>
 It will prompt you to select a place to create the JSON file.
+
 ## Import shortcuts
 This allows you to import shortcuts via a JSON file. The JSON file should contain your shortcuts in the proper format. If you want to make a JSON file from scratch, I recommend first making a few shortcuts in the app, exporting that file, and then looking at the file as you design your own.
 
