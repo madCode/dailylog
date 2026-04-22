@@ -82,7 +82,7 @@ kover {
         verify {
             rule {
                 bound {
-                    minValue = 3 // Fails build if line coverage is < 3%
+                    minValue = 5 // Fails build if line coverage is < 5%
                 }
             }
         }
