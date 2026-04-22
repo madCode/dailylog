@@ -110,6 +110,7 @@ A description of the available datetime patterns can be found in the [Java docum
 When you have a list of shortcuts in the settings page, you can drag them around to reorder them. This will also change the order by which they appear in the shortcuts tray.
 ## Export shortcuts
 **New in version 3.1.0**: Version 3.1.0 switched to JSON-based shortcut exports compared to the previous CSV format. Until 3.2.0 you'll be able to import the legacy CSV format. We recommend you re-export any existing shortcuts to have a json-based backup.
+
 You can export your shortcuts to a JSON file by hitting the three-dot menu next to "Shortcuts" in the settings page.
 
 <img alt="An options menu has popped up with three options: Bulk add shortcuts, Export shortcuts, Import Shortcuts Backup, Import Legacy Shortcuts Backup (csv)" src="/README_screenshots/three_dot_menu.png" height="500px"/>
