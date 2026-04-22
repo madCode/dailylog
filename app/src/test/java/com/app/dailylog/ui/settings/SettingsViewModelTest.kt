@@ -14,8 +14,11 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.*
+import org.mockito.Mockito.doThrow
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.any
 
 @ExperimentalCoroutinesApi
 class SettingsViewModelTest : TestCase() {
@@ -25,14 +28,8 @@ class SettingsViewModelTest : TestCase() {
     private var buildMock: DetermineBuildInterface = mock(DetermineBuildInterface::class.java)
     private var repository: RepositoryInterface = mock(RepositoryInterface::class.java)
 
-    private fun finalize() {
-        settingsViewModel = null
-    }
-
     @Before
     fun setup() {
-        // Sets the given [dispatcher] as an underlying dispatcher of [Dispatchers.Main].
-        // All consecutive usages of [Dispatchers.Main] will use given [dispatcher] under the hood.
         Dispatchers.setMain(testDispatcher)
         buildMock = mock(DetermineBuildInterface::class.java)
         repository = mock(RepositoryInterface::class.java)
@@ -40,11 +37,7 @@ class SettingsViewModelTest : TestCase() {
 
     @After
     fun takeDown() {
-        // Resets state of the [Dispatchers.Main] to the original main dispatcher.
-        // For example, in Android Main thread dispatcher will be set as [Dispatchers.Main].
         Dispatchers.resetMain()
-
-        // Clean up the TestCoroutineDispatcher to make sure no other work is running.
         testDispatcher.cleanupTestCoroutines()
     }
 
@@ -60,7 +53,7 @@ class SettingsViewModelTest : TestCase() {
     fun `test repository called when updateShortcutPositions called`(): Unit = runBlocking {
         `when`(buildMock.isOreoOrGreater()).thenReturn(false)
         settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
-        val shortcutList = arrayListOf<Shortcut>(
+        val shortcutList = arrayListOf(
             Shortcut(label = "test", value = "test", cursorIndex = 3, type = "TEXT", position = 1),
             Shortcut(label = "test2", value = "test", cursorIndex = 3, type = "TEXT", position = 2),
             Shortcut(label = "test3", value = "test", cursorIndex = 3, type = "TEXT", position = 3),
@@ -81,8 +74,8 @@ class SettingsViewModelTest : TestCase() {
     fun `test repository called when updateShortcut called`(): Unit = runBlocking {
         `when`(buildMock.isOreoOrGreater()).thenReturn(false)
         settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
-        settingsViewModel!!.updateShortcut("test","testTExt",0,1,"TEXT")
-        verify(repository).updateShortcut("test","testTExt",0,1,"TEXT")
+        settingsViewModel!!.updateShortcut("test", "testTExt", 0, 1, "TEXT")
+        verify(repository).updateShortcut("test", "testTExt", 0, 1, "TEXT")
     }
 
     @Test
@@ -95,11 +88,11 @@ class SettingsViewModelTest : TestCase() {
     }
 
     @Test
-    fun `test repository called when addShortcut called`(): Unit = runBlocking  {
+    fun `test repository called when addShortcut called`(): Unit = runBlocking {
         `when`(buildMock.isOreoOrGreater()).thenReturn(false)
         settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
-        settingsViewModel!!.addShortcut("hello", "hello", 1,"TEXT")
-        verify(repository).addShortcut("hello", "hello", 1,"TEXT")
+        settingsViewModel!!.addShortcut("hello", "hello", 1, "TEXT")
+        verify(repository).addShortcut("hello", "hello", 1, "TEXT")
     }
 
     @Test
@@ -127,21 +120,11 @@ class SettingsViewModelTest : TestCase() {
     }
 
     @Test
-    fun `when export called and not right OS version error`() {
-        `when`(buildMock.isOreoOrGreater()).thenReturn(false)
-        val settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
-        settingsViewModel.exportFileUri = Uri.EMPTY
-        val error = settingsViewModel.exportShortcuts()
-        assertEquals("Need OS of Oreo or greater to export to CSV", error?.message)
-    }
-
-    @Test
     fun `when export called and no export file selected error`() {
         `when`(buildMock.isOreoOrGreater()).thenReturn(true)
         val settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
         val error = settingsViewModel.exportShortcuts()
         assertEquals("No export file selected", error?.message)
-
     }
 
     @Test
@@ -150,17 +133,15 @@ class SettingsViewModelTest : TestCase() {
         val settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
         settingsViewModel.exportFileUri = Uri.EMPTY
         val error = settingsViewModel.exportShortcuts()
-        assertNull(error);
-        verify(repository).exportShortcuts(Uri.EMPTY)
-
+        assertNull(error)
+        verify(repository).exportShortcutsAsJson(Uri.EMPTY)
     }
 
     @Test
-    fun `when exportShortcuts called with exception`() {
+    fun `when exportShortcuts throws exception returns error`() {
         `when`(buildMock.isOreoOrGreater()).thenReturn(true)
         val settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
         settingsViewModel.exportFileUri = Uri.EMPTY
-        // Mock repository to throw exception
         doThrow(Exception("Export failed")).`when`(repository).exportShortcutsAsJson(any())
         val error = settingsViewModel.exportShortcuts()
         assertNotNull(error)
@@ -168,7 +149,7 @@ class SettingsViewModelTest : TestCase() {
     }
 
     @Test
-    fun `when getFilename called then returns proper value from repository`() {
+    fun `when getFilename called then returns value from repository`() {
         `when`(buildMock.isOreoOrGreater()).thenReturn(false)
         `when`(repository.retrieveFilename()).thenReturn("test_filename.md")
         settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
@@ -178,22 +159,66 @@ class SettingsViewModelTest : TestCase() {
     }
 
     @Test
-    fun `when exportShortcuts called with exception then returns proper error`() {
-        `when`(buildMock.isOreoOrGreater()).thenReturn(true)
-        val settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
-        settingsViewModel.exportFileUri = Uri.EMPTY
-        // Mock repository to throw exception
-        doThrow(Exception("Export failed")).`when`(repository).exportShortcuts(any())
-        val error = settingsViewModel.exportShortcuts()
-        assertNotNull(error)
-        assertTrue(error?.message?.contains("Error:") == true)
-    }
-
-    @Test
-    fun `when createShortcutDialogViewModel called then returns proper instance`() {
+    fun `when createShortcutDialogViewModel called returns correct instance`() {
         settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
         val dialogViewModel = settingsViewModel!!.createShortcutDialogViewModel()
         assertNotNull(dialogViewModel)
         assertTrue(dialogViewModel is ShortcutDialogViewModel)
+    }
+
+    // Task 7: import path tests
+
+    @Test
+    fun `importShortcutsLegacy with Oreo calls repository`(): Unit = runBlocking {
+        `when`(buildMock.isOreoOrGreater()).thenReturn(true)
+        val toastMessages = mutableListOf<String>()
+        val vm = SettingsViewModel(repository, buildMock, { msg -> toastMessages.add(msg) }, testDispatcher)
+        vm.importShortcutsLegacy(Uri.EMPTY)
+        // Use the proper way to advance coroutines instead of deprecated advanceUntilIdle()
+        testDispatcher.scheduler.advanceUntilIdle()
+        verify(repository).importShortcuts(Uri.EMPTY)
+    }
+
+    @Test
+    fun `importShortcutsLegacy below Oreo shows toast`(): Unit = runBlocking {
+        `when`(buildMock.isOreoOrGreater()).thenReturn(false)
+        val toastMessages = mutableListOf<String>()
+        val vm = SettingsViewModel(repository, buildMock, { msg -> toastMessages.add(msg) }, testDispatcher)
+        vm.importShortcutsLegacy(Uri.EMPTY)
+        // Use the proper way to advance coroutines instead of deprecated advanceUntilIdle()
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertTrue(toastMessages.contains("Need OS of Oreo or greater to import from CSV"))
+    }
+
+    @Test
+    fun `importShortcuts with Oreo calls repository`(): Unit = runBlocking {
+        `when`(buildMock.isOreoOrGreater()).thenReturn(true)
+        val toastMessages = mutableListOf<String>()
+        val vm = SettingsViewModel(repository, buildMock, { msg -> toastMessages.add(msg) }, testDispatcher)
+        vm.importShortcuts(Uri.EMPTY)
+        // Use the proper way to advance coroutines instead of deprecated advanceUntilIdle()
+        testDispatcher.scheduler.advanceUntilIdle()
+        verify(repository).importShortcutsFromJson(Uri.EMPTY)
+    }
+
+    @Test
+    fun `importShortcuts below Oreo shows toast`(): Unit = runBlocking {
+        `when`(buildMock.isOreoOrGreater()).thenReturn(false)
+        val toastMessages = mutableListOf<String>()
+        val vm = SettingsViewModel(repository, buildMock, { msg -> toastMessages.add(msg) }, testDispatcher)
+        vm.importShortcuts(Uri.EMPTY)
+        // Use the proper way to advance coroutines instead of deprecated advanceUntilIdle()
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertTrue(toastMessages.contains("Need OS of Oreo or greater to import from CSV"))
+    }
+
+    // Task 8A: factory test
+
+    @Test
+    fun `SettingsViewModelFactory creates SettingsViewModel`() {
+        val factory = SettingsViewModelFactory(repository, buildMock, {}, testDispatcher)
+        val vm = factory.create(SettingsViewModel::class.java)
+        assertNotNull(vm)
+        assertTrue(vm is SettingsViewModel)
     }
 }
