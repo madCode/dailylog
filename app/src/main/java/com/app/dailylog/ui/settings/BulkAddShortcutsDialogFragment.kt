@@ -41,7 +41,6 @@ class BulkAddShortcutsDialogFragment(viewModel: ShortcutDialogViewModel, private
         }
 
         binding.btnSaveBulkShortcut.setOnClickListener {
-            numLabelsBeingValidated = 0
             valid = true
             clearInvalidLabelMessage()
             resultLines = ArrayList()

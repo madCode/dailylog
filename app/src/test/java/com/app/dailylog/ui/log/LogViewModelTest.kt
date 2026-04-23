@@ -1,13 +1,15 @@
 package com.app.dailylog.ui.log
 
 import com.app.dailylog.repository.RepositoryInterface
-import junit.framework.TestCase
+import org.junit.Assert.*
+import org.junit.Test
 import org.mockito.Mockito.*
 
 
-class LogViewModelTest : TestCase() {
+class LogViewModelTest {
 
-    fun `test cursor index gets set`() {
+    @Test
+    fun testCursorIndexGetsSet() {
         val repository: RepositoryInterface = mock(RepositoryInterface::class.java)
         val index = 3
         doNothing().`when`(repository).setCursorIndex(index)
@@ -16,35 +18,40 @@ class LogViewModelTest : TestCase() {
         assertEquals(index, viewModel.cursorIndex)
     }
 
-    fun `test repository called when getLog called`() {
+    @Test
+    fun testRepositoryCalledWhenGetLogCalled() {
         val repository: RepositoryInterface = mock(RepositoryInterface::class.java)
         val viewModel = LogViewModel(repository)
         viewModel.getLog()
         verify(repository).readFile(true)
     }
 
-    fun `test repository called when getAllShortcuts called`() {
+    @Test
+    fun testRepositoryCalledWhenGetAllShortcutsCalled() {
         val repository: RepositoryInterface = mock(RepositoryInterface::class.java)
         val viewModel = LogViewModel(repository)
         viewModel.getAllShortcuts()
         verify(repository).getAllShortcuts()
     }
 
-    fun `test repository called when force save called`() {
+    @Test
+    fun testRepositoryCalledWhenForceSaveCalled() {
         val repository: RepositoryInterface = mock(RepositoryInterface::class.java)
         val viewModel = LogViewModel(repository)
         viewModel.forceSave("hello")
         verify(repository).saveToFile("hello", true)
     }
 
-    fun `test repository called when smart save called`() {
+    @Test
+    fun testRepositoryCalledWhenSmartSaveCalled() {
         val repository: RepositoryInterface = mock(RepositoryInterface::class.java)
         val viewModel = LogViewModel(repository)
         viewModel.smartSave("hello")
         verify(repository).saveToFile("hello", false)
     }
 
-    fun `loadedFileForFirstTime goes from true to false after first log load`() {
+    @Test
+    fun testLoadedFileForFirstTimeGoesTrueToFalseAfterFirstLogLoad() {
         val repository: RepositoryInterface = mock(RepositoryInterface::class.java)
         val viewModel = LogViewModel(repository)
         viewModel.getLog()
@@ -52,5 +59,4 @@ class LogViewModelTest : TestCase() {
         viewModel.getLog()
         verify(repository).readFile(false)
     }
-
 }

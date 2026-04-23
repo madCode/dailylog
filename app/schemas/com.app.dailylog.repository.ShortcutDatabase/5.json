@@ -1,13 +1,19 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 4,
-    "identityHash": "9872f3867be6b9932f25c8b2dae036a5",
+    "version": 5,
+    "identityHash": "c9f9f0de0a50b6990f56ff71143323d1",
     "entities": [
       {
         "tableName": "Shortcut",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`label` TEXT NOT NULL, `value` TEXT NOT NULL, `cursorIndex` INTEGER NOT NULL, `type` TEXT NOT NULL DEFAULT 'TEXT', `position` INTEGER NOT NULL, PRIMARY KEY(`label`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `label` TEXT NOT NULL, `value` TEXT NOT NULL, `cursorIndex` INTEGER NOT NULL, `type` TEXT NOT NULL DEFAULT 'TEXT', `position` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
           {
             "fieldPath": "label",
             "columnName": "label",
@@ -41,19 +47,16 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": false,
           "columnNames": [
-            "label"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": []
+            "id"
+          ]
+        }
       }
     ],
-    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9872f3867be6b9932f25c8b2dae036a5')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c9f9f0de0a50b6990f56ff71143323d1')"
     ]
   }
 }

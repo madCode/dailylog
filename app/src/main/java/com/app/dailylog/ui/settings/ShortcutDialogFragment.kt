@@ -10,7 +10,6 @@ import android.text.style.ForegroundColorSpan
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
-import android.widget.Button
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.LiveData
 import com.app.dailylog.R
@@ -24,7 +23,7 @@ interface ShortcutDialogListener {
 
 open class ModifyShortcutDialogFragment(viewModel: ShortcutDialogViewModel): ShortcutDialogFragment(viewModel) {
     open var keepCursorValueAtMax = true // keep the cursor value at the max it can be
-    open var skipUniqueCheck = false
+    open var excludeId: String? = null
     lateinit var binding: CreateNewShortcutBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -114,7 +113,7 @@ open class ModifyShortcutDialogFragment(viewModel: ShortcutDialogViewModel): Sho
         clearInvalidLabelMessage()
         val label = binding.labelInput
         val text = binding.textInput
-        val isLabelValid = viewModel.isLabelValid(label.text.toString(), skipUniqueCheck)
+        val isLabelValid = viewModel.isLabelValid(label.text.toString(), excludeId)
         if (!isLabelValid) {
             binding.labelInputLayout.error = "Label must be unique and cannot be empty"
             valid = false
@@ -136,7 +135,6 @@ open class ModifyShortcutDialogFragment(viewModel: ShortcutDialogViewModel): Sho
 
 open class ShortcutDialogFragment(var viewModel: ShortcutDialogViewModel): DialogFragment() {
     var valid = true
-    var numLabelsBeingValidated = 0
     var isDateTimeType = false
     lateinit var saveButton: MaterialButton
 
@@ -165,7 +163,7 @@ open class ShortcutDialogFragment(var viewModel: ShortcutDialogViewModel): Dialo
     }
 
     open fun canSubmit(): Boolean {
-        return valid && numLabelsBeingValidated == 0
+        return valid
     }
 
     open fun alertOnInvalidLabel(label: String) {
@@ -176,13 +174,4 @@ open class ShortcutDialogFragment(var viewModel: ShortcutDialogViewModel): Dialo
         TODO("implement submit")
     }
 
-    open fun savingIndicator() {
-        if (numLabelsBeingValidated != 0) {
-            saveButton.isEnabled = false
-            saveButton.text = getString(R.string.saving)
-        } else {
-            saveButton.isEnabled = true
-            saveButton.text = getString(R.string.save)
-        }
-    }
 }

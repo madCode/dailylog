@@ -320,6 +320,7 @@ class SettingsFragment(
     }
 
     override fun onFinishEditShortcutDialog(
+        id: String,
         label: String,
         text: String,
         cursor: Int,
@@ -327,6 +328,7 @@ class SettingsFragment(
         type: String
     ) {
         viewModel.updateShortcut(
+            id,
             label,
             text,
             cursor,

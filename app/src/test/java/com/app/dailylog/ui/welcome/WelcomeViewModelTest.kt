@@ -1,12 +1,14 @@
 package com.app.dailylog.ui.welcome
 
 import com.app.dailylog.repository.RepositoryInterface
-import junit.framework.TestCase
+import org.junit.Assert.*
+import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 
-class WelcomeViewModelTest : TestCase() {
+class WelcomeViewModelTest {
 
+    @Test
     fun testSaveFilenameDelegates() {
         val repository = mock(RepositoryInterface::class.java)
         val viewModel = WelcomeViewModel(repository) {}
@@ -14,6 +16,7 @@ class WelcomeViewModelTest : TestCase() {
         verify(repository).storeFilename("content://test/file.md")
     }
 
+    @Test
     fun testOpenLogViewInvokesCallback() {
         var called = false
         val repository = mock(RepositoryInterface::class.java)

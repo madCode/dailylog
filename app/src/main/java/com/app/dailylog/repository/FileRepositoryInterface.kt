@@ -8,7 +8,6 @@ import androidx.annotation.RequiresApi
 import com.app.dailylog.R
 import com.app.dailylog.ui.permissions.PermissionChecker
 import com.opencsv.CSVReader
-import com.opencsv.CSVWriter
 import java.io.*
 import java.lang.Exception
 import java.math.BigInteger
@@ -116,34 +115,6 @@ interface FileRepositoryInterface {
                 Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show()
                 false
             } catch (ex: Exception) {
-                Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show()
-                false
-            }
-        }
-        Toast.makeText(context, "File write permissions not yet granted.", Toast.LENGTH_LONG).show()
-        return false
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun exportShortcuts(uri: Uri, rows: List<List<String>>): Boolean {
-        if (permissionChecker.requestPermissionsBasedOnAppVersion()) {
-            return try {
-                val openFileDescriptor = context.contentResolver.openFileDescriptor(uri, "rwt")
-                val fileDescriptor = openFileDescriptor?.fileDescriptor
-                val fileStream = FileOutputStream(fileDescriptor)
-                val writer = CSVWriter(OutputStreamWriter(fileStream))
-                for (row in rows) {
-                    writer.writeNext(row.toTypedArray());
-                }
-                writer.close();
-                fileStream.close()
-                openFileDescriptor?.close()
-                true
-            } catch (ex: IllegalArgumentException) {
-                Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show()
-                false
-            } catch (ex: Exception) {
-                print(ex.stackTrace)
                 Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show()
                 false
             }
