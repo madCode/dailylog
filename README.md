@@ -63,7 +63,7 @@ You'll now see your shortcut displayed in the shortcuts list:
 
 <img alt="The settings screen from before but now under the 'Shortcuts' heading there is your dinner shortcut. The label and text are there, with a | at the end to denote that we left the cursor index as the end." src="/README_screenshots/shortcut_list.png" height="500px"/>
 
-Clicking on it will allow you to edit it. You'll also notice a gray x on the side to delete the shortcut, and the six gray dots on the left-hand side of the shortcut card. The dots denote that when there are multiple shortcuts, you can drag to reorder them. More in "Drag to reorder shortcuts".
+Clicking on it will allow you to edit it, including the label. **New in version 3.2.0**: shortcut labels can now be edited. You'll also notice a gray x on the side to delete the shortcut, and the six gray dots on the left-hand side of the shortcut card. The dots denote that when there are multiple shortcuts, you can drag to reorder them. More in "Drag to reorder shortcuts".
 
 ## Step 4. Insert your first shortcut
 Hit the back button to go back to the log screen. It should look like this:
