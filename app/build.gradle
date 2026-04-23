@@ -19,14 +19,8 @@ android {
         applicationId "com.app.dailylog"
         minSdkVersion 23
         targetSdkVersion 36
-        versionCode 3100
-        versionName "3.1.0"
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
-            }
-        }
+        versionCode 3200
+        versionName "3.2.0"
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
@@ -48,6 +42,16 @@ android {
         }
     }
     namespace 'com.app.dailylog'
+
+    sourceSets {
+        androidTest {
+            assets.srcDirs += files("$projectDir/schemas")
+        }
+    }
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 dependencies {
@@ -108,7 +112,7 @@ kover {
         verify {
             rule {
                 bound {
-                    minValue = 5 // Fails build if line coverage is < 5%
+                    minValue = 51
                 }
             }
         }

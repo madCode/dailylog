@@ -8,8 +8,6 @@ import androidx.lifecycle.LiveData
 import com.app.dailylog.R
 import com.app.dailylog.ui.permissions.PermissionChecker
 import com.app.dailylog.utils.JsonShortcutUtils
-import com.opencsv.CSVReader
-import com.opencsv.CSVWriter
 import java.io.*
 import java.lang.Exception
 import java.math.BigInteger
@@ -22,9 +20,6 @@ interface RepositoryInterface: FileRepositoryInterface, ShortcutRepositoryInterf
     fun setCursorIndex(index: Int)
     fun getAllShortcuts(): LiveData<List<Shortcut>>
     fun labelExists(label: String): LiveData<Boolean>
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun exportShortcuts(uri: Uri)
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun importShortcuts(uri: Uri)
@@ -85,11 +80,6 @@ class Repository(override val context: Context,
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun exportShortcuts(uri: Uri) {
-        shortcutLiveData.value?.let { exportShortcuts(uri, getExportRows()) }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun importShortcuts(uri: Uri) {
         val results = importShortcutValuesFromCSV(uri)
         if (results != null) {
@@ -112,10 +102,13 @@ class Repository(override val context: Context,
             val shortcuts = JsonShortcutUtils.importShortcutsFromJson(jsonContent)
             
             if (shortcuts != null) {
-                // Add all shortcuts to the database
-                bulkAddShortcuts(shortcuts.map { 
-                    arrayOf(it.label, it.value, it.cursorIndex.toString(), it.type) 
-                })
+                val validShortcuts = shortcuts.filter { shortcut ->
+                    isLabelValid(shortcut.label) &&
+                    isTextValid(shortcut.value) &&
+                    ShortcutType.isTypeValid(shortcut.type) == true &&
+                    shortcut.cursorIndex in 0..shortcut.value.length
+                }
+                shortcutDao.addAll(*validShortcuts.toTypedArray())
             }
     }
 
