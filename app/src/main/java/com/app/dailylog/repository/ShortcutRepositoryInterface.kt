@@ -1,6 +1,7 @@
 package com.app.dailylog.repository
 
 import androidx.lifecycle.LiveData
+import java.util.UUID
 
 interface ShortcutRepositoryInterface {
     val shortcutDao: ShortcutDao
@@ -13,11 +14,11 @@ interface ShortcutRepositoryInterface {
     }
 
     private fun createShortcut(label: String, text: String, cursorIndex: Int, type: String): Shortcut {
-        return  Shortcut(label = label, value = text, cursorIndex = cursorIndex, position = nextShortcutPosition(), type=type)
+        return  Shortcut(id = UUID.randomUUID().toString(), label = label, value = text, cursorIndex = cursorIndex, position = nextShortcutPosition(), type=type)
     }
 
-    private suspend fun deleteShortcutFromDB(label: String): Boolean {
-        shortcutDao.deleteByLabel(label)
+    private suspend fun deleteShortcutFromDB(id: String): Boolean {
+        shortcutDao.deleteById(id)
         return true
     }
 
@@ -25,8 +26,8 @@ interface ShortcutRepositoryInterface {
         shortcutDao.updateAll(*shortcuts.toTypedArray())
     }
 
-    suspend fun updateShortcut(label: String, text: String, cursorIndex: Int, position: Int, type: String): Boolean {
-        val shortcut = Shortcut(label = label, value = text, cursorIndex = cursorIndex, position = position, type= type)
+    suspend fun updateShortcut(id: String, label: String, text: String, cursorIndex: Int, position: Int, type: String): Boolean {
+        val shortcut = Shortcut(id = id, label = label, value = text, cursorIndex = cursorIndex, position = position, type= type)
         shortcutDao.updateAll(shortcut)
         return true
     }
@@ -50,6 +51,7 @@ interface ShortcutRepositoryInterface {
                 val type = list[3]
                 results.add(
                     Shortcut(
+                        id = UUID.randomUUID().toString(),
                         label = label,
                         value = text,
                         cursorIndex = cursorIndex,
@@ -100,15 +102,13 @@ interface ShortcutRepositoryInterface {
         return text.isNotEmpty()
     }
 
-    fun isLabelValid(label: String, skipUniqueCheck: Boolean = false): Boolean {
+    fun isLabelValid(label: String, excludeId: String? = null): Boolean {
         if (label.isEmpty()) {
             return false
         }
-        if (!skipUniqueCheck) {
-            for (shortcut in shortcutLiveData.value!!) {
-                if (shortcut.label == label) {
-                    return false
-                }
+        for (shortcut in shortcutLiveData.value ?: emptyList()) {
+            if (shortcut.label == label && shortcut.id != excludeId) {
+                return false
             }
         }
         return true
@@ -140,8 +140,8 @@ interface ShortcutRepositoryInterface {
         return true
     }
 
-    suspend fun removeShortcut(label: String): Boolean {
-        deleteShortcutFromDB(label)
+    suspend fun removeShortcut(id: String): Boolean {
+        deleteShortcutFromDB(id)
         return true
     }
 
@@ -150,23 +150,5 @@ interface ShortcutRepositoryInterface {
             shortcut.position = index
         }
         saveAllShortcutsToDb(shortcuts)
-    }
-
-    fun getExportRows(): List<List<String>> {
-        val results = arrayListOf<List<String>>()
-        if (shortcutLiveData.value != null && shortcutLiveData.value!!.isNotEmpty()) {
-            val shortcuts = shortcutLiveData.value
-            if (shortcuts != null) {
-                for (shortcut in shortcuts) {
-                    val row = arrayListOf<String>()
-                    row.add(shortcut.label)
-                    row.add(shortcut.value)
-                    row.add(shortcut.cursorIndex.toString())
-                    row.add(shortcut.type)
-                    results.add(row)
-                }
-            }
-        }
-        return results
     }
 }

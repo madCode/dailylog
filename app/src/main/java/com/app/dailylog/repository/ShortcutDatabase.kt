@@ -9,7 +9,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 
-@Database(entities = [Shortcut::class], version = 4, exportSchema = true)
+@Database(entities = [Shortcut::class], version = 5, exportSchema = true)
 abstract class ShortcutDatabase : RoomDatabase() {
     abstract fun shortcutDao(): ShortcutDao
 
@@ -38,6 +38,16 @@ abstract class ShortcutDatabase : RoomDatabase() {
             }
         }
 
+        @VisibleForTesting
+        val MIGRATION_4_5: Migration = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE shortcut_new(id TEXT NOT NULL, label TEXT NOT NULL, value TEXT NOT NULL, cursorIndex INTEGER NOT NULL, type TEXT NOT NULL DEFAULT 'TEXT', position INTEGER NOT NULL, PRIMARY KEY(id));")
+                db.execSQL("INSERT INTO shortcut_new(id, label, value, cursorIndex, type, position) SELECT label, label, value, cursorIndex, type, position FROM Shortcut;")
+                db.execSQL("DROP TABLE Shortcut;")
+                db.execSQL("ALTER TABLE shortcut_new RENAME TO Shortcut;")
+            }
+        }
+
         fun getDatabase(context: Context): ShortcutDatabase {
             val tempInstance = INSTANCE
             if (tempInstance != null) {
@@ -56,7 +66,7 @@ abstract class ShortcutDatabase : RoomDatabase() {
                         context,
                         ShortcutDatabase::class.java,
                         "shortcut_database"
-                    ).addMigrations(MIGRATION_3_4).build()
+                    ).addMigrations(MIGRATION_3_4, MIGRATION_4_5).build()
                     INSTANCE = instance
                     return instance
                 }
