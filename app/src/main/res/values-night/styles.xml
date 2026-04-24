@@ -2,20 +2,13 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#89B0AE</item>
-        <item name="colorPrimaryDark">#89B0AE</item>
-        <item name="colorPrimaryVariant">#89B0AE</item>
-        <item name="colorSecondary">#F4C09C</item>
-        <item name="colorAccent">#F4C09C</item>
-        <item name="colorSecondaryVariant">#F4C09C</item>
-        <!--        <item name="colorSecondaryVariant">#FFD6BA</item>-->
-
-        <!--        <item name="colorPrimary">#006D77</item>-->
-        <!--        <item name="colorOnPrimary">#ffffff</item>-->
-        <!--        <item name="colorPrimaryDark">#006D77</item>-->
-        <!--        <item name="colorPrimaryVariant">#006D77</item>-->
-        <!--        <item name="colorSecondary">#F9C8D7</item>-->
-        <!--        <item name="colorAccent">#EA678F</item>-->
-        <!--        <item name="colorSecondaryVariant">#F9C8D7</item>-->
+        <item name="colorPrimary">#BEE3DB</item>
+        <item name="colorOnPrimary">#000000</item>
+        <item name="colorPrimaryDark">#BEE3DB</item>
+        <item name="colorPrimaryVariant">#BEE3DB</item>
+        <item name="colorSecondary">#F2CBDC</item>
+        <item name="colorOnSecondary">#000000</item>
+        <item name="colorAccent">#F2CBDC</item>
+        <item name="colorSecondaryVariant">#F2CBDC</item>
     </style>
 </resources>

@@ -112,6 +112,7 @@
         android:contentDescription="@string/add_a_shortcut"
         android:src="@drawable/ic_add_48"
         app:backgroundTint="?attr/colorPrimary"
+        app:tint="?attr/colorOnPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
