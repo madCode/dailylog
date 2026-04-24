@@ -55,6 +55,14 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
             save(false)
             goToSettings()
         }
+
+        viewModel.saveComplete.observe(viewLifecycleOwner) {
+            Toast.makeText(context, "Saved file", Toast.LENGTH_SHORT).show()
+        }
+
+        viewModel.saveError.observe(viewLifecycleOwner) { error ->
+            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onPause() {
@@ -81,15 +89,10 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
         if (todayLog.text != null && todayLog.text!!.isNotEmpty()) {
             viewModel.saveCursorIndex(todayLog.selectionStart)
         }
-        val saved = if (forceSave) {
+        if (forceSave) {
             viewModel.forceSave(todayLog.text.toString())
         } else {
             viewModel.smartSave(todayLog.text.toString())
-        }
-        if (saved) {
-            todayLog.setText(viewModel.getLog(), TextView.BufferType.EDITABLE)
-            todayLog.setSelection(getCursorIndex(todayLog.text.toString()))
-            Toast.makeText(context, "Saved file", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -132,8 +135,7 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
     private fun loadFile() {
         val todayLog = binding.todayLog
         todayLog.setText(viewModel.getLog(), TextView.BufferType.EDITABLE)
-        val cursorIndex = getCursorIndex(todayLog.text!!.toString())
-        todayLog.setSelection(cursorIndex)
+        todayLog.setSelection(getCursorIndex(todayLog.text!!.toString()))
         Toast.makeText(context, "Loaded file", Toast.LENGTH_SHORT).show()
     }
 
