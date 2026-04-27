@@ -51,7 +51,7 @@ Each fragment takes a pre-constructed ViewModel (not a factory lookup) passed fr
 
 ### Shortcut System
 
-`Shortcut` is the Room entity (`@Entity`). Fields: `label` (PK), `value`, `cursorIndex`, `type`, `position`.
+`Shortcut` is the Room entity (`@Entity`). Fields: `id` (UUID, PK), `label`, `value`, `cursorIndex`, `type`, `position`. Using a UUID primary key (instead of `label`) allows labels to be edited without cascading deletes/re-inserts.
 
 Two shortcut types (`ShortcutType`):
 - `TEXT` — inserts `value` verbatim.
@@ -66,7 +66,7 @@ JSON export format (v3.1.0+): `{ "schemaVersion": N, "shortcuts": [...] }`. Lega
 | `MainActivity.kt` | Fragment orchestration, startup migration warning |
 | `repository/Repository.kt` | Concrete repository; wires together file + shortcut interfaces |
 | `repository/FileRepositoryInterface.kt` | File read/write, smart save via MD5 hash |
-| `repository/ShortcutRepositoryInterface.kt` | Shortcut CRUD, bulk add, validation, export rows |
+| `repository/ShortcutRepositoryInterface.kt` | Shortcut CRUD, bulk add, validation; operates on UUID `id` not `label` |
 | `repository/Shortcut.kt` | `Shortcut` entity + `ShortcutDao` + `ShortcutType` |
 | `repository/ShortcutDatabase.kt` | Room database definition |
 | `utils/ShortcutUtils.kt` | Datetime token replacement at insert time |

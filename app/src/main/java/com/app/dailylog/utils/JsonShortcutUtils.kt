@@ -3,6 +3,7 @@ package com.app.dailylog.utils
 import android.util.Log
 import com.app.dailylog.repository.Shortcut
 import com.google.gson.Gson
+import java.util.UUID
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -30,6 +31,7 @@ class JsonShortcutUtils {
             val shortcutsArray = JsonArray()
             for (shortcut in shortcuts) {
                 val shortcutJson = JsonObject()
+                shortcutJson.addProperty("id", shortcut.id)
                 shortcutJson.addProperty("label", shortcut.label)
                 shortcutJson.addProperty("value", shortcut.value)
                 shortcutJson.addProperty("cursorIndex", shortcut.cursorIndex)
@@ -56,6 +58,7 @@ class JsonShortcutUtils {
                     for (element in shortcutsArray) {
                         val shortcutJson = element.asJsonObject
                         val shortcut = Shortcut(
+                            id = if (shortcutJson.has("id")) shortcutJson.get("id").asString else UUID.randomUUID().toString(),
                             label = shortcutJson.get("label").asString,
                             value = shortcutJson.get("value").asString,
                             cursorIndex = shortcutJson.get("cursorIndex").asInt,

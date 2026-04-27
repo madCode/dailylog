@@ -1,19 +1,30 @@
 package com.app.dailylog.ui.settings
 
 import com.app.dailylog.repository.RepositoryInterface
-import junit.framework.TestCase
+import org.junit.Assert.*
+import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 
-class ShortcutDialogViewModelTest : TestCase() {
+class ShortcutDialogViewModelTest {
 
+    @Test
     fun testIsLabelValidDelegates() {
         val repository = mock(RepositoryInterface::class.java)
         val viewModel = ShortcutDialogViewModel(repository)
-        viewModel.isLabelValid("myLabel", false)
-        verify(repository).isLabelValid("myLabel", false)
+        viewModel.isLabelValid("myLabel")
+        verify(repository).isLabelValid("myLabel", null)
     }
 
+    @Test
+    fun testIsLabelValidWithExcludeIdDelegates() {
+        val repository = mock(RepositoryInterface::class.java)
+        val viewModel = ShortcutDialogViewModel(repository)
+        viewModel.isLabelValid("myLabel", "some-uuid")
+        verify(repository).isLabelValid("myLabel", "some-uuid")
+    }
+
+    @Test
     fun testIsTextValidDelegates() {
         val repository = mock(RepositoryInterface::class.java)
         val viewModel = ShortcutDialogViewModel(repository)
@@ -21,6 +32,7 @@ class ShortcutDialogViewModelTest : TestCase() {
         verify(repository).isTextValid("someText")
     }
 
+    @Test
     fun testValidateShortcutRowDelegates() {
         val repository = mock(RepositoryInterface::class.java)
         val row = arrayOf("a", "b", "1", "TEXT")

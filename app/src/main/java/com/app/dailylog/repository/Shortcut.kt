@@ -16,7 +16,8 @@ object ShortcutType {
 
 @Entity
 data class Shortcut(
-    @PrimaryKey val label: String,
+    @PrimaryKey val id: String,
+    @ColumnInfo(name = "label") val label: String,
     @ColumnInfo(name = "value") val value: String,
     @ColumnInfo(name = "cursorIndex") val cursorIndex: Int,
     @ColumnInfo(name = "type", defaultValue = ShortcutType.TEXT) var type: String,
@@ -37,8 +38,8 @@ interface ShortcutDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addAll(vararg shortcuts: Shortcut)
 
-    @Query("DELETE FROM shortcut WHERE label = :label")
-    suspend fun deleteByLabel(label: String)
+    @Query("DELETE FROM shortcut WHERE id = :id")
+    suspend fun deleteById(id: String)
 
     @Query("SELECT EXISTS(SELECT * FROM shortcut WHERE label = :label)")
     fun labelExists(label: String): LiveData<Boolean>

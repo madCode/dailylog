@@ -26,7 +26,6 @@ class AddShortcutDialogFragment(viewModel: ShortcutDialogViewModel, private val 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnSaveShortcut.setOnClickListener {
-            numLabelsBeingValidated = 0
             validateView()
             submit()
         }

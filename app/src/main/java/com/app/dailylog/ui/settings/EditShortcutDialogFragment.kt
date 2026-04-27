@@ -11,10 +11,9 @@ import com.app.dailylog.repository.ShortcutType
 class EditShortcutDialogFragment(private var shortcut: Shortcut,
                                  viewModel: ShortcutDialogViewModel, private val listener: EditShortcutDialogListener) : ModifyShortcutDialogFragment(viewModel) {
     override var keepCursorValueAtMax = false
-    override var skipUniqueCheck = true
 
     interface EditShortcutDialogListener {
-        fun onFinishEditShortcutDialog(label: String, text: String, cursor: Int, position: Int, type: String)
+        fun onFinishEditShortcutDialog(id: String, label: String, text: String, cursor: Int, position: Int, type: String)
     }
 
     companion object {
@@ -33,7 +32,7 @@ class EditShortcutDialogFragment(private var shortcut: Shortcut,
         super.onViewCreated(view, savedInstanceState)
 
         val label = binding.labelInput
-        label.isEnabled = false
+        this.excludeId = shortcut.id
         binding.btnSaveShortcut.setOnClickListener {
             validateView()
             submit()
@@ -64,6 +63,7 @@ class EditShortcutDialogFragment(private var shortcut: Shortcut,
         }
         if (canSubmit()) {
             listener.onFinishEditShortcutDialog(
+                shortcut.id,
                 label.text.toString(),
                 text.text.toString(),
                 cursor.value.toInt(),
