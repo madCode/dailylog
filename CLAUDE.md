@@ -78,9 +78,19 @@ JSON export format (v3.1.0+): `{ "schemaVersion": N, "shortcuts": [...] }`. Lega
 
 1. Bump `versionCode` and `versionName` in `app/build.gradle`.
 2. Commit, tag `v<version>`, push the tag.
-3. Build a signed release APK (not AAB — F-Droid requires APK).
-4. Create a GitHub release, attach `app-release.apk` and `output.json`.
-5. F-Droid picks up new tags automatically; verify within 24h on the [F-Droid page](https://f-droid.org/packages/com.app.dailylog/).
+3. The `release` GitHub Actions workflow triggers automatically, builds a signed APK, and attaches it to the GitHub Release page.
+4. F-Droid picks up new tags automatically; verify within 24h on the [F-Droid page](https://f-droid.org/packages/com.app.dailylog/).
+
+### First-time setup (required for signing)
+
+The release workflow requires four repository secrets to sign the APK. Set these once in **GitHub → Settings → Secrets and variables → Actions**:
+
+| Secret | Value |
+|---|---|
+| `KEYSTORE_BASE64` | Base64-encoded `.jks` file: `base64 -i your-keystore.jks \| pbcopy` |
+| `KEYSTORE_PASSWORD` | Keystore password |
+| `KEY_ALIAS` | Key alias |
+| `KEY_PASSWORD` | Key password |
 
 ## Library Choices
 
