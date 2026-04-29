@@ -34,14 +34,15 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
 
         binding = AddToLogViewBinding.bind(view)
 
-        // Apply window insets to handle notch and navigation areas
-        ViewCompat.setOnApplyWindowInsetsListener(view) { view, insets ->
+        // Apply window insets to handle notch, navigation bar, and keyboard
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            v.setPadding(
                 systemBars.left,
-                systemBars.top,    // avoids notch/status bar
+                systemBars.top,
                 systemBars.right,
-                systemBars.bottom  // avoids nav buttons
+                maxOf(systemBars.bottom, ime.bottom)
             )
             insets
         }
@@ -106,23 +107,6 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
             shortcuts.let { adapter.itemList = it; }
         })
         tray.adapter = adapter
-        
-        // Add keyboard visibility listener to adjust shortcut tray position
-        ViewCompat.setOnApplyWindowInsetsListener(tray) { view, insets ->
-            val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-            if (imeHeight > 0) {
-                // Keyboard is visible, adjust the layout
-                val params = view.layoutParams as ViewGroup.MarginLayoutParams
-                params.bottomMargin = imeHeight
-                view.layoutParams = params
-            } else {
-                // Keyboard is hidden, reset margin
-                val params = view.layoutParams as ViewGroup.MarginLayoutParams
-                params.bottomMargin = 0
-                view.layoutParams = params
-            }
-            insets
-        }
     }
 
     private fun getCursorIndex(text: String): Int {
