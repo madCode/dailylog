@@ -87,7 +87,7 @@ Download the latest version of Android Studio.
    - **Note:** The four keystore secrets must be configured in the repository (see setup step 6 above) before this will work.
    - **Important:** F-Droid requires APKs, not App Bundles — the workflow is already configured to produce an APK.
 
-4. **Add release notes manually**: once the workflow completes, go to the [Releases page](https://github.com/madCode/dailylog/releases), edit the new release, and fill in the title and description/changelog before publishing.
+4. **Add release notes and publish**: once the workflow completes, a draft release will be waiting on the [Releases page](https://github.com/madCode/dailylog/releases). Edit it to add a title and description/changelog, then publish it.
 
 ### Part 2: Ensuring a Successful F-Droid Release
 
