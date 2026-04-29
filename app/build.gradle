@@ -68,8 +68,8 @@ dependencies {
     // Room
     implementation 'androidx.room:room-runtime:2.7.0'
     implementation "androidx.room:room-ktx:2.7.0"
-    implementation 'androidx.test:core-ktx:1.5.0'
-    implementation 'androidx.test.ext:junit-ktx:1.1.5'
+    implementation 'androidx.test:core-ktx:1.6.1'
+    implementation 'androidx.test.ext:junit-ktx:1.2.1'
     androidTestImplementation "androidx.room:room-testing:2.7.0"
     ksp "androidx.room:room-compiler:2.7.0"
 
@@ -84,7 +84,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-inline:3.12.4'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3'
     androidTestImplementation 'org.mockito:mockito-android:3.12.4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 }
 
 kover {
