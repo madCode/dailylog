@@ -23,3 +23,4 @@
 .externalNativeBuild
 .cxx
 /.kotlin/errors/*
+app/release/
