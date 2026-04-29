@@ -1,16 +1,4 @@
-# IntelliJ IDEA files (should be tracked)
-/.idea/gradle.xml
-/.idea/misc.xml
-/.idea/compiler.xml
-/.idea/vcs.xml
-
-# Other IntelliJ IDEA files (should be ignored)
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+# IntelliJ IDEA files
 .idea/
 
 # Other files
