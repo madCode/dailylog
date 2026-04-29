@@ -5,7 +5,7 @@ This document provides instructions for setting up a development environment and
 ## Prerequisites
 
 - Android Studio (recommended) or command-line tools
-- JDK 17 (required for building)
+- JDK 21 / OpenJDK 21 (required for building)
 - Kotlin SDK 2.2.10 (as specified in build.gradle)
 - Android SDK with API level 36
 - Gradle 8.0 or higher
@@ -47,14 +47,22 @@ Download the latest version of Android Studio.
       - the debug apk is stored in `app/build/outputs/apk/debug/app-debug.apk`
    - In the device, play around with the app
 
-6. **madCode only**: Set up signing key
-   - Search for the `dailylog.jks` file.
+6. **madCode only**: Set up signing key for releases
+   - Locate the `dailylog.jks` keystore file.
+   - Add the following secrets to the GitHub repository (**Settings → Secrets and variables → Actions**):
+
+   | Secret | Value |
+   |---|---|
+   | `KEYSTORE_BASE64` | Base64-encoded keystore: `base64 -i dailylog.jks \| pbcopy` |
+   | `KEYSTORE_PASSWORD` | Keystore password |
+   | `KEY_ALIAS` | Key alias |
+   | `KEY_PASSWORD` | Key password |
+
+   - In Android Studio, go to **Settings → Build, Execution, Deployment → Build Tools → Gradle → Gradle JDK** and select `openjdk-21`.
 
 ## Releasing a New App Version
 
-### Part 1: Creating an F-Droid Compatible New Release
-
-To create a new release compatible with F-Droid, follow these steps:
+### Part 1: Tag a New Release
 
 1. **Update version information in `app/build.gradle`**:
    ```gradle
@@ -67,43 +75,21 @@ To create a new release compatible with F-Droid, follow these steps:
    }
    ```
 
-2. **Commit your changes**:
+2. **Commit and tag**:
    ```bash
    git add app/build.gradle
    git commit -m "Release version 3.0.1"
-   ```
-
-3. **Create a Git tag**:
-   ```bash
    git tag -a v3.0.1 -m "Release version 3.0.1"
    git push origin v3.0.1
    ```
 
-4. **Build the release APK**:
-   - In Android Studio: Build > Generate Signed App Bundle or APK > APK
-   - **Important:** F-Droid only uses APKs *not* App Bundles. Always select APK for your release build.
+3. **Pushing the tag** triggers the `release` GitHub Actions workflow, which builds a signed APK and creates the GitHub Release page with the APK attached automatically.
+   - **Note:** The four keystore secrets must be configured in the repository (see setup step 6 above) before this will work.
+   - **Important:** F-Droid requires APKs, not App Bundles — the workflow is already configured to produce an APK.
 
-### Part 2: Publish The Release on Github
+4. **Add release notes and publish**: once the workflow completes, a draft release will be waiting on the [Releases page](https://github.com/madCode/dailylog/releases). Edit it to add a title and description/changelog, then publish it.
 
-When creating a new release on GitHub:
-
-1. **Navigate to Releases page**:
-   - Go to your GitHub repository's "Releases" tab
-   - Click "Create a new release"
-
-2. **Release details**:
-   - **Tag version**: Use the same tag you created (e.g., `v3.0.1`)
-   - **Release title**: Use the same version name (e.g., `dailyLog 3.0.1`)
-   - **Description**: Add release notes and changelog information
-
-3. **Uploading the APK**:
-   - **Upload the release APK**: Attach `app/build/outputs/apk/release/app-release.apk` and `output.json`
-   - **F-Droid will verify the signed APK** - Since the app is signed, F-Droid will check that it matches the reproducible build, then serve the Github version.
-
-4. **Publish the release**:
-   - Click "Publish release" to make it available on GitHub
-
-### Part 3: Ensuring a Successful F-Droid Release
+### Part 2: Ensuring a Successful F-Droid Release
 
 You can read about F-Droid's update process [here](https://gitlab.com/fdroid/wiki/-/wikis/FAQ#finding-updates). This page also links to where you can see the latest builds and releases.
 
@@ -172,8 +158,8 @@ The project follows standard Android conventions:
 ### Common Issues
 
 1. **Build failures with Java version**:
-   - Ensure JDK 17 is set as default
-   - Check `JAVA_HOME` environment variable
+   - Ensure JDK 21 (OpenJDK 21) is installed and set as the Gradle JDK in Android Studio (**Settings → Build, Execution, Deployment → Build Tools → Gradle → Gradle JDK**)
+   - On macOS with Homebrew: `brew install openjdk@21`, then symlink it: `sudo ln -sfn /opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-21.jdk`
 
 2. **Permission issues with external storage**:
    - The app requires read/write permissions to external storage
@@ -181,4 +167,4 @@ The project follows standard Android conventions:
 
 3. **F-Droid build errors**:
    - Ensure all dependencies are compatible with F-Droid's build environment
-   - Verify the app builds with openjdk-17-jdk-headless
+   - Verify the app builds with openjdk-21-jdk-headless

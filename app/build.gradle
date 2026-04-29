@@ -7,12 +7,12 @@ android {
     compileSdk 36
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
     }
 
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = '21'
     }
 
     defaultConfig {
@@ -31,8 +31,20 @@ android {
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
+    signingConfigs {
+        release {
+            storeFile file(System.getenv("KEYSTORE_PATH") ?: "placeholder.jks")
+            storePassword System.getenv("KEYSTORE_PASSWORD") ?: ""
+            keyAlias System.getenv("KEY_ALIAS") ?: ""
+            keyPassword System.getenv("KEY_PASSWORD") ?: ""
+        }
+    }
+
     buildTypes {
         release {
+            if (System.getenv("KEYSTORE_PATH")) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -76,10 +88,9 @@ dependencies {
 
     // Test
     testImplementation('junit:junit:4.13.2')
-    testImplementation 'org.mockito:mockito-core:3.12.4'
-    testImplementation 'org.mockito:mockito-inline:3.12.4'
+    testImplementation 'org.mockito:mockito-core:5.14.2'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3'
-    androidTestImplementation 'org.mockito:mockito-android:3.12.4'
+    androidTestImplementation 'org.mockito:mockito-android:5.14.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
 
