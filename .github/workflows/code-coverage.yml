@@ -17,8 +17,8 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'adopt'
-          java-version: '17'
+          distribution: 'temurin'
+          java-version: '21'
 
       # 1. Run Kover Tasks
       # koverHtmlReport generates the HTML for manual inspection if needed

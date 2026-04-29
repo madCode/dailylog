@@ -30,7 +30,7 @@ dailyLog is a native Android app (Kotlin) for distraction-free journaling with c
 ./gradlew koverVerify       # Fails if line coverage < 5%
 ```
 
-**Requirements**: JDK 17, Android SDK (API 36 target, 23 min), Kotlin 2.2.10.
+**Requirements**: JDK 21 (OpenJDK 21), Android SDK (API 36 target, 23 min), Kotlin 2.2.10.
 
 ## Architecture
 
