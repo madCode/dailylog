@@ -17,6 +17,10 @@ class ShortcutTrayAdapter internal constructor(
     RecyclerView.Adapter<ShortcutTrayAdapter.ViewHolder>() {
 
     var itemList: List<Shortcut> = ArrayList()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     // inflates the cell layout from xml when needed
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

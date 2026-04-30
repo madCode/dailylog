@@ -38,6 +38,15 @@ abstract class ShortcutDatabase : RoomDatabase() {
             }
         }
 
+        @VisibleForTesting
+        fun resetForTesting() {
+            synchronized(this) {
+                INSTANCE?.close()
+                INSTANCE = null
+                TEST_MODE = false
+            }
+        }
+
         fun getDatabase(context: Context): ShortcutDatabase {
             val tempInstance = INSTANCE
             if (tempInstance != null) {
