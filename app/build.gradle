@@ -60,6 +60,13 @@ android {
         }
     }
     namespace 'com.app.dailylog'
+
+    // F-Droid Requirement
+    // Disables dependency metadata when building APKs and Android App Bundles
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
 }
 
 dependencies {
