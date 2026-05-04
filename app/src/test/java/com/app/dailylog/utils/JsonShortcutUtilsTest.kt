@@ -22,6 +22,13 @@ class JsonShortcutUtilsTest {
     }
 
     @Test
+    fun testExportShortcutsAsJsonEmptyList() {
+        val json = JsonShortcutUtils.exportShortcutsAsJson(emptyList(), 5)
+        Assert.assertTrue(json.contains("\"schemaVersion\":5"))
+        Assert.assertTrue(json.contains("\"shortcuts\":[]"))
+    }
+
+    @Test
     fun testValidateJsonStructureValid() {
         val json = """{"schemaVersion": 5, "shortcuts": []}"""
         Assert.assertEquals(5, JsonShortcutUtils.validateJsonStructure(json))

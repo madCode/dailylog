@@ -227,6 +227,30 @@ class SettingsViewModelTest {
     }
 
     @Test
+    fun testImportShortcutsWithOreoShowsToastOnException(): Unit = runBlocking {
+        `when`(buildMock.isOreoOrGreater()).thenReturn(true)
+        val toastMessages = mutableListOf<String>()
+        val mockUri = mock(Uri::class.java)
+        val vm = SettingsViewModel(repository, buildMock, { msg -> toastMessages.add(msg) }, testDispatcher)
+        doThrow(RuntimeException("json import failed")).`when`(repository).importShortcutsFromJson(mockUri)
+        vm.importShortcuts(mockUri)
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertTrue(toastMessages.contains("json import failed"))
+    }
+
+    @Test
+    fun testImportShortcutsLegacyWithOreoShowsToastOnException(): Unit = runBlocking {
+        `when`(buildMock.isOreoOrGreater()).thenReturn(true)
+        val toastMessages = mutableListOf<String>()
+        val mockUri = mock(Uri::class.java)
+        val vm = SettingsViewModel(repository, buildMock, { msg -> toastMessages.add(msg) }, testDispatcher)
+        doThrow(RuntimeException("csv import failed")).`when`(repository).importShortcuts(mockUri)
+        vm.importShortcutsLegacy(mockUri)
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertTrue(toastMessages.contains("csv import failed"))
+    }
+
+    @Test
     fun `bulkAddShortcuts shows toast when repository throws exception`(): Unit = runBlocking {
         val toastMessages = mutableListOf<String>()
         settingsViewModel = SettingsViewModel(repository, buildMock, { msg -> toastMessages.add(msg) }, testDispatcher)
