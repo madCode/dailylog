@@ -248,6 +248,84 @@ class ShortcutRepositoryInterfaceTest {
         runBlocking { makeRepo(shortcuts).saveAllShortcutsToDb(shortcuts) }
     }
 
+    // addShortcut — guard conditions
+
+    @Test
+    fun testAddShortcutWithExistingLabelInDbSkipsSave() {
+        var addCalled = false
+        val repo = object : ShortcutRepositoryInterface {
+            override val shortcutDao: ShortcutDao = object : ShortcutDao {
+                override fun getAll(): LiveData<List<Shortcut>> = MutableLiveData(emptyList())
+                override suspend fun updateAll(vararg shortcuts: Shortcut) {}
+                override suspend fun add(shortcut: Shortcut) { addCalled = true }
+                override suspend fun addAll(vararg shortcuts: Shortcut) {}
+                override suspend fun deleteById(id: String) {}
+                override fun labelExists(label: String): LiveData<Boolean> = MutableLiveData(true)
+                override suspend fun labelExistsSuspend(label: String): Boolean = true
+            }
+            override var shortcutLiveData: LiveData<List<Shortcut>> = MutableLiveData(emptyList())
+        }
+        runBlocking { repo.addShortcut("taken", "text", 0, "TEXT") }
+        assertFalse(addCalled)
+    }
+
+    @Test
+    fun testAddShortcutWithEmptyLabelSkipsSave() {
+        var addCalled = false
+        val repo = object : ShortcutRepositoryInterface {
+            override val shortcutDao: ShortcutDao = object : ShortcutDao {
+                override fun getAll(): LiveData<List<Shortcut>> = MutableLiveData(emptyList())
+                override suspend fun updateAll(vararg shortcuts: Shortcut) {}
+                override suspend fun add(shortcut: Shortcut) { addCalled = true }
+                override suspend fun addAll(vararg shortcuts: Shortcut) {}
+                override suspend fun deleteById(id: String) {}
+                override fun labelExists(label: String): LiveData<Boolean> = MutableLiveData(false)
+                override suspend fun labelExistsSuspend(label: String): Boolean = false
+            }
+            override var shortcutLiveData: LiveData<List<Shortcut>> = MutableLiveData(emptyList())
+        }
+        runBlocking { repo.addShortcut("", "text", 0, "TEXT") }
+        assertFalse(addCalled)
+    }
+
+    @Test
+    fun testAddShortcutWithEmptyTextSkipsSave() {
+        var addCalled = false
+        val repo = object : ShortcutRepositoryInterface {
+            override val shortcutDao: ShortcutDao = object : ShortcutDao {
+                override fun getAll(): LiveData<List<Shortcut>> = MutableLiveData(emptyList())
+                override suspend fun updateAll(vararg shortcuts: Shortcut) {}
+                override suspend fun add(shortcut: Shortcut) { addCalled = true }
+                override suspend fun addAll(vararg shortcuts: Shortcut) {}
+                override suspend fun deleteById(id: String) {}
+                override fun labelExists(label: String): LiveData<Boolean> = MutableLiveData(false)
+                override suspend fun labelExistsSuspend(label: String): Boolean = false
+            }
+            override var shortcutLiveData: LiveData<List<Shortcut>> = MutableLiveData(emptyList())
+        }
+        runBlocking { repo.addShortcut("label", "", 0, "TEXT") }
+        assertFalse(addCalled)
+    }
+
+    // validateShortcutRow — label error paths
+
+    @Test
+    fun testValidateShortcutRowEmptyLabelThrows() {
+        try {
+            makeRepo().validateShortcutRow(arrayOf("", "txt", "0", "TEXT"), 0)
+            fail("Expected IllegalArgumentException")
+        } catch (e: IllegalArgumentException) { }
+    }
+
+    @Test
+    fun testValidateShortcutRowDuplicateLabelThrows() {
+        val existing = Shortcut(id = "id-1", label = "taken", value = "v", cursorIndex = 0, type = "TEXT", position = 0)
+        try {
+            makeRepo(listOf(existing)).validateShortcutRow(arrayOf("taken", "txt", "0", "TEXT"), 0)
+            fail("Expected IllegalArgumentException")
+        } catch (e: IllegalArgumentException) { }
+    }
+
     // label rename end-to-end
 
     @Test
