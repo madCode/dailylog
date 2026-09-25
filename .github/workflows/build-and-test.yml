@@ -21,7 +21,11 @@ jobs:
         cache: gradle
         
     - name: Setup Android SDK
-      uses: android-actions/setup-android@v2
+      uses: android-actions/setup-android@v3
+      with:
+        # The default also installs the obsolete 'tools' package, which
+        # sdkmanager can no longer find.
+        packages: 'platform-tools'
       
     - name: Build
       run: ./gradlew build
