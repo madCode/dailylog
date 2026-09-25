@@ -41,6 +41,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            // Lets a debug build install next to the release app instead of conflicting with it
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
+        }
         release {
             if (System.getenv("KEYSTORE_PATH")) {
                 signingConfig signingConfigs.release
