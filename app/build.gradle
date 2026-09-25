@@ -69,16 +69,6 @@ android {
     }
 }
 
-// F-Droid Requirement
-// Baseline profiles (assets/dexopt/baseline.prof) are not byte-for-byte
-// reproducible across build machines, which breaks F-Droid's reproducible
-// build check. Skip generating them.
-tasks.whenTaskAdded { task ->
-    if (task.name.contains("ArtProfile")) {
-        task.enabled = false
-    }
-}
-
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     api 'com.google.android.material:material:1.12.0'
