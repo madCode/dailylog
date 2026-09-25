@@ -7,13 +7,16 @@ import android.view.ViewGroup
 import com.app.dailylog.R
 import com.app.dailylog.repository.ShortcutType
 
-class AddShortcutDialogFragment(viewModel: ShortcutDialogViewModel, private val listener: AddShortcutDialogListener) : ModifyShortcutDialogFragment(viewModel) {
+class AddShortcutDialogFragment(viewModel: ShortcutDialogViewModel) : ModifyShortcutDialogFragment(viewModel) {
+    // Looked up rather than held so the dialog still works after Android recreates it.
+    private val listener get() = parentFragment as AddShortcutDialogListener
+
     interface AddShortcutDialogListener {
         fun onFinishAddShortcutDialog(label: String, text: String, cursor: Int, type: String)
     }
 
     companion object {
-        fun newInstance(viewModel: ShortcutDialogViewModel, listener: AddShortcutDialogListener) = AddShortcutDialogFragment(viewModel, listener)
+        fun newInstance(viewModel: ShortcutDialogViewModel) = AddShortcutDialogFragment(viewModel)
     }
 
     override fun onCreateView(

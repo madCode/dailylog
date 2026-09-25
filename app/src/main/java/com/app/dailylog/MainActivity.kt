@@ -5,11 +5,17 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentFactory
 import androidx.lifecycle.ViewModelProvider
 import com.app.dailylog.repository.Repository
 import com.app.dailylog.ui.permissions.PermissionChecker
 import com.app.dailylog.ui.log.LogFragment
 import com.app.dailylog.ui.log.LogViewModel
+import com.app.dailylog.ui.settings.AddShortcutDialogFragment
+import com.app.dailylog.ui.settings.BulkAddShortcutsDialogFragment
+import com.app.dailylog.ui.settings.EditShortcutDialogFragment
+import com.app.dailylog.ui.settings.ShortcutDialogViewModel
 import com.app.dailylog.ui.settings.SettingsFragment
 import com.app.dailylog.ui.settings.SettingsViewModel
 import com.app.dailylog.ui.settings.SettingsViewModelFactory
@@ -24,12 +30,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var prefs: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        permissionChecker = PermissionChecker(this)
+        repository = Repository(applicationContext, permissionChecker)
+        // Must be set before super.onCreate, which recreates any fragments that were showing
+        // before the Activity was destroyed (dark mode switch, rotation, process death).
+        supportFragmentManager.fragmentFactory = AppFragmentFactory()
         super.onCreate(savedInstanceState)
         // Enable edge-to-edge
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.main_activity)
-        permissionChecker = PermissionChecker(this)
-        repository = Repository(applicationContext, permissionChecker)
         
         // Initialize preferences
         prefs = getSharedPreferences("app_preferences", MODE_PRIVATE)
@@ -46,32 +55,52 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun openWelcome() {
-        val welcomeViewModel = WelcomeViewModel(repository) { openLog() }
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.container, WelcomeFragment.newInstance(welcomeViewModel))
-            .commitNow()
+    /**
+     * Supplies fragments with their dependencies, both when this Activity creates them and when
+     * Android recreates them from saved state. Without it, recreation needs a no-argument
+     * constructor and the app crashes.
+     */
+    private inner class AppFragmentFactory : FragmentFactory() {
+        override fun instantiate(classLoader: ClassLoader, className: String): Fragment =
+            when (loadFragmentClass(classLoader, className)) {
+                WelcomeFragment::class.java -> WelcomeFragment(WelcomeViewModel(repository) { openLog() })
+                LogFragment::class.java -> LogFragment(LogViewModel(repository)) { openSettings() }
+                SettingsFragment::class.java -> SettingsFragment(getSettingsViewModel(), permissionChecker)
+                AddShortcutDialogFragment::class.java -> AddShortcutDialogFragment(ShortcutDialogViewModel(repository))
+                EditShortcutDialogFragment::class.java -> EditShortcutDialogFragment(ShortcutDialogViewModel(repository))
+                BulkAddShortcutsDialogFragment::class.java -> BulkAddShortcutsDialogFragment(ShortcutDialogViewModel(repository))
+                else -> super.instantiate(classLoader, className)
+            }
     }
 
-    private fun openLog() {
-        val logViewModel = LogViewModel(repository)
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.container, LogFragment.newInstance(logViewModel) { openSettings() })
-            .commitNow()
-    }
-
-    private fun openSettings() {
+    private fun getSettingsViewModel(): SettingsViewModel {
         val settingsViewModel =
             ViewModelProvider(this, SettingsViewModelFactory(repository, DetermineBuild, ::showErrorDialog))[SettingsViewModel::class.java]
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.container, SettingsFragment.newInstance(settingsViewModel, permissionChecker))
-            .addToBackStack(null)
-            .commit()
+        // The ViewModel outlives this Activity on recreation; point it at the current one.
+        settingsViewModel.showToastOnActivity = ::showErrorDialog
+        return settingsViewModel
     }
+
+    private fun showFragment(fragmentClass: Class<out Fragment>, addToBackStack: Boolean) {
+        val fragment = supportFragmentManager.fragmentFactory.instantiate(classLoader, fragmentClass.name)
+        val transaction = supportFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+        if (addToBackStack) {
+            transaction.addToBackStack(null).commit()
+        } else {
+            transaction.commitNow()
+        }
+    }
+
+    private fun openWelcome() = showFragment(WelcomeFragment::class.java, addToBackStack = false)
+
+    private fun openLog() = showFragment(LogFragment::class.java, addToBackStack = false)
+
+    private fun openSettings() = showFragment(SettingsFragment::class.java, addToBackStack = true)
 
     fun showErrorDialog(message: String) {
         runOnUiThread(Runnable {
-            ErrorDialogFragment(message).show(supportFragmentManager, "error")
+            ErrorDialogFragment.newInstance(message).show(supportFragmentManager, "error")
         })
     }
     

@@ -26,7 +26,7 @@ class SettingsViewModelFactory(private var repository: RepositoryInterface,
 class SettingsViewModel(
     private var repository: RepositoryInterface,
     private var build: DetermineBuildInterface,
-    private var showToastOnActivity: (String) -> Unit,
+    var showToastOnActivity: (String) -> Unit,
     private var dispatcher: CoroutineDispatcher
 ) : ViewModel() {
     var exportFileUri: Uri? = null
