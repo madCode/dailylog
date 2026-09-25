@@ -83,8 +83,8 @@ dependencies {
     // Room
     implementation 'androidx.room:room-runtime:2.7.0'
     implementation "androidx.room:room-ktx:2.7.0"
-    implementation 'androidx.test:core-ktx:1.5.0'
-    implementation 'androidx.test.ext:junit-ktx:1.1.5'
+    androidTestImplementation 'androidx.test:core-ktx:1.5.0'
+    androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.5'
     androidTestImplementation "androidx.room:room-testing:2.7.0"
     ksp "androidx.room:room-compiler:2.7.0"
 
