@@ -69,6 +69,16 @@ android {
     }
 }
 
+// F-Droid Requirement
+// Baseline profiles (assets/dexopt/baseline.prof) are not byte-for-byte
+// reproducible across build machines, which breaks F-Droid's reproducible
+// build check. Skip generating them.
+tasks.whenTaskAdded { task ->
+    if (task.name.contains("ArtProfile")) {
+        task.enabled = false
+    }
+}
+
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     api 'com.google.android.material:material:1.12.0'
@@ -83,8 +93,8 @@ dependencies {
     // Room
     implementation 'androidx.room:room-runtime:2.7.0'
     implementation "androidx.room:room-ktx:2.7.0"
-    implementation 'androidx.test:core-ktx:1.5.0'
-    implementation 'androidx.test.ext:junit-ktx:1.1.5'
+    androidTestImplementation 'androidx.test:core-ktx:1.5.0'
+    androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.5'
     androidTestImplementation "androidx.room:room-testing:2.7.0"
     ksp "androidx.room:room-compiler:2.7.0"
 
