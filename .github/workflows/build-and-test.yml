@@ -25,6 +25,12 @@ jobs:
       
     - name: Build
       run: ./gradlew build
+
+    - name: Upload debug APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: dailylog-debug-apk
+        path: app/build/outputs/apk/debug/*.apk
       
     - name: Unit Test
       run: ./gradlew testDebugUnitTest
