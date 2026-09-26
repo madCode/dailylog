@@ -55,11 +55,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Supplies fragments with their dependencies, both when this Activity creates them and when
-     * Android recreates them from saved state. Without it, recreation needs a no-argument
-     * constructor and the app crashes.
-     */
+    // Our fragments take constructor arguments, so recreation (e.g. dark mode) needs this factory.
     private inner class AppFragmentFactory : FragmentFactory() {
         override fun instantiate(classLoader: ClassLoader, className: String): Fragment =
             when (loadFragmentClass(classLoader, className)) {
