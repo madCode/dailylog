@@ -81,11 +81,13 @@ class ShortcutTrayTest : AppRobolectricTest() {
     @Test
     fun keyboardShown_trayStaysAboveKeyboard() {
         val navBarHeight = 48
-        val keyboardHeight = 800
         launchApp().use { scenario ->
             assertTrayShowsAllShortcuts(scenario)
             scenario.onActivity { activity ->
                 val root = activity.window.decorView
+                // Realistic size relative to the (small) Robolectric screen; a keyboard taller
+                // than the screen pushes everything off-screen and makes the check meaningless.
+                val keyboardHeight = root.height * 2 / 5
                 val insets = WindowInsetsCompat.Builder()
                     .setInsets(WindowInsetsCompat.Type.systemBars(), Insets.of(0, 0, 0, navBarHeight))
                     // IME insets are measured from the bottom of the screen, nav bar included
@@ -100,6 +102,7 @@ class ShortcutTrayTest : AppRobolectricTest() {
                 tray.getLocationInWindow(location)
                 val trayBottom = location[1] + tray.height
                 val keyboardTop = root.height - keyboardHeight
+                assertTrue("tray is on screen (top ${location[1]})", location[1] >= 0)
                 assertTrue(
                     "tray bottom ($trayBottom) should be at or above keyboard top ($keyboardTop)",
                     trayBottom <= keyboardTop
