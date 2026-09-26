@@ -24,10 +24,12 @@ jobs:
       run: ./gradlew build
 
     - name: Upload debug APK
+      if: github.event_name == 'pull_request'
       uses: actions/upload-artifact@v4
       with:
         name: dailylog-debug-apk
         path: app/build/outputs/apk/debug/*.apk
+        retention-days: 14
       
     - name: Unit Test
       run: ./gradlew testDebugUnitTest
