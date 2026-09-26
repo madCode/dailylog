@@ -6,14 +6,17 @@ import com.app.dailylog.R
 import com.app.dailylog.utils.DetermineBuild
 import com.app.dailylog.databinding.BulkAddShortcutsBinding
 
-class BulkAddShortcutsDialogFragment(viewModel: ShortcutDialogViewModel, private val listener: BulkAddListener) : ShortcutDialogFragment(viewModel)  {
+class BulkAddShortcutsDialogFragment(viewModel: ShortcutDialogViewModel) : ShortcutDialogFragment(viewModel)  {
+    // Looked up rather than held so the dialog still works after Android recreates it.
+    private val listener get() = parentFragment as BulkAddListener
+
     lateinit var binding: BulkAddShortcutsBinding
     interface BulkAddListener {
         fun onBulkAddShortcuts(info: List<Array<String>>)
     }
 
     companion object {
-        fun newInstance(viewModel: ShortcutDialogViewModel, listener: BulkAddListener) = BulkAddShortcutsDialogFragment(viewModel, listener)
+        fun newInstance(viewModel: ShortcutDialogViewModel) = BulkAddShortcutsDialogFragment(viewModel)
     }
     private var resultLines = ArrayList<Array<String>>()
 

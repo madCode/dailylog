@@ -92,10 +92,9 @@ class SettingsFragment(
         binding.addShortcutButton.setOnClickListener {
             val addDialog: AddShortcutDialogFragment =
                 AddShortcutDialogFragment.newInstance(
-                    viewModel.createShortcutDialogViewModel(),
-                    this
+                    viewModel.createShortcutDialogViewModel()
                 )
-            addDialog.show(parentFragmentManager, "fragment_add_shortcut")
+            addDialog.show(childFragmentManager, "fragment_add_shortcut")
         }
         binding.addShortcutButton.setOnLongClickListener {
             bulkAddShortcuts()
@@ -161,10 +160,9 @@ class SettingsFragment(
     private fun bulkAddShortcuts() {
         val addBulkDialog: BulkAddShortcutsDialogFragment =
             BulkAddShortcutsDialogFragment.newInstance(
-                viewModel.createShortcutDialogViewModel(),
-                this
+                viewModel.createShortcutDialogViewModel()
             )
-        addBulkDialog.show(parentFragmentManager, "fragment_bulk_add")
+        addBulkDialog.show(childFragmentManager, "fragment_bulk_add")
     }
 
     private fun selectImportFileLegacyCSV() {
@@ -269,10 +267,9 @@ class SettingsFragment(
         val editDialog: EditShortcutDialogFragment =
             EditShortcutDialogFragment.newInstance(
                 shortcut,
-                viewModel.createShortcutDialogViewModel(),
-                this
+                viewModel.createShortcutDialogViewModel()
             )
-        editDialog.show(parentFragmentManager, "fragment_edit")
+        editDialog.show(childFragmentManager, "fragment_edit")
     }
 
     private fun renderFileNameRow() {

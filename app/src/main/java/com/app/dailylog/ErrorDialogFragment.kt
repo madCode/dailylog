@@ -6,7 +6,16 @@ import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 
-class ErrorDialogFragment(private val message: String): DialogFragment() {
+class ErrorDialogFragment : DialogFragment() {
+    companion object {
+        private const val ARG_MESSAGE = "message"
+
+        fun newInstance(message: String) = ErrorDialogFragment().apply {
+            arguments = Bundle().apply { putString(ARG_MESSAGE, message) }
+        }
+    }
+
+    private val message get() = requireArguments().getString(ARG_MESSAGE)
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
