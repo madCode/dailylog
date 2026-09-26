@@ -1,11 +1,12 @@
 package com.app.dailylog.ui.log
 
 import android.content.Context
+import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.app.dailylog.MainActivity
@@ -81,7 +82,33 @@ class ShortcutTrayVisibilityTest {
             // Espresso syncs with the main thread before the check, allowing any
             // pending RecyclerView layout passes (triggered by notifyDataSetChanged)
             // to complete before asserting visibility.
-            onView(withText("TestShortcut")).check(matches(isDisplayed()))
+            onView(withText("TestShortcut")).check(matches(isCompletelyDisplayed()))
+        }
+    }
+
+    /**
+     * Reopening the app from the background (onStop -> onResume) must keep the tray populated.
+     * LogFragment used to rebuild the tray's adapter on every onResume.
+     */
+    @Test
+    fun shortcut_isVisibleInTray_afterReturningFromBackground() {
+        val shortcutsLoaded = CountDownLatch(1)
+
+        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+            scenario.onActivity { activity ->
+                activity.repository.getAllShortcuts().observeForever { shortcuts ->
+                    if (shortcuts.isNotEmpty()) shortcutsLoaded.countDown()
+                }
+            }
+            assertTrue(
+                "Shortcuts LiveData did not emit within 5 seconds",
+                shortcutsLoaded.await(5, TimeUnit.SECONDS)
+            )
+
+            scenario.moveToState(Lifecycle.State.CREATED)
+            scenario.moveToState(Lifecycle.State.RESUMED)
+
+            onView(withText("TestShortcut")).check(matches(isCompletelyDisplayed()))
         }
     }
 }
