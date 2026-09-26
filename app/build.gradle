@@ -62,6 +62,12 @@ android {
     testOptions {
         unitTests {
             returnDefaultValues = true
+            // Robolectric needs merged resources to inflate layouts in JVM tests
+            includeAndroidResources = true
+            all {
+                // Robolectric's Android 16 runtime needs this on JDK 21
+                jvmArgs '--add-opens=java.base/jdk.internal.access=ALL-UNNAMED'
+            }
         }
     }
     namespace 'com.app.dailylog'
@@ -88,8 +94,6 @@ dependencies {
     // Room
     implementation 'androidx.room:room-runtime:2.7.0'
     implementation "androidx.room:room-ktx:2.7.0"
-    implementation 'androidx.test:core-ktx:1.5.0'
-    implementation 'androidx.test.ext:junit-ktx:1.1.5'
     androidTestImplementation "androidx.room:room-testing:2.7.0"
     ksp "androidx.room:room-compiler:2.7.0"
 
@@ -102,6 +106,14 @@ dependencies {
     testImplementation('junit:junit:4.13.2')
     testImplementation 'org.mockito:mockito-core:5.14.2'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3'
+    testImplementation 'org.robolectric:robolectric:4.17'
+    testImplementation 'androidx.test:core-ktx:1.6.1'
+    testImplementation 'androidx.test.ext:junit-ktx:1.2.1'
+    testImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    // Kept at the versions matching espresso-core 3.5.1 below; mixing 1.6.x with it breaks
+    // ActivityScenario.recreate() on emulators
+    androidTestImplementation 'androidx.test:core-ktx:1.5.0'
+    androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.5'
     androidTestImplementation 'org.mockito:mockito-android:5.14.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
@@ -114,16 +126,8 @@ kover {
                     "com.app.dailylog.databinding.*",
                     "com.app.dailylog.repository.ShortcutDao_Impl*",
                     "com.app.dailylog.repository.ShortcutDatabase_Impl*",
-                    "com.app.dailylog.ui.log.LogFragment*",
-                    "com.app.dailylog.ui.log.ShortcutTrayAdapter*",
-                    "com.app.dailylog.ui.settings.SettingsFragment*",
-                    "com.app.dailylog.ui.settings.*DialogFragment*",
-                    "com.app.dailylog.ui.settings.ShortcutListAdapter*",
                     "com.app.dailylog.ui.settings.ShortcutTouchHelper*",
                     "com.app.dailylog.ui.settings.ShortcutTouchViewHolder*",
-                    "com.app.dailylog.ui.welcome.WelcomeFragment*",
-                    "com.app.dailylog.MainActivity*",
-                    "com.app.dailylog.ErrorDialogFragment*",
                     "com.app.dailylog.ui.permissions.PermissionChecker*",
                 )
             }
@@ -131,7 +135,7 @@ kover {
         verify {
             rule {
                 bound {
-                    minValue = 5 // Fails build if line coverage is < 5%
+                    minValue = 45 // Fails build if line coverage is < 45%
                 }
             }
         }
