@@ -58,7 +58,6 @@ class SettingsScreenTest : AppRobolectricTest() {
         idleUntil(500) { false }
     }
 
-    // Returns [uri] from the next file picker the screen opens.
     private fun MainActivity.answerFilePicker(uri: Uri) {
         val request = shadowOf(this).nextStartedActivityForResult
         assertNotNull("expected a file picker", request)

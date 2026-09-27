@@ -9,7 +9,6 @@ import com.app.dailylog.repository.Shortcut
 import com.app.dailylog.repository.ShortcutType
 
 class EditShortcutDialogFragment(viewModel: ShortcutDialogViewModel) : ModifyShortcutDialogFragment(viewModel) {
-    // Arguments and a looked-up listener survive Android recreating the dialog.
     private val shortcut: Shortcut
         get() = requireArguments().let {
             Shortcut(

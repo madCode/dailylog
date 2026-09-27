@@ -94,6 +94,16 @@ The release workflow requires four repository secrets to sign the APK. Set these
 | `KEY_ALIAS` | Key alias |
 | `KEY_PASSWORD` | Key password |
 
+## Code Comments
+
+Keep comments to what the code can't say on its own:
+
+- **Explain why, not what.** Comment a non-obvious reason: a workaround, a platform or library quirk, an ordering constraint, a magic number. Link the upstream issue when there is one.
+- **Skip the obvious.** Don't restate the code, describe a well-named function, or explain common Android knowledge (e.g. why fragments need a `FragmentFactory`, what `applicationIdSuffix` does).
+- **Reviewer context goes in the PR, not the code.** What changed, what was tried, and why this approach won belong in the commit message or PR description.
+- **One comment per block.** When several lines share a reason (e.g. a group of CI settings), put one comment above the block saying why it exists, not a comment on each line.
+- **Keep them short.** Usually one line, two at most.
+
 ## Library Choices
 
 When adding dependencies, prefer Kotlin-native libraries (no Java plugin requirement). Current key deps: Room (database), Gson (JSON), OpenCSV (legacy CSV import), Kover (coverage), Mockito (test mocks), Robolectric (JVM UI tests), Espresso (UI tests).

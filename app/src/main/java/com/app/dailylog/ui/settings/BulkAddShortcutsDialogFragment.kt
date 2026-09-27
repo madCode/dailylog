@@ -7,7 +7,6 @@ import com.app.dailylog.utils.DetermineBuild
 import com.app.dailylog.databinding.BulkAddShortcutsBinding
 
 class BulkAddShortcutsDialogFragment(viewModel: ShortcutDialogViewModel) : ShortcutDialogFragment(viewModel)  {
-    // Looked up rather than held so the dialog still works after Android recreates it.
     private val listener get() = parentFragment as BulkAddListener
 
     lateinit var binding: BulkAddShortcutsBinding
