@@ -55,6 +55,8 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
             save(false)
             goToSettings()
         }
+
+        setUpShortcutTray()
     }
 
     override fun onPause() {
@@ -69,7 +71,6 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
 
         val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.showSoftInput(binding.todayLog, InputMethodManager.SHOW_IMPLICIT)
-        renderShortcutTray()
     }
 
     private fun save(forceSave: Boolean) {
@@ -93,36 +94,28 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
         }
     }
 
-    private fun renderShortcutTray() {
-        if (context == null) {
-            return
-        }
-        val shortcutsLiveData = viewModel.getAllShortcuts()
+    private fun setUpShortcutTray() {
         val tray = binding.shortcutTray
         tray.layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.HORIZONTAL)
         val adapter = ShortcutTrayAdapter(binding.todayLog)
-        shortcutsLiveData.observe(viewLifecycleOwner, Observer { shortcuts ->
-            // Update the cached copy of the words in the adapter.
-            shortcuts.let { adapter.itemList = it; }
-        })
         tray.adapter = adapter
-        
-        // Add keyboard visibility listener to adjust shortcut tray position
+        viewModel.getAllShortcuts().observe(viewLifecycleOwner, Observer { shortcuts ->
+            adapter.itemList = shortcuts
+        })
+
+        // The IME inset includes the nav bar, which the root view already pads for.
         ViewCompat.setOnApplyWindowInsetsListener(tray) { view, insets ->
-            val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-            if (imeHeight > 0) {
-                // Keyboard is visible, adjust the layout
-                val params = view.layoutParams as ViewGroup.MarginLayoutParams
-                params.bottomMargin = imeHeight
-                view.layoutParams = params
-            } else {
-                // Keyboard is hidden, reset margin
-                val params = view.layoutParams as ViewGroup.MarginLayoutParams
-                params.bottomMargin = 0
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val navBottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+            val params = view.layoutParams as ViewGroup.MarginLayoutParams
+            val bottomMargin = (imeBottom - navBottom).coerceAtLeast(0)
+            if (params.bottomMargin != bottomMargin) {
+                params.bottomMargin = bottomMargin
                 view.layoutParams = params
             }
             insets
         }
+        ViewCompat.requestApplyInsets(tray)
     }
 
     private fun getCursorIndex(text: String): Int {
