@@ -27,7 +27,7 @@ dailyLog is a native Android app (Kotlin) for distraction-free journaling with c
 # Coverage
 ./gradlew koverHtmlReport   # HTML: app/build/reports/kover/html/index.html
 ./gradlew koverXmlReport    # XML:  app/build/reports/kover/xml/report.xml
-./gradlew koverVerify       # Fails if line coverage < 45%
+./gradlew koverVerify       # Fails if line coverage < 85%
 ```
 
 Unit tests include Robolectric tests that launch the whole app on the JVM (`app/src/test/.../testutil/AppRobolectricTest.kt` is the base class). They use the real file-backed Room database, so they cover the cold-start path; prefer them over instrumentation tests for UI behavior. CI also runs the instrumentation tests on emulators and uploads a debug APK (`com.app.dailylog.debug`, installs beside the release app) as a build artifact.
