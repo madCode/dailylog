@@ -3,6 +3,7 @@ package com.app.dailylog
 import android.content.Context
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.Espresso.closeSoftKeyboard
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -102,6 +103,9 @@ class ActivityRecreationTest {
             onView(withId(R.id.addShortcutTitle)).inRoot(isDialog()).check(matches(isDisplayed()))
 
             scenario.recreate()
+            // The restored label field reopens the keyboard, which can squeeze a small screen's
+            // dialog until the title is clipped.
+            closeSoftKeyboard()
 
             onView(withId(R.id.addShortcutTitle)).inRoot(isDialog()).check(matches(isDisplayed()))
         }
