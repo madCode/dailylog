@@ -2,9 +2,15 @@
 # "Boot completed" can come before user 0 is unlocked and /sdcard is mounted, and tests
 # that touch SharedPreferences or /sdcard then fail.
 set -uo pipefail
+sdk=$(adb shell getprop ro.build.version.sdk | tr -d '\r')
 state() {
-  ce=$(adb shell getprop sys.user.0.ce_available | tr -d '\r')
-  user=$(adb shell dumpsys user | grep -m1 -oE 'State: [A-Z_]+' | tr -d '\r')
+  if [ "$sdk" -lt 24 ]; then
+    # No file-based encryption before API 24, so there's no locked state to wait out.
+    ce=true; user="State: RUNNING_UNLOCKED"
+  else
+    ce=$(adb shell getprop sys.user.0.ce_available | tr -d '\r')
+    user=$(adb shell dumpsys user | grep -m1 -oE 'State: [A-Z_]+' | tr -d '\r')
+  fi
   if adb shell ls /sdcard/ >/dev/null 2>&1; then sdcard=ok; else sdcard=unavailable; fi
 }
 for i in $(seq 150); do
