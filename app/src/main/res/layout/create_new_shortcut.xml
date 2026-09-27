@@ -1,4 +1,3 @@
-<!-- Scrolls so the whole dialog stays reachable when the keyboard shrinks it on a small screen. -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
