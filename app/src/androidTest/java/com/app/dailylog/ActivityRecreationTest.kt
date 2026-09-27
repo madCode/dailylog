@@ -16,15 +16,13 @@ import com.app.dailylog.repository.ShortcutDatabase
 import com.app.dailylog.repository.ShortcutType
 import kotlinx.coroutines.runBlocking
 import org.junit.After
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
-/**
- * Switching dark mode, rotating, or process death recreates MainActivity, and Android
- * recreates whatever fragments were showing. Fragments that take constructor arguments
- * crashed here because they had no no-argument constructor.
- */
 @RunWith(AndroidJUnit4::class)
 class ActivityRecreationTest {
 
@@ -53,9 +51,20 @@ class ActivityRecreationTest {
         ShortcutDatabase.resetForTesting()
     }
 
+    // The tray grows when shortcuts load, shifting the buttons above it, so wait before tapping.
+    private fun launchWithShortcutsLoaded(): ActivityScenario<MainActivity> {
+        val loaded = CountDownLatch(1)
+        val scenario = ActivityScenario.launch(MainActivity::class.java)
+        scenario.onActivity { activity ->
+            activity.repository.getAllShortcuts().observeForever { if (it.isNotEmpty()) loaded.countDown() }
+        }
+        assertTrue("Shortcuts did not load within 5 seconds", loaded.await(5, TimeUnit.SECONDS))
+        return scenario
+    }
+
     @Test
     fun logScreen_survivesRecreation() {
-        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+        launchWithShortcutsLoaded().use { scenario ->
             scenario.recreate()
 
             onView(withId(R.id.todayLog)).check(matches(isDisplayed()))
@@ -65,7 +74,7 @@ class ActivityRecreationTest {
 
     @Test
     fun settingsScreen_survivesRecreation_andBackReturnsToLog() {
-        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+        launchWithShortcutsLoaded().use { scenario ->
             onView(withId(R.id.btnSettings)).perform(click())
             onView(withId(R.id.addShortcutButton)).check(matches(isDisplayed()))
 
@@ -81,7 +90,7 @@ class ActivityRecreationTest {
 
     @Test
     fun addShortcutDialog_survivesRecreation() {
-        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+        launchWithShortcutsLoaded().use { scenario ->
             onView(withId(R.id.btnSettings)).perform(click())
             onView(withId(R.id.addShortcutButton)).perform(click())
             onView(withId(R.id.addShortcutTitle)).check(matches(isDisplayed()))

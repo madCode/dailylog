@@ -3,9 +3,11 @@ package com.app.dailylog.testutil
 import android.content.Context
 import android.net.Uri
 import android.os.Looper
+import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import com.app.dailylog.MainActivity
+import com.app.dailylog.R
 import com.app.dailylog.repository.Constants
 import com.app.dailylog.repository.Shortcut
 import com.app.dailylog.repository.ShortcutDatabase
@@ -53,8 +55,17 @@ abstract class AppRobolectricTest {
         logFile.delete()
     }
 
+    // Waits for the shortcut tray to fill: it grows when shortcuts load, shifting the buttons above it.
     protected fun launchApp(): ActivityScenario<MainActivity> =
-        ActivityScenario.launch(MainActivity::class.java)
+        ActivityScenario.launch(MainActivity::class.java).also { scenario ->
+            if (fileSelected && initialShortcuts.isNotEmpty()) {
+                scenario.onActivity { activity ->
+                    idleUntil {
+                        activity.findViewById<RecyclerView>(R.id.shortcutTray).childCount == initialShortcuts.size
+                    }
+                }
+            }
+        }
 
     // Room queries on a background thread, so a single idle() can run before the result is posted.
     protected fun idleUntil(timeoutMs: Long = 5000, condition: () -> Boolean): Boolean {
