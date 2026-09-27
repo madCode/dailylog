@@ -64,8 +64,6 @@ class RepositoryTest {
         repository.storeFilename(Uri.fromFile(logFile).toString())
     }
 
-    // File selection
-
     @Test
     fun noFileSelected_userMustSelectFile() {
         assertTrue(repository.userMustSelectFile())
@@ -85,8 +83,6 @@ class RepositoryTest {
         repository.setCursorIndex(7)
         assertEquals(7, repository.getCursorIndex())
     }
-
-    // Reading and saving
 
     @Test
     fun readFile_returnsContents() {
@@ -138,8 +134,6 @@ class RepositoryTest {
         repository.storeFilename("content://nonexistent.provider/log.md")
         assertFalse(repository.saveToFile("text", true))
     }
-
-    // Shortcuts
 
     @Test
     fun addShortcut_assignsIncreasingPositions() = runBlocking {
@@ -222,8 +216,6 @@ class RepositoryTest {
     fun getExportRows_isEmptyWithNoShortcuts() {
         assertTrue(repository.getExportRows().isEmpty())
     }
-
-    // Import and export
 
     @Test
     fun jsonExportThenImport_roundTrips() = runBlocking {

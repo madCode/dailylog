@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# "Boot completed" can be reported before user 0 is unlocked and shared storage is
-# mounted; tests that touch SharedPreferences or /sdcard then fail. Wait for all three
-# signals, up to 5 minutes, logging progress.
+# "Boot completed" can come before user 0 is unlocked and /sdcard is mounted, and tests
+# that touch SharedPreferences or /sdcard then fail.
 set -uo pipefail
 sdk=$(adb shell getprop ro.build.version.sdk | tr -d '\r')
 state() {

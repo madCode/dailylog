@@ -38,8 +38,7 @@ jobs:
       uses: asadmansr/android-test-report-action@v1.2.0
   instrumentation:
     name: Instrumentation tests (API ${{ matrix.api-level }})
-    # On ubuntu-24.04, the API 37.0 emulator's SurfaceFlinger aborts every ~40s (assertion
-    # !hasReadColorBufferDma, issuetracker.google.com/issues/557246813), restarting Android.
+    # The API 37.0 emulator crash-loops on ubuntu-24.04: issuetracker.google.com/issues/557246813
     runs-on: ${{ matrix.api-level == '37.0' && 'ubuntu-26.04' || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
@@ -65,7 +64,8 @@ jobs:
       uses: reactivecircus/android-emulator-runner@v2
       with:
         api-level: ${{ matrix.api-level }}
-        target: google_apis
+        # Google apps on the API 23 google_apis image crash at random, and the crash dialog steals focus.
+        target: ${{ matrix.api-level == '23' && 'default' || 'google_apis' }}
         arch: x86_64
         # Sized for Android 17, which doesn't boot in 10 minutes or fit the test APKs on the
         # defaults. Logcat is recorded from boot so a crash before the tests still leaves a

@@ -8,7 +8,6 @@ import com.app.dailylog.R
 import com.app.dailylog.repository.ShortcutType
 
 class AddShortcutDialogFragment(viewModel: ShortcutDialogViewModel) : ModifyShortcutDialogFragment(viewModel) {
-    // Looked up rather than held so the dialog still works after Android recreates it.
     private val listener get() = parentFragment as AddShortcutDialogListener
 
     interface AddShortcutDialogListener {
