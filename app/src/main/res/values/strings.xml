@@ -33,7 +33,6 @@
     <string name="addShortcut">Add a shortcut</string>
     <string name="editShortcut">Edit shortcut</string>
     <string name="addBulkShortcut">Bulk add shortcuts</string>
-    <string name="permissionNeeded">Permission Needed</string>
     <string name="ok">OK</string>
     <string name="no_shortcuts_info">Click on the + button at the bottom of the screen to add a shortcut.</string>
     <string name="bulk_add_shortcuts_instructions">Each row represents one shortcut. Each row should contain three items: shortcut, text, and cursor index.\n\nSample row: four,4,1,TEXT</string>
