@@ -14,10 +14,12 @@ import com.app.dailylog.repository.Constants
 import com.app.dailylog.repository.Shortcut
 import com.app.dailylog.repository.ShortcutDatabase
 import com.app.dailylog.repository.ShortcutType
+import com.app.dailylog.testutil.grantStoragePermission
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.concurrent.CountDownLatch
@@ -32,6 +34,9 @@ import java.util.concurrent.TimeUnit
  */
 @RunWith(AndroidJUnit4::class)
 class ShortcutTrayVisibilityTest {
+
+    @get:Rule
+    val storagePermission = grantStoragePermission()
 
     private val context = ApplicationProvider.getApplicationContext<Context>()
 

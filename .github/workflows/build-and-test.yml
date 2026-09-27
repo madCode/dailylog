@@ -44,8 +44,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Strings: Android 17+ images are named with a minor version (android-37.0).
-        api-level: ['30', '35', '36', '37.0']
+        api-level: ['23', '36', '37.0']
 
     steps:
     - uses: actions/checkout@v4
@@ -68,15 +67,14 @@ jobs:
         api-level: ${{ matrix.api-level }}
         target: google_apis
         arch: x86_64
-        # Android 17 didn't boot within 10 minutes on the defaults (2 cores), and
-        # then ran out of internal storage installing the test APKs.
+        # Sized for Android 17, which doesn't boot in 10 minutes or fit the test APKs on the
+        # defaults. Logcat is recorded from boot so a crash before the tests still leaves a
+        # log, and the tests wait for user storage to unlock before disabling animations.
         cores: 4
         ram-size: 4096M
         disk-size: 6000M
         emulator-boot-timeout: 900
-        # Record logcat from boot, so it's kept even when Android crashes before the tests start.
         pre-emulator-launch-script: .github/scripts/record-emulator-logcat.sh
-        # Done in the script instead, after the emulator is fully up.
         disable-animations: false
         script: |
           .github/scripts/wait-for-emulator-unlock.sh

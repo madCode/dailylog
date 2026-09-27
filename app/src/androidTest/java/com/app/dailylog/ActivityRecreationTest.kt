@@ -5,6 +5,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -15,10 +16,12 @@ import com.app.dailylog.repository.Constants
 import com.app.dailylog.repository.Shortcut
 import com.app.dailylog.repository.ShortcutDatabase
 import com.app.dailylog.repository.ShortcutType
+import com.app.dailylog.testutil.grantStoragePermission
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.concurrent.CountDownLatch
@@ -26,6 +29,9 @@ import java.util.concurrent.TimeUnit
 
 @RunWith(AndroidJUnit4::class)
 class ActivityRecreationTest {
+
+    @get:Rule
+    val storagePermission = grantStoragePermission()
 
     private val context = ApplicationProvider.getApplicationContext<Context>()
 
@@ -94,11 +100,13 @@ class ActivityRecreationTest {
         launchWithShortcutsLoaded().use { scenario ->
             onView(withId(R.id.btnSettings)).perform(click())
             onView(withId(R.id.addShortcutButton)).perform(click())
-            onView(withId(R.id.addShortcutTitle)).inRoot(isDialog()).check(matches(isDisplayed()))
+            // On the small API 23 emulator the open keyboard pushes the dialog title off screen.
+            val dialogTitle = onView(withId(R.id.addShortcutTitle)).inRoot(isDialog())
+            dialogTitle.perform(closeSoftKeyboard()).check(matches(isDisplayed()))
 
             scenario.recreate()
 
-            onView(withId(R.id.addShortcutTitle)).inRoot(isDialog()).check(matches(isDisplayed()))
+            dialogTitle.perform(closeSoftKeyboard()).check(matches(isDisplayed()))
         }
     }
 }
