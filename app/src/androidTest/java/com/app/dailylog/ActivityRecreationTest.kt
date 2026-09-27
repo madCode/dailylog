@@ -3,9 +3,9 @@ package com.app.dailylog
 import android.content.Context
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.espresso.Espresso.closeSoftKeyboard
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -101,13 +101,12 @@ class ActivityRecreationTest {
             onView(withId(R.id.btnSettings)).perform(click())
             onView(withId(R.id.addShortcutButton)).perform(click())
             // On the small API 23 emulator the open keyboard pushes the dialog title off screen.
-            closeSoftKeyboard()
-            onView(withId(R.id.addShortcutTitle)).inRoot(isDialog()).check(matches(isDisplayed()))
+            val dialogTitle = onView(withId(R.id.addShortcutTitle)).inRoot(isDialog())
+            dialogTitle.perform(closeSoftKeyboard()).check(matches(isDisplayed()))
 
             scenario.recreate()
-            closeSoftKeyboard()
 
-            onView(withId(R.id.addShortcutTitle)).inRoot(isDialog()).check(matches(isDisplayed()))
+            dialogTitle.perform(closeSoftKeyboard()).check(matches(isDisplayed()))
         }
     }
 }
