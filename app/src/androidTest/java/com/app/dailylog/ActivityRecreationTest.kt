@@ -100,8 +100,7 @@ class ActivityRecreationTest {
         launchWithShortcutsLoaded().use { scenario ->
             onView(withId(R.id.btnSettings)).perform(click())
             onView(withId(R.id.addShortcutButton)).perform(click())
-            // On API < 30 the keyboard opens with the dialog and resizes it; on a small screen
-            // that clips the title, which isn't what this test checks.
+            // Below API 30 the keyboard opens with the dialog and can squeeze the title off screen.
             closeSoftKeyboard()
             onView(withId(R.id.addShortcutTitle)).inRoot(isDialog()).check(matches(isDisplayed()))
 
