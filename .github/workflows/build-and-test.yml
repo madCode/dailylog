@@ -42,7 +42,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        api-level: [30, 35, 36]
+        # Strings: Android 17+ images are named with a minor version (android-37.0).
+        api-level: ['30', '35', '36', '37.0']
 
     steps:
     - uses: actions/checkout@v4
@@ -65,5 +66,24 @@ jobs:
         api-level: ${{ matrix.api-level }}
         target: google_apis
         arch: x86_64
+        # Android 17 didn't boot within 10 minutes on the defaults (2 cores), and
+        # then ran out of internal storage installing the test APKs.
+        cores: 4
+        ram-size: 4096M
+        disk-size: 6000M
+        emulator-boot-timeout: 900
+        # On API 37.0, swiftshader_indirect crashes SurfaceFlinger (GoldfishMapper assertion
+        # hasReadColorBufferDma), which soft-reboots Android and locks user storage mid-run.
+        emulator-options: -no-window -gpu ${{ matrix.api-level == '37.0' && 'swangle_indirect' || 'swiftshader_indirect' }} -no-snapshot -noaudio -no-boot-anim
         disable-animations: true
-        script: ./gradlew connectedDebugAndroidTest
+        script: |
+          .github/scripts/wait-for-emulator-unlock.sh
+          ./gradlew connectedDebugAndroidTest || (adb logcat -d > emulator-logcat.txt; exit 1)
+
+    - name: Upload emulator logcat
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: emulator-logcat-api-${{ matrix.api-level }}
+        path: emulator-logcat.txt
+        if-no-files-found: ignore
