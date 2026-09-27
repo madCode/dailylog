@@ -66,4 +66,8 @@ jobs:
         target: google_apis
         arch: x86_64
         disable-animations: true
-        script: ./gradlew connectedDebugAndroidTest
+        # Close any system dialog left over from boot so it can't cover the app. On failure, show
+        # what had focus and any crash or ANR, since a covered app just never reaches RESUMED.
+        script: |
+          adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS
+          ./gradlew connectedDebugAndroidTest || (adb shell dumpsys window windows | grep -E 'mCurrentFocus|mFocusedApp'; adb logcat -d | grep -E -A4 'ANR in|FATAL EXCEPTION|has stopped|not responding' | head -150; exit 1)
