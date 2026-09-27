@@ -43,7 +43,7 @@ interface ShortcutRepositoryInterface {
         shortcutInfoList.forEachIndexed {
             index, list ->
             //TODO: create popup or Toast with failures
-            if (validateShortcutRow(list, index)) {
+            if (validateShortcutRow(list, index + 1)) {
                 val label = list[0]
                 val text = list[1]
                 val cursorIndex = list[2].toInt()
