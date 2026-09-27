@@ -123,6 +123,8 @@ There is also an option to import from the legacy CSV format ("Import Legacy Sho
 ## Bulk add shortcuts
 The other option is to use the bulk add feature. This shows you a text box and allows you to type in values. You don't need to wrap everything in quotes, but you do still need to follow the label, text, cursorIndex, shortcutType order.
 
+If a shortcut's text contains a comma, wrap the text in quotes, e.g. `Greeting,"hello, world",5,TEXT`. Labels can't contain commas in bulk add; use the single add dialog for those.
+
 # Known Issues
 ## I can't edit the file I selected! When I edit and hit save, all my edits disappear!
 You probably selected the file from the "Recents" menu or some other shortcut folder conveniently provided to you by Android's file picker. Android has some weird bug where in order for the app to get the full path to the file (and therefore write to the file), you _must_ select it via the Internal Storage directory. You must navigate to the file's exact location. See [Step 1: Select Your File](#step-1-select-your-file) for more details.
