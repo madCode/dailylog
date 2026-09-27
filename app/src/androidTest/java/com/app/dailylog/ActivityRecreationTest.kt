@@ -64,6 +64,11 @@ class ActivityRecreationTest {
         return scenario
     }
 
+    // The log field's keyboard can cover the settings button on a small screen.
+    private fun openSettings() {
+        onView(withId(R.id.btnSettings)).perform(closeSoftKeyboard(), click())
+    }
+
     @Test
     fun logScreen_survivesRecreation() {
         launchWithShortcutsLoaded().use { scenario ->
@@ -77,7 +82,7 @@ class ActivityRecreationTest {
     @Test
     fun settingsScreen_survivesRecreation_andBackReturnsToLog() {
         launchWithShortcutsLoaded().use { scenario ->
-            onView(withId(R.id.btnSettings)).perform(click())
+            openSettings()
             onView(withId(R.id.addShortcutButton)).check(matches(isDisplayed()))
 
             scenario.recreate()
@@ -93,7 +98,7 @@ class ActivityRecreationTest {
     @Test
     fun addShortcutDialog_survivesRecreation() {
         launchWithShortcutsLoaded().use { scenario ->
-            onView(withId(R.id.btnSettings)).perform(click())
+            openSettings()
             onView(withId(R.id.addShortcutButton)).perform(click())
             // On the small API 23 emulator the open keyboard pushes the dialog title off screen.
             val dialogTitle = onView(withId(R.id.addShortcutTitle)).inRoot(isDialog())
