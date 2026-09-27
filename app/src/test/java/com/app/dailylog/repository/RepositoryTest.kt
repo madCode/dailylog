@@ -1,13 +1,11 @@
 package com.app.dailylog.repository
 
-import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import android.os.Looper
 import androidx.lifecycle.Observer
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.app.dailylog.ui.permissions.PermissionChecker
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -18,7 +16,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.Robolectric
 import org.robolectric.Shadows.shadowOf
 import java.io.File
 
@@ -33,8 +30,7 @@ class RepositoryTest {
 
     @Before
     fun setUp() {
-        val activity = Robolectric.buildActivity(Activity::class.java).setup().get()
-        repository = Repository(context, PermissionChecker(activity))
+        repository = Repository(context)
         // Validation and positions read the LiveData's value, which only updates while observed.
         repository.getAllShortcuts().observeForever(keepLiveDataActive)
         idle()
@@ -76,8 +72,7 @@ class RepositoryTest {
     @Test
     fun storedFilename_isRestoredByNewRepository() {
         useLogFile("")
-        val activity = Robolectric.buildActivity(Activity::class.java).setup().get()
-        val reopened = Repository(context, PermissionChecker(activity))
+        val reopened = Repository(context)
         assertFalse(reopened.userMustSelectFile())
         assertEquals(Uri.fromFile(logFile).toString(), reopened.filename)
     }

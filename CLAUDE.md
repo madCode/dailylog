@@ -36,7 +36,7 @@ Unit tests include Robolectric tests that launch the whole app on the JVM (`app/
 
 ## Architecture
 
-Single-Activity MVVM. `MainActivity` creates the `Repository` and `PermissionChecker`, then swaps between three fragments based on app state:
+Single-Activity MVVM. `MainActivity` creates the `Repository`, then swaps between three fragments based on app state:
 
 - **WelcomeFragment** — shown on first launch when no file is selected. Lets user create or pick a file, then calls back into MainActivity to open the log.
 - **LogFragment** — main screen. Displays the log file in a text editor, a shortcut tray (horizontal staggered RecyclerView), and save/settings buttons. Saves on pause (smart save: skips if content hash unchanged) and on explicit button press (force save).

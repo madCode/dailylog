@@ -128,7 +128,3 @@ If a shortcut's text contains a comma, wrap the text in quotes, e.g. `Greeting,"
 # Known Issues
 ## I can't edit the file I selected! When I edit and hit save, all my edits disappear!
 You probably selected the file from the "Recents" menu or some other shortcut folder conveniently provided to you by Android's file picker. Android has some weird bug where in order for the app to get the full path to the file (and therefore write to the file), you _must_ select it via the Internal Storage directory. You must navigate to the file's exact location. See [Step 1: Select Your File](#step-1-select-your-file) for more details.
-## I just selected a file and I'm seeing "File read permissions not granted.". But I definitely did grant permissions!
-If you _just_ opened the app for the first time and _just_ granted permissions, you may still see a Toast notification saying "File read permissions not granted". Give the app about 30 seconds. The app is trying to load the file right after permissions have been granted and it may not work right away. After about 10-30 seconds you should see a "Saved file" message and all should be right with the world. If the Toast message has gone away, try hitting the save button and see if it works. If it does, you're all right.
-
-If it's still not working, double-check that you _did_, in fact, give permissions to the app.
