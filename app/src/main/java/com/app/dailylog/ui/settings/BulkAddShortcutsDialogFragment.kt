@@ -59,6 +59,7 @@ class BulkAddShortcutsDialogFragment(viewModel: ShortcutDialogViewModel) : Short
                 try {
                     viewModel.validateShortcutRow(splitResults.toTypedArray(), displayIndex)
                 } catch(ex: Exception) {
+                    valid = false
                     binding.bulkInputLayout.error = ex.message
                 }
                 resultLines.add(splitResults.toTypedArray())
