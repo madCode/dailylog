@@ -32,7 +32,7 @@ dailyLog is a native Android app (Kotlin) for distraction-free journaling with c
 
 Unit tests include Robolectric tests that launch the whole app on the JVM (`app/src/test/.../testutil/AppRobolectricTest.kt` is the base class). They use the real file-backed Room database, so they cover the cold-start path; prefer them over instrumentation tests for UI behavior. CI also runs the instrumentation tests on emulators and uploads a debug APK (`com.app.dailylog.debug`, installs beside the release app) as a build artifact.
 
-**Requirements**: JDK 21 (OpenJDK 21), Android SDK (API 36 target, 23 min), Kotlin 2.2.10.
+**Requirements**: JDK 21 (OpenJDK 21), Android SDK (API 37 target, 23 min), Kotlin 2.2.10.
 
 ## Architecture
 
