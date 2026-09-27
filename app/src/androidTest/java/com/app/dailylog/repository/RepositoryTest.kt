@@ -3,7 +3,6 @@ package com.app.dailylog.repository
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.runner.AndroidJUnit4
-import com.app.dailylog.ui.permissions.PermissionChecker
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -51,7 +50,7 @@ class RepositoryTest {
     fun setUp() {
         ShortcutDatabase.TEST_MODE = true
         val context = ApplicationProvider.getApplicationContext<Context>()
-        repository = Repository(context, PermissionChecker(null))
+        repository = Repository(context)
         repository.shortcutDao = ShortcutDatabase.getDatabase(context).shortcutDao()
     }
 
@@ -94,9 +93,5 @@ class RepositoryTest {
 
     @Test
     fun getContext() {
-    }
-
-    @Test
-    fun getPermissionChecker() {
     }
 }

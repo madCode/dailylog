@@ -6,7 +6,6 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import com.app.dailylog.R
-import com.app.dailylog.ui.permissions.PermissionChecker
 import com.app.dailylog.utils.JsonShortcutUtils
 import com.opencsv.CSVReader
 import com.opencsv.CSVWriter
@@ -36,9 +35,7 @@ interface RepositoryInterface: FileRepositoryInterface, ShortcutRepositoryInterf
     suspend fun importShortcutsFromJson(uri: Uri)
 }
 
-class Repository(override val context: Context,
-                 override val permissionChecker: PermissionChecker
-): RepositoryInterface {
+class Repository(override val context: Context): RepositoryInterface {
     override lateinit var filename : String
     override var lastSavedContentsHash: String = ""
     override var shortcutDao = ShortcutDatabase.getDatabase(context).shortcutDao()
@@ -121,19 +118,17 @@ class Repository(override val context: Context,
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun exportShortcutsAsJson(uri: Uri, jsonContent: String) {
-        if (permissionChecker.requestPermissionsBasedOnAppVersion()) {
-            try {
-                val openFileDescriptor = context.contentResolver.openFileDescriptor(uri, "rwt")
-                val fileDescriptor = openFileDescriptor?.fileDescriptor
-                val fileStream = FileOutputStream(fileDescriptor)
-                fileStream.write(jsonContent.toByteArray())
-                fileStream.close()
-                openFileDescriptor?.close()
-            } catch (ex: IllegalArgumentException) {
-                ex.printStackTrace()
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
+        try {
+            val openFileDescriptor = context.contentResolver.openFileDescriptor(uri, "rwt")
+            val fileDescriptor = openFileDescriptor?.fileDescriptor
+            val fileStream = FileOutputStream(fileDescriptor)
+            fileStream.write(jsonContent.toByteArray())
+            fileStream.close()
+            openFileDescriptor?.close()
+        } catch (ex: IllegalArgumentException) {
+            ex.printStackTrace()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
 

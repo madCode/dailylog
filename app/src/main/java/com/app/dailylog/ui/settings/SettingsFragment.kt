@@ -21,13 +21,11 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.dailylog.R
 import com.app.dailylog.repository.Shortcut
-import com.app.dailylog.ui.permissions.PermissionChecker
 import com.app.dailylog.utils.DetermineBuild
 import com.app.dailylog.databinding.SettingsViewBinding
 
 class SettingsFragment(
-    private val viewModel: SettingsViewModel,
-    private val permissionChecker: PermissionChecker
+    private val viewModel: SettingsViewModel
 ) : Fragment(),
     AddShortcutDialogFragment.AddShortcutDialogListener,
     BulkAddShortcutsDialogFragment.BulkAddListener,
@@ -39,8 +37,7 @@ class SettingsFragment(
     private lateinit var binding: SettingsViewBinding
 
     companion object {
-        fun newInstance(viewModel: SettingsViewModel, permissionChecker: PermissionChecker) =
-            SettingsFragment(viewModel, permissionChecker)
+        fun newInstance(viewModel: SettingsViewModel) = SettingsFragment(viewModel)
     }
 
     override fun onCreateView(
@@ -166,9 +163,6 @@ class SettingsFragment(
     }
 
     private fun selectImportFileLegacyCSV() {
-        if (!permissionChecker.requestPermissionsBasedOnAppVersion()) {
-            return
-        }
         val intent =
             Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
@@ -212,9 +206,6 @@ class SettingsFragment(
         }
 
     private fun selectExportFile() {
-        if (!permissionChecker.requestPermissionsBasedOnAppVersion()) {
-            return
-        }
         val intent =
             Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
@@ -230,9 +221,6 @@ class SettingsFragment(
     }
 
     private fun selectImportFile() {
-        if (!permissionChecker.requestPermissionsBasedOnAppVersion()) {
-            return
-        }
         val intent =
             Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
