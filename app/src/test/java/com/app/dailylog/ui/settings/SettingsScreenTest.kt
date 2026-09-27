@@ -1,0 +1,260 @@
+package com.app.dailylog.ui.settings
+
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.view.View
+import android.widget.EditText
+import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.RecyclerView
+import androidx.test.core.app.ActivityScenario
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.app.dailylog.MainActivity
+import com.app.dailylog.R
+import com.app.dailylog.repository.Shortcut
+import com.app.dailylog.repository.ShortcutType
+import com.app.dailylog.testutil.AppRobolectricTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.Shadows.shadowOf
+import org.robolectric.shadows.ShadowDialog
+import org.robolectric.shadows.ShadowPopupMenu
+import java.io.File
+
+@RunWith(AndroidJUnit4::class)
+class SettingsScreenTest : AppRobolectricTest() {
+
+    override val initialShortcuts = listOf(
+        Shortcut("First", "one", 0, ShortcutType.TEXT, 0),
+        Shortcut("Second", "two", 0, ShortcutType.TEXT, 1),
+    )
+
+    private fun openSettings(): ActivityScenario<MainActivity> =
+        launchApp().also { onView(withId(R.id.btnSettings)).perform(click()) }
+
+    private fun MainActivity.settings(): SettingsFragment =
+        supportFragmentManager.findFragmentById(R.id.container) as SettingsFragment
+
+    private fun MainActivity.dialog(tag: String): DialogFragment =
+        settings().childFragmentManager.findFragmentByTag(tag) as DialogFragment
+
+    private fun MainActivity.shortcuts(): List<Shortcut> {
+        idleUntil(500) { false }
+        return repository.getAllShortcuts().value.orEmpty()
+    }
+
+    private fun DialogFragment.type(id: Int, text: String) =
+        requireView().findViewById<EditText>(id).setText(text)
+
+    private fun DialogFragment.click(id: Int) {
+        requireView().findViewById<View>(id).performClick()
+        idleUntil(500) { false }
+    }
+
+    // Returns [uri] from the next file picker the screen opens.
+    private fun MainActivity.answerFilePicker(uri: Uri) {
+        val request = shadowOf(this).nextStartedActivityForResult
+        assertNotNull("expected a file picker", request)
+        shadowOf(this).receiveResult(request.intent, Activity.RESULT_OK, Intent().setData(uri))
+        idleUntil(500) { false }
+    }
+
+    private fun MainActivity.chooseMenuItem(id: Int) {
+        findViewById<View>(R.id.shortcutMenuButton).performClick()
+        ShadowPopupMenu.getLatestPopupMenu().menu.performIdentifierAction(id, 0)
+        idleUntil(500) { false }
+    }
+
+    @Test
+    fun listsShortcutsAndFile() {
+        openSettings().use { scenario ->
+            scenario.onActivity { activity ->
+                idleUntil { activity.findViewById<RecyclerView>(R.id.recycler_view).childCount == 2 }
+                assertEquals(View.GONE, activity.findViewById<View>(R.id.noShortcutsMessage).visibility)
+                assertEquals(
+                    Uri.fromFile(logFile).toString(),
+                    activity.findViewById<android.widget.TextView>(R.id.fileName).text.toString()
+                )
+            }
+        }
+    }
+
+    @Test
+    fun addDialog_addsShortcut() {
+        openSettings().use { scenario ->
+            onView(withId(R.id.addShortcutButton)).perform(click())
+            scenario.onActivity { activity ->
+                val dialog = activity.dialog("fragment_add_shortcut")
+                dialog.type(R.id.labelInput, "Third")
+                dialog.type(R.id.textInput, "three")
+                dialog.click(R.id.btnSaveShortcut)
+                assertTrue(activity.shortcuts().any { it.label == "Third" && it.value == "three" })
+                assertFalse(dialog.isAdded)
+            }
+        }
+    }
+
+    @Test
+    fun addDialog_rejectsDuplicateLabel() {
+        openSettings().use { scenario ->
+            onView(withId(R.id.addShortcutButton)).perform(click())
+            scenario.onActivity { activity ->
+                val dialog = activity.dialog("fragment_add_shortcut")
+                dialog.type(R.id.labelInput, "First")
+                dialog.type(R.id.textInput, "duplicate")
+                dialog.click(R.id.btnSaveShortcut)
+                assertEquals("one", activity.shortcuts().single { it.label == "First" }.value)
+                assertTrue(dialog.isAdded)
+            }
+        }
+    }
+
+    @Test
+    fun editDialog_updatesShortcut() {
+        openSettings().use { scenario ->
+            scenario.onActivity { activity ->
+                val list = activity.findViewById<RecyclerView>(R.id.recycler_view)
+                idleUntil { list.childCount == 2 }
+                list.getChildAt(0).performClick()
+                idleUntil(500) { false }
+                val dialog = activity.dialog("fragment_edit")
+                assertEquals("First", dialog.requireView().findViewById<EditText>(R.id.labelInput).text.toString())
+                dialog.type(R.id.textInput, "uno")
+                dialog.click(R.id.btnSaveShortcut)
+                assertEquals("uno", activity.shortcuts().single { it.label == "First" }.value)
+            }
+        }
+    }
+
+    @Test
+    fun deleteButton_removesShortcut() {
+        openSettings().use { scenario ->
+            scenario.onActivity { activity ->
+                val list = activity.findViewById<RecyclerView>(R.id.recycler_view)
+                idleUntil { list.childCount == 2 }
+                list.getChildAt(0).findViewById<View>(R.id.removeShortcutButton).performClick()
+                assertEquals(listOf("Second"), activity.shortcuts().map { it.label })
+            }
+        }
+    }
+
+    @Test
+    fun bulkAdd_addsValidLines() {
+        openSettings().use { scenario ->
+            scenario.onActivity { activity ->
+                activity.findViewById<View>(R.id.addShortcutButton).performLongClick()
+                idleUntil(500) { false }
+                val dialog = activity.dialog("fragment_bulk_add")
+                dialog.type(R.id.bulkInput, "Third,three,0,TEXT\nFourth,four,2,TEXT")
+                dialog.click(R.id.btnSaveBulkShortcut)
+                val added = activity.shortcuts().associate { it.label to it.value }
+                assertEquals("three", added["Third"])
+                assertEquals("four", added["Fourth"])
+            }
+        }
+    }
+
+    @Test
+    fun menuBulkAdd_opensDialog() {
+        openSettings().use { scenario ->
+            scenario.onActivity { activity ->
+                activity.chooseMenuItem(R.id.bulkAdd)
+                assertTrue(activity.dialog("fragment_bulk_add").isAdded)
+            }
+        }
+    }
+
+    @Test
+    fun exportThenImportJson_roundTripsThroughFilePicker() {
+        val exported = File(context.filesDir, "shortcuts.json")
+        openSettings().use { scenario ->
+            scenario.onActivity { activity ->
+                activity.shortcuts()
+                activity.chooseMenuItem(R.id.exportShortcuts)
+                activity.answerFilePicker(Uri.fromFile(exported))
+                idleUntil { exported.exists() && exported.length() > 0 }
+                assertTrue(exported.readText().contains("\"First\""))
+
+                val list = activity.findViewById<RecyclerView>(R.id.recycler_view)
+                repeat(2) {
+                    idleUntil { list.childCount > 0 }
+                    list.getChildAt(0).findViewById<View>(R.id.removeShortcutButton).performClick()
+                    activity.shortcuts()
+                }
+                assertTrue(activity.shortcuts().isEmpty())
+
+                activity.chooseMenuItem(R.id.importShortcuts)
+                activity.answerFilePicker(Uri.fromFile(exported))
+                idleUntil { activity.repository.getAllShortcuts().value.orEmpty().size == 2 }
+                assertEquals(listOf("First", "Second"), activity.shortcuts().map { it.label })
+            }
+        }
+        exported.delete()
+    }
+
+    @Test
+    fun importLegacyCsv_addsShortcuts() {
+        val csv = File(context.filesDir, "legacy.csv").apply { writeText("\"Third\",\"three\",\"0\",\"TEXT\"\n") }
+        openSettings().use { scenario ->
+            scenario.onActivity { activity ->
+                activity.shortcuts()
+                activity.chooseMenuItem(R.id.importShortcutsLegacy)
+                activity.answerFilePicker(Uri.fromFile(csv))
+                idleUntil { activity.repository.getAllShortcuts().value.orEmpty().size == 3 }
+                assertTrue(activity.shortcuts().any { it.label == "Third" })
+            }
+        }
+        csv.delete()
+    }
+
+    @Test
+    fun selectFile_changesLogFile() {
+        val other = File(context.filesDir, "other.md").apply { writeText("other\n") }
+        openSettings().use { scenario ->
+            scenario.onActivity { activity ->
+                activity.findViewById<View>(R.id.selectFileButton).performClick()
+                activity.answerFilePicker(Uri.fromFile(other))
+                assertEquals(
+                    Uri.fromFile(other).toString(),
+                    activity.findViewById<android.widget.TextView>(R.id.fileName).text.toString()
+                )
+                assertEquals(Uri.fromFile(other).toString(), activity.repository.filename)
+            }
+        }
+        other.delete()
+    }
+
+    @Test
+    fun errorDialog_showsMessage() {
+        launchApp().use { scenario ->
+            scenario.onActivity { activity ->
+                activity.showErrorDialog("Something broke")
+                idleUntil(500) { false }
+                val dialog = ShadowDialog.getLatestDialog() as android.app.AlertDialog
+                assertTrue(dialog.isShowing)
+                assertEquals("Something broke", shadowOf(dialog).message.toString())
+            }
+        }
+    }
+}
+
+@RunWith(AndroidJUnit4::class)
+class EmptySettingsScreenTest : AppRobolectricTest() {
+    @Test
+    fun noShortcuts_showsInstructions() {
+        launchApp().use { scenario ->
+            onView(withId(R.id.btnSettings)).perform(click())
+            scenario.onActivity { activity ->
+                idleUntil(500) { false }
+                assertEquals(View.VISIBLE, activity.findViewById<View>(R.id.noShortcutsMessage).visibility)
+            }
+        }
+    }
+}
