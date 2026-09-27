@@ -64,7 +64,8 @@ jobs:
       uses: reactivecircus/android-emulator-runner@v2
       with:
         api-level: ${{ matrix.api-level }}
-        target: google_apis
+        # Google apps on the API 23 google_apis image crash at random, and the crash dialog steals focus.
+        target: ${{ matrix.api-level == '23' && 'default' || 'google_apis' }}
         arch: x86_64
         # Sized for Android 17, which doesn't boot in 10 minutes or fit the test APKs on the
         # defaults. Logcat is recorded from boot so a crash before the tests still leaves a
