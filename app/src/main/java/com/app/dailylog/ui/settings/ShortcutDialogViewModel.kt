@@ -13,6 +13,10 @@ class ShortcutDialogViewModel(private var repository: RepositoryInterface) : Vie
         return repository.isTextValid(text)
     }
 
+    fun cleanUpText(text: String): String {
+        return repository.cleanUpText(text)
+    }
+
     fun validateShortcutRow(row: Array<String>, index: Int): Boolean {
         return repository.validateShortcutRow(row, index)
     }
