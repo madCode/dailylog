@@ -51,11 +51,15 @@ class BulkAddShortcutsDialogFragment(viewModel: ShortcutDialogViewModel) : Short
             val lines = binding.bulkInput.text?.lines()
             lines?.forEachIndexed { index, s ->
                 val regex = Regex(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)")
-                val splitResults = s.split(regex = regex)
+                val splitResults = s.split(regex = regex).toMutableList()
+                if (splitResults.size > 1) {
+                    splitResults[1] = viewModel.cleanUpText(splitResults[1])
+                }
                 val displayIndex = index + 1
                 try {
                     viewModel.validateShortcutRow(splitResults.toTypedArray(), displayIndex)
                 } catch(ex: Exception) {
+                    valid = false
                     binding.bulkInputLayout.error = ex.message
                 }
                 resultLines.add(splitResults.toTypedArray())
