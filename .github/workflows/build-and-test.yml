@@ -38,7 +38,9 @@ jobs:
       uses: asadmansr/android-test-report-action@v1.2.0
   instrumentation:
     name: Instrumentation tests (API ${{ matrix.api-level }})
-    runs-on: ubuntu-latest
+    # On ubuntu-24.04, the API 37.0 emulator's SurfaceFlinger aborts every ~40s (assertion
+    # !hasReadColorBufferDma, issuetracker.google.com/issues/557246813), restarting Android.
+    runs-on: ${{ matrix.api-level == '37.0' && 'ubuntu-26.04' || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
       matrix:
@@ -72,9 +74,6 @@ jobs:
         ram-size: 4096M
         disk-size: 6000M
         emulator-boot-timeout: 900
-        # API 37.0's gralloc mapper aborts SurfaceFlinger if the host offers colour buffer DMA
-        # reads (assertion !hasReadColorBufferDma), which GLDirectMem enables.
-        emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim ${{ matrix.api-level == '37.0' && '-feature -GLDirectMem' || '' }}
         # Record logcat from boot, so it's kept even when Android crashes before the tests start.
         pre-emulator-launch-script: .github/scripts/record-emulator-logcat.sh
         # Done in the script instead, after the emulator is fully up.
