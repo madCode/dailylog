@@ -38,11 +38,13 @@ jobs:
       uses: asadmansr/android-test-report-action@v1.2.0
   instrumentation:
     name: Instrumentation tests (API ${{ matrix.api-level }})
-    runs-on: ubuntu-latest
+    # On ubuntu-24.04, the API 37.0 emulator's SurfaceFlinger aborts every ~40s (assertion
+    # !hasReadColorBufferDma, issuetracker.google.com/issues/557246813), restarting Android.
+    runs-on: ${{ matrix.api-level == '37.0' && 'ubuntu-26.04' || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
       matrix:
-        api-level: [23, 36]
+        api-level: ['23', '36', '37.0']
 
     steps:
     - uses: actions/checkout@v4
@@ -65,5 +67,24 @@ jobs:
         api-level: ${{ matrix.api-level }}
         target: google_apis
         arch: x86_64
-        disable-animations: true
-        script: ./gradlew connectedDebugAndroidTest
+        # Sized for Android 17, which doesn't boot in 10 minutes or fit the test APKs on the
+        # defaults. Logcat is recorded from boot so a crash before the tests still leaves a
+        # log, and the tests wait for user storage to unlock before disabling animations.
+        cores: 4
+        ram-size: 4096M
+        disk-size: 6000M
+        emulator-boot-timeout: 900
+        pre-emulator-launch-script: .github/scripts/record-emulator-logcat.sh
+        disable-animations: false
+        script: |
+          .github/scripts/wait-for-emulator-unlock.sh
+          for s in window_animation_scale transition_animation_scale animator_duration_scale; do adb shell settings put global $s 0.0; done
+          ./gradlew connectedDebugAndroidTest
+
+    - name: Upload emulator logcat
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: emulator-logcat-api-${{ matrix.api-level }}
+        path: emulator-logcat.txt
+        if-no-files-found: ignore
