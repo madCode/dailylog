@@ -100,7 +100,7 @@ class ActivityRecreationTest {
         launchWithShortcutsLoaded().use { scenario ->
             onView(withId(R.id.btnSettings)).perform(click())
             onView(withId(R.id.addShortcutButton)).perform(click())
-            // Otherwise, on the small API 23 emulator, the keyboard pushes the dialog title off screen.
+            // On the small API 23 emulator the open keyboard pushes the dialog title off screen.
             closeSoftKeyboard()
             onView(withId(R.id.addShortcutTitle)).inRoot(isDialog()).check(matches(isDisplayed()))
 
