@@ -125,7 +125,6 @@ kover {
                     "com.app.dailylog.repository.ShortcutDatabase_Impl*",
                     "com.app.dailylog.ui.settings.ShortcutTouchHelper*",
                     "com.app.dailylog.ui.settings.ShortcutTouchViewHolder*",
-                    "com.app.dailylog.ui.permissions.PermissionChecker*",
                 )
             }
         }

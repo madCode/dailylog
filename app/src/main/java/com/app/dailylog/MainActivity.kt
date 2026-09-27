@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.lifecycle.ViewModelProvider
 import com.app.dailylog.repository.Repository
-import com.app.dailylog.ui.permissions.PermissionChecker
 import com.app.dailylog.ui.log.LogFragment
 import com.app.dailylog.ui.log.LogViewModel
 import com.app.dailylog.ui.settings.AddShortcutDialogFragment
@@ -26,12 +25,10 @@ import com.app.dailylog.utils.DetermineBuild
 class MainActivity : AppCompatActivity() {
 
     lateinit var repository: Repository
-    private lateinit var permissionChecker: PermissionChecker
     private lateinit var prefs: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        permissionChecker = PermissionChecker(this)
-        repository = Repository(applicationContext, permissionChecker)
+        repository = Repository(applicationContext)
         // Must be set before super.onCreate, which recreates fragments after e.g. a dark mode switch.
         supportFragmentManager.fragmentFactory = AppFragmentFactory()
         super.onCreate(savedInstanceState)
@@ -59,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             when (loadFragmentClass(classLoader, className)) {
                 WelcomeFragment::class.java -> WelcomeFragment(WelcomeViewModel(repository) { openLog() })
                 LogFragment::class.java -> LogFragment(LogViewModel(repository)) { openSettings() }
-                SettingsFragment::class.java -> SettingsFragment(getSettingsViewModel(), permissionChecker)
+                SettingsFragment::class.java -> SettingsFragment(getSettingsViewModel())
                 AddShortcutDialogFragment::class.java -> AddShortcutDialogFragment(ShortcutDialogViewModel(repository))
                 EditShortcutDialogFragment::class.java -> EditShortcutDialogFragment(ShortcutDialogViewModel(repository))
                 BulkAddShortcutsDialogFragment::class.java -> BulkAddShortcutsDialogFragment(ShortcutDialogViewModel(repository))
