@@ -72,10 +72,11 @@ jobs:
         ram-size: 4096M
         disk-size: 6000M
         emulator-boot-timeout: 900
+        # API 37.0's gralloc mapper aborts SurfaceFlinger if the host offers colour buffer DMA
+        # reads (assertion !hasReadColorBufferDma), which GLDirectMem enables.
+        emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim ${{ matrix.api-level == '37.0' && '-feature -GLDirectMem' || '' }}
         # Record logcat from boot, so it's kept even when Android crashes before the tests start.
-        pre-emulator-launch-script: |
-          .github/scripts/record-emulator-logcat.sh
-          ${{ matrix.api-level == '37.0' && '.github/scripts/use-three-button-nav.sh' || 'true' }}
+        pre-emulator-launch-script: .github/scripts/record-emulator-logcat.sh
         # Done in the script instead, after the emulator is fully up.
         disable-animations: false
         script: |
