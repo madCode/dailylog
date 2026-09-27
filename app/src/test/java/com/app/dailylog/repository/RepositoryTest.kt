@@ -13,6 +13,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -196,6 +197,18 @@ class RepositoryTest {
             listOf(arrayOf("b", "two", "0", ShortcutType.TEXT), arrayOf("c", "three", "1", ShortcutType.TEXT))
         )
         assertEquals(listOf("a" to 0, "b" to 1, "c" to 2), shortcuts().map { it.label to it.position })
+    }
+
+    @Test
+    fun bulkAdd_numbersLinesFromOne() {
+        val error = assertThrows(IllegalArgumentException::class.java) {
+            runBlocking {
+                repository.bulkAddShortcuts(
+                    listOf(arrayOf("a", "one", "0", ShortcutType.TEXT), arrayOf("b", "two", "99", ShortcutType.TEXT))
+                )
+            }
+        }
+        assertTrue(error.message!!, error.message!!.startsWith("Line 2:"))
     }
 
     @Test

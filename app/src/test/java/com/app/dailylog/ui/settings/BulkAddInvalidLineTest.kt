@@ -63,6 +63,8 @@ class BulkAddInvalidLineTest : AppRobolectricTest() {
     fun viewModelBulkAdd_withInvalidRow_reportsErrorInsteadOfCrashing() {
         launchApp().use { scenario ->
             scenario.onActivity { activity ->
+                // Validation reads the loaded shortcut list, so wait for it like a user would.
+                idleUntil { activity.repository.getAllShortcuts().value != null }
                 val reported = AtomicReference<String?>()
                 val viewModel = SettingsViewModel(activity.repository, DetermineBuild, { reported.set(it) }, Dispatchers.IO)
                 viewModel.bulkAddShortcuts(listOf(arrayOf("Label", "text", "99", "TEXT")))
