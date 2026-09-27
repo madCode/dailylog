@@ -32,8 +32,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         permissionChecker = PermissionChecker(this)
         repository = Repository(applicationContext, permissionChecker)
-        // Must be set before super.onCreate, which recreates any fragments that were showing
-        // before the Activity was destroyed (dark mode switch, rotation, process death).
+        // Must be set before super.onCreate, which recreates fragments after e.g. a dark mode switch.
         supportFragmentManager.fragmentFactory = AppFragmentFactory()
         super.onCreate(savedInstanceState)
         // Enable edge-to-edge
@@ -55,7 +54,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Our fragments take constructor arguments, so recreation (e.g. dark mode) needs this factory.
     private inner class AppFragmentFactory : FragmentFactory() {
         override fun instantiate(classLoader: ClassLoader, className: String): Fragment =
             when (loadFragmentClass(classLoader, className)) {
