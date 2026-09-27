@@ -75,10 +75,14 @@ jobs:
         # On API 37.0, swiftshader_indirect crashes SurfaceFlinger (GoldfishMapper assertion
         # hasReadColorBufferDma), which soft-reboots Android and locks user storage mid-run.
         emulator-options: -no-window -gpu ${{ matrix.api-level == '37.0' && 'swangle_indirect' || 'swiftshader_indirect' }} -no-snapshot -noaudio -no-boot-anim
-        disable-animations: true
+        # Record logcat from boot, so it's kept even when Android crashes before the tests start.
+        pre-emulator-launch-script: .github/scripts/record-emulator-logcat.sh
+        # Done in the script instead, after the emulator is fully up.
+        disable-animations: false
         script: |
           .github/scripts/wait-for-emulator-unlock.sh
-          ./gradlew connectedDebugAndroidTest || (adb logcat -d > emulator-logcat.txt; exit 1)
+          for s in window_animation_scale transition_animation_scale animator_duration_scale; do adb shell settings put global $s 0.0; done
+          ./gradlew connectedDebugAndroidTest
 
     - name: Upload emulator logcat
       if: failure()
