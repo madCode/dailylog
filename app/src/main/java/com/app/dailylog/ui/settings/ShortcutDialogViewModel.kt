@@ -5,8 +5,8 @@ import com.app.dailylog.repository.RepositoryInterface
 
 class ShortcutDialogViewModel(private var repository: RepositoryInterface) : ViewModel() {
 
-    fun isLabelValid(label: String, skipUniqueCheck: Boolean = false): Boolean {
-        return repository.isLabelValid(label, skipUniqueCheck)
+    fun isLabelValid(label: String, excludeId: String? = null): Boolean {
+        return repository.isLabelValid(label, excludeId)
     }
 
     fun isTextValid(text: String): Boolean {

@@ -75,9 +75,15 @@ class ShortcutRepositoryInterfaceTest : TestCase() {
         assertFalse(makeRepo(listOf(existing)).isLabelValid("taken"))
     }
 
-    fun testIsLabelValidDuplicateSkipped() {
+    fun testIsLabelValidOwnLabelWhenExcluded() {
         val existing = Shortcut(label = "taken", value = "v", cursorIndex = 0, type = "TEXT", position = 0)
-        assertTrue(makeRepo(listOf(existing)).isLabelValid("taken", skipUniqueCheck = true))
+        assertTrue(makeRepo(listOf(existing)).isLabelValid("taken", excludeId = existing.id))
+    }
+
+    fun testIsLabelValidOtherShortcutsLabelWhenExcluded() {
+        val edited = Shortcut(label = "mine", value = "v", cursorIndex = 0, type = "TEXT", position = 0)
+        val other = Shortcut(label = "taken", value = "v", cursorIndex = 0, type = "TEXT", position = 1)
+        assertFalse(makeRepo(listOf(edited, other)).isLabelValid("taken", excludeId = edited.id))
     }
 
     // validateShortcutRow

@@ -2,6 +2,7 @@ package com.app.dailylog.repository
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import java.util.UUID
 
 object ShortcutType {
     const val TEXT = "TEXT"
@@ -14,13 +15,14 @@ object ShortcutType {
     }
 }
 
-@Entity
+@Entity(indices = [Index(value = ["label"], unique = true)])
 data class Shortcut(
-    @PrimaryKey val label: String,
+    @ColumnInfo(name = "label") val label: String,
     @ColumnInfo(name = "value") val value: String,
     @ColumnInfo(name = "cursorIndex") val cursorIndex: Int,
     @ColumnInfo(name = "type", defaultValue = ShortcutType.TEXT) var type: String,
     @ColumnInfo(name = "position") var position: Int,
+    @PrimaryKey val id: String = UUID.randomUUID().toString(),
 )
 
 @Dao
@@ -37,8 +39,8 @@ interface ShortcutDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addAll(vararg shortcuts: Shortcut)
 
-    @Query("DELETE FROM shortcut WHERE label = :label")
-    suspend fun deleteByLabel(label: String)
+    @Query("DELETE FROM shortcut WHERE id = :id")
+    suspend fun deleteById(id: String)
 
     @Query("SELECT EXISTS(SELECT * FROM shortcut WHERE label = :label)")
     fun labelExists(label: String): LiveData<Boolean>

@@ -66,16 +66,16 @@ class SettingsViewModelTest : TestCase() {
     fun `test repository called when removeCallback called`(): Unit = runBlocking {
         `when`(buildMock.isOreoOrGreater()).thenReturn(false)
         settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
-        settingsViewModel!!.removeCallback("test")
-        verify(repository).removeShortcut("test")
+        settingsViewModel!!.removeCallback("id1")
+        verify(repository).removeShortcut("id1")
     }
 
     @Test
     fun `test repository called when updateShortcut called`(): Unit = runBlocking {
         `when`(buildMock.isOreoOrGreater()).thenReturn(false)
         settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
-        settingsViewModel!!.updateShortcut("test", "testTExt", 0, 1, "TEXT")
-        verify(repository).updateShortcut("test", "testTExt", 0, 1, "TEXT")
+        settingsViewModel!!.updateShortcut("id1", "test", "testTExt", 0, 1, "TEXT")
+        verify(repository).updateShortcut("id1", "test", "testTExt", 0, 1, "TEXT")
     }
 
     @Test

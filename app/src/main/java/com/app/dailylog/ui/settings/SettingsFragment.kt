@@ -66,7 +66,7 @@ class SettingsFragment(
         val value = TypedValue()
         context?.theme?.resolveAttribute(R.attr.colorAccent, value, true)
         adapter = ShortcutListAdapter(
-            removeCallback = { label -> viewModel.removeCallback(label) },
+            removeCallback = { id -> viewModel.removeCallback(id) },
             updateShortcutPositions = { shortcuts ->
                 viewModel.updateShortcutPositions(
                     shortcuts
@@ -305,6 +305,7 @@ class SettingsFragment(
     }
 
     override fun onFinishEditShortcutDialog(
+        id: String,
         label: String,
         text: String,
         cursor: Int,
@@ -312,6 +313,7 @@ class SettingsFragment(
         type: String
     ) {
         viewModel.updateShortcut(
+            id,
             label,
             text,
             cursor,
