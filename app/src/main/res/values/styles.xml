@@ -17,7 +17,7 @@
         <item name="buttonBarPositiveButtonStyle">@style/Widget.MaterialComponents.Button</item>
     </style>
 
-    <style name="FullScreenDialog" parent="AppTheme">
+    <style name="ShortcutDialog" parent="AppTheme">
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowBackground">?android:attr/colorBackground</item>
     </style>

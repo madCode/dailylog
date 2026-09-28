@@ -1,0 +1,4 @@
+<resources>
+    <!-- Material's maximum width for a floating dialog. -->
+    <dimen name="dialog_max_width">560dp</dimen>
+</resources>
