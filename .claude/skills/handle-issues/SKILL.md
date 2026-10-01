@@ -164,6 +164,12 @@ Every later comment in that thread starts with a tag naming what it is:
 The tags are `proposal`, `fix ready`, `needs info`, `update` and
 `question for madCode`.
 
+Everything else you post from madCode's account carries a tag too:
+
+- a PR description starts with `🤖 **Claude · pull request**`;
+- a comment or review on a PR starts with `🤖 **Claude · review notes**`
+  for review findings, or `🤖 **Claude · update**` for anything else.
+
 Then keep it short and specific: what you found (file:line), what you
 propose or did, and the one question you need answered. End every comment
 with the attribution footer and then the marker on its own line:
