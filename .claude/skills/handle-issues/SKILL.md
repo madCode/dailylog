@@ -62,6 +62,8 @@ Comment on the issue with:
 - the problem in a sentence, and what you found in the code (file:line);
 - the proposed change: for UX, what the user sees and does, step by step;
   for architecture, the design and what it touches;
+- for UX changes, mockups (see "Mockups"); for architecture changes, a
+  Mermaid diagram of the parts and how data moves, where it helps;
 - the alternatives you considered and why this one;
 - the approvals it needs, by name: "@reporter, does this solve it for you?"
   and/or "@madCode, OK to build?".
@@ -81,6 +83,29 @@ approval comments in the PR.
 
 If a UX proposal has waited 14 days for the reporter with no answer, ask
 madCode whether to go ahead without them.
+
+## Mockups
+
+A UX proposal shows the change, not just describes it: one image per
+screen or state that changes, before and after when it modifies an
+existing screen.
+
+- Build each mockup as a small HTML page at phone size (412×915) that
+  matches the app's real look: copy colours, type and spacing from the
+  screenshots in `README_screenshots/` and the app's theme and layout files.
+- Render it to PNG with the globally installed Playwright: a CommonJS
+  script (`require('playwright')`, `chromium.launch()`, viewport
+  412×915, `page.screenshot`) run as `NODE_PATH=$(npm root -g) node
+  render.cjs`. ES-module imports don't see global packages.
+- Commit the PNGs to the `claude/mockups` branch under
+  `issue-<N>/` (create the branch from `origin/main` if it doesn't
+  exist; never merge it), and embed them in the comment with
+  `![caption](https://github.com/madCode/dailylog/blob/claude/mockups/issue-<N>/<file>.png?raw=true)`.
+- If rendering or pushing fails, fall back to a text wireframe in a code
+  block, and say in the comment that it's a sketch.
+
+Revised proposals get new images (`v2-...`), so earlier comments still
+show what they described.
 
 ## Fixing
 
