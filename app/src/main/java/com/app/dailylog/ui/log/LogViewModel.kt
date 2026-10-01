@@ -9,10 +9,15 @@ import com.app.dailylog.repository.Shortcut
 class LogViewModel(var repository: RepositoryInterface) : ViewModel() {
     var cursorIndex = repository.getCursorIndex()
     private var loadedFileForFirstTime = false
+    private var loadedFilename: String? = null
 
     fun getLog(): String {
-        val fileContents = repository.readFile(!loadedFileForFirstTime)
+        // Picking another file in Settings keeps this ViewModel, so treat the new file as a first load:
+        // otherwise the old file's saved hash makes the next smart save rewrite the new file.
+        val firstLoadOfThisFile = !loadedFileForFirstTime || loadedFilename != repository.filename
+        val fileContents = repository.readFile(firstLoadOfThisFile)
         loadedFileForFirstTime = true
+        loadedFilename = repository.filename
         return fileContents;
     }
 

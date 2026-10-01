@@ -6,6 +6,7 @@ import android.net.Uri
 import android.view.View
 import android.widget.EditText
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
@@ -231,6 +232,25 @@ class SettingsScreenTest : AppRobolectricTest() {
                 assertEquals(Uri.fromFile(other).toString(), activity.repository.filename)
             }
         }
+        other.delete()
+    }
+
+    @Test
+    fun selectFile_thenLeavingTheApp_leavesTheNewFileUntouched() {
+        // CRLF and no trailing newline: reading normalizes both, so any save would change the bytes.
+        val original = "first\r\nsecond"
+        val other = File(context.filesDir, "other.md").apply { writeText(original) }
+        openSettings().use { scenario ->
+            scenario.onActivity { activity ->
+                activity.findViewById<View>(R.id.selectFileButton).performClick()
+                activity.answerFilePicker(Uri.fromFile(other))
+                activity.onBackPressedDispatcher.onBackPressed()
+                idleUntil(500) { false }
+                assertEquals("first\nsecond\n", activity.findViewById<EditText>(R.id.todayLog).text.toString())
+            }
+            scenario.moveToState(Lifecycle.State.CREATED)
+        }
+        assertEquals(original, other.readText())
         other.delete()
     }
 
