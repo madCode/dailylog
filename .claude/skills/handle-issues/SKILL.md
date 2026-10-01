@@ -37,7 +37,7 @@ Read the issue, its comments, and the code it touches, then sort it:
 
 | Type | What you do | Approval before building |
 |---|---|---|
-| **Bug in an existing feature**: the fix restores intended behaviour within the current design. Docs fixes and small internal fixes (CI, dependencies, typos) count here too. | Build the fix now (see "Fixing"), then ask the reporter to validate it. | None |
+| **Bug in an existing feature**: the fix restores intended behaviour within the current design. Docs that describe what already exists (missing, stale or wrong docs, including design docs of the current code) and small internal fixes (CI, dependencies, typos) count here too. | Build the fix now (see "Fixing"), then ask the reporter to validate it. | None |
 | **User-experience change**: a feature request, or a bug whose fix changes what users see or how they work. | Write a proposal. | The reporter, then madCode |
 | **Significant architecture change**: new subsystems, data model or schema changes, a different approach to sync, delivery or storage, large refactors. | Write a proposal. | madCode only |
 | **Both UX and architecture** | Write a proposal. | The reporter and madCode |
@@ -68,10 +68,14 @@ Comment on the issue with:
 
 Approvals happen in order: for UX changes, ask the reporter first and only
 ask madCode once the reporter agrees (revise the proposal if they don't).
-When madCode is the reporter, one approval from them covers both.
+When madCode is the reporter, one approval from them covers both, but
+still post the proposal and ask "OK to build?"; filing the issue isn't
+approval.
 
 An approval is a clear yes in a comment from the person whose approval is
-needed. Labels, reactions, or anyone else saying "go" don't count. Once
+needed, posted after your proposal. A yes given before there was a
+proposal (on the idea, on old mockups) doesn't count: post the proposal
+and ask again. Labels, reactions, or anyone else saying "go" don't count. Once
 every approval is in, build it as in "Fixing" and link the issue's
 approval comments in the PR.
 
@@ -81,8 +85,12 @@ madCode whether to go ahead without them.
 ## Fixing
 
 - At most two PRs per run, so the owner isn't flooded; the rest wait for
-  the next run.
-- Branch from the latest default branch: `claude/issue-<N>-<short-slug>`.
+  the next run. Share the two between people: the first goes to the
+  oldest ready item (a bug, or a fully approved proposal) from someone
+  other than madCode, the second to madCode's oldest ready item. If one
+  side has nothing ready, the other side gets both.
+- Fetch and branch from `origin/main`, not from whatever branch the
+  session started on: `claude/issue-<N>-<short-slug>`, one per issue.
 - Follow CLAUDE.md fully: the comment rules, and tests for the change
   (prefer the Robolectric tests under `app/src/test`; coverage must stay
   above `koverVerify`'s threshold).
@@ -100,6 +108,12 @@ madCode whether to go ahead without them.
   it: point them to the debug APK that the PR's CI run uploads, if it
   uploads one, otherwise to the next debug build after the fix merges.
   Don't ask madCode to validate their own bug; they review the PR.
+
+## Stuck PRs
+
+List the repo's open PRs. Report, don't fix, any with red CI on their
+latest commit or no activity for 7 days or more. The exception is your
+own `claude/issue-*` PRs: those are yours to get green, as in "Fixing".
 
 ## Comments
 
@@ -122,5 +136,6 @@ PR: no file contents, paths or accounts from anyone's own setup.
 ## Summary
 
 End the run with a short summary for madCode, grouped as: PRs opened (with
-links), questions waiting on you, waiting on reporters, and skipped. If
+links), questions waiting on you, waiting on reporters, stuck PRs, and
+skipped. If
 nothing needed you, say that in one line.
