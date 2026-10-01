@@ -34,8 +34,15 @@ jobs:
     - name: Unit Test
       run: ./gradlew testDebugUnitTest
 
-    - name: Android Test Report
-      uses: asadmansr/android-test-report-action@v1.2.0
+    # Runs after failed steps too, so failing tests get reported; the job still fails from the step
+    # that failed. annotate_only needs no checks: write, which PRs from forks don't get.
+    - name: Unit test report
+      if: ${{ !cancelled() }}
+      uses: mikepenz/action-junit-report@v6.5.0
+      with:
+        report_paths: 'app/build/test-results/**/TEST-*.xml'
+        annotate_only: true
+
   instrumentation:
     name: Instrumentation tests (API ${{ matrix.api-level }})
     # The API 37.0 emulator crash-loops on ubuntu-24.04: issuetracker.google.com/issues/557246813
