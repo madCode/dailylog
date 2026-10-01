@@ -58,11 +58,12 @@ class SettingsScreenTest : AppRobolectricTest() {
         idleUntil(500) { false }
     }
 
-    private fun MainActivity.answerFilePicker(uri: Uri) {
+    private fun MainActivity.answerFilePicker(uri: Uri): Intent {
         val request = shadowOf(this).nextStartedActivityForResult
         assertNotNull("expected a file picker", request)
         shadowOf(this).receiveResult(request.intent, Activity.RESULT_OK, Intent().setData(uri))
         idleUntil(500) { false }
+        return request.intent.getParcelableExtra(Intent.EXTRA_INTENT)!!
     }
 
     private fun MainActivity.chooseMenuItem(id: Int) {
@@ -219,7 +220,10 @@ class SettingsScreenTest : AppRobolectricTest() {
         openSettings().use { scenario ->
             scenario.onActivity { activity ->
                 activity.findViewById<View>(R.id.selectFileButton).performClick()
-                activity.answerFilePicker(Uri.fromFile(other))
+                val picker = activity.answerFilePicker(Uri.fromFile(other))
+                // A text/* filter greys out .md files that the provider reports with another type.
+                assertEquals(Intent.ACTION_OPEN_DOCUMENT, picker.action)
+                assertEquals("*/*", picker.type)
                 assertEquals(
                     Uri.fromFile(other).toString(),
                     activity.findViewById<android.widget.TextView>(R.id.fileName).text.toString()
