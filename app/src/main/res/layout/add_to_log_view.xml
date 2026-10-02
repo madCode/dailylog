@@ -7,27 +7,22 @@
     android:background="@android:color/transparent"
     tools:context=".ui.log.LogFragment">
 
-    <ScrollView
-        android:id="@+id/logScrollView"
+    <!-- The field scrolls itself: inside a ScrollView the two scrollers fought,
+         and long logs could stop short of the top (#16). -->
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/todayLog"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:fillViewport="true"
+        android:background="@android:color/transparent"
+        android:gravity="top"
+        android:hint="@string/write_something_to_save"
+        android:importantForAutofill="no"
+        android:inputType="textMultiLine|textCapSentences"
+        android:padding="10dp"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@id/shortcutTray"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/todayLog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:gravity="top"
-            android:hint="@string/write_something_to_save"
-            android:importantForAutofill="no"
-            android:inputType="textMultiLine|textCapSentences"
-            android:padding="10dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </ScrollView>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/btnSettings"
@@ -40,7 +35,7 @@
         android:scaleType="fitCenter"
         android:src="@drawable/ic_settings_48"
         app:layout_constraintBottom_toTopOf="@id/btnSave"
-        app:layout_constraintEnd_toEndOf="@id/logScrollView" />
+        app:layout_constraintEnd_toEndOf="@id/todayLog" />
 
     <ImageButton
         android:id="@+id/btnSave"
@@ -52,8 +47,8 @@
         android:contentDescription="@string/save"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_save_48"
-        app:layout_constraintBottom_toBottomOf="@id/logScrollView"
-        app:layout_constraintEnd_toEndOf="@id/logScrollView" />
+        app:layout_constraintBottom_toBottomOf="@id/todayLog"
+        app:layout_constraintEnd_toEndOf="@id/todayLog" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/shortcutTray"
@@ -61,6 +56,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/logScrollView"/>
+        app:layout_constraintTop_toBottomOf="@id/todayLog"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
 
