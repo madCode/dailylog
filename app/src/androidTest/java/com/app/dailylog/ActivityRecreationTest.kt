@@ -100,13 +100,12 @@ class ActivityRecreationTest {
         launchWithShortcutsLoaded().use { scenario ->
             openSettings()
             onView(withId(R.id.addShortcutButton)).perform(click())
-            // On the small API 23 emulator the open keyboard pushes the dialog title off screen.
             val dialogTitle = onView(withId(R.id.addShortcutTitle)).inRoot(isDialog())
-            dialogTitle.perform(closeSoftKeyboard()).check(matches(isDisplayed()))
+            dialogTitle.check(matches(isDisplayed()))
 
             scenario.recreate()
 
-            dialogTitle.perform(closeSoftKeyboard()).check(matches(isDisplayed()))
+            dialogTitle.check(matches(isDisplayed()))
         }
     }
 }

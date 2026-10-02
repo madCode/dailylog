@@ -1,0 +1,4 @@
+<resources>
+    <!-- Material's full-screen dialog becomes a floating one on medium and larger windows. -->
+    <style name="ShortcutDialog" parent="ThemeOverlay.MaterialComponents.Dialog" />
+</resources>

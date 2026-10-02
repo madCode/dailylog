@@ -9,6 +9,7 @@ import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
 import androidx.fragment.app.DialogFragment
@@ -142,6 +143,20 @@ open class ShortcutDialogFragment(var viewModel: ShortcutDialogViewModel): Dialo
 
     companion object {
         fun newInstance(viewModel: ShortcutDialogViewModel) = ShortcutDialogFragment(viewModel)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(STYLE_NO_TITLE, R.style.ShortcutDialog)
+    }
+
+    // Only floating on larger windows (values-w600dp-h480dp), where the content would otherwise span the screen.
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.takeIf { it.isFloating }?.setLayout(
+            resources.getDimensionPixelSize(R.dimen.dialog_max_width),
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
 
     fun getText(text: String, cursorIndex: Int): SpannableStringBuilder {
