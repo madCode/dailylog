@@ -22,12 +22,6 @@ android {
         versionCode 3103
         versionName "3.1.3"
 
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
-            }
-        }
-
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
@@ -58,6 +52,11 @@ android {
         viewBinding = true
     }
 
+    // Robolectric reads the tested variant's merged assets, not test assets, so the migration test needs the schemas here.
+    sourceSets {
+        debug.assets.srcDirs += files("$projectDir/schemas")
+    }
+
     testOptions {
         unitTests {
             returnDefaultValues = true
@@ -78,6 +77,10 @@ android {
     }
 }
 
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     api 'com.google.android.material:material:1.12.0'
@@ -93,6 +96,7 @@ dependencies {
     implementation 'androidx.room:room-runtime:2.7.0'
     implementation "androidx.room:room-ktx:2.7.0"
     androidTestImplementation "androidx.room:room-testing:2.7.0"
+    testImplementation "androidx.room:room-testing:2.7.0"
     ksp "androidx.room:room-compiler:2.7.0"
 
     // Lifecycle components

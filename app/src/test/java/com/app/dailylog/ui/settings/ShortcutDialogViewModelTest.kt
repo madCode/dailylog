@@ -10,8 +10,8 @@ class ShortcutDialogViewModelTest : TestCase() {
     fun testIsLabelValidDelegates() {
         val repository = mock(RepositoryInterface::class.java)
         val viewModel = ShortcutDialogViewModel(repository)
-        viewModel.isLabelValid("myLabel", false)
-        verify(repository).isLabelValid("myLabel", false)
+        viewModel.isLabelValid("myLabel", "id1")
+        verify(repository).isLabelValid("myLabel", "id1")
     }
 
     fun testIsTextValidDelegates() {

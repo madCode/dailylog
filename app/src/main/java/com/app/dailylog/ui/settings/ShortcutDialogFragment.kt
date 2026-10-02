@@ -24,7 +24,7 @@ interface ShortcutDialogListener {
 
 open class ModifyShortcutDialogFragment(viewModel: ShortcutDialogViewModel): ShortcutDialogFragment(viewModel) {
     open var keepCursorValueAtMax = true // keep the cursor value at the max it can be
-    open var skipUniqueCheck = false
+    open val editedShortcutId: String? = null
     lateinit var binding: CreateNewShortcutBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -114,7 +114,7 @@ open class ModifyShortcutDialogFragment(viewModel: ShortcutDialogViewModel): Sho
         clearInvalidLabelMessage()
         val label = binding.labelInput
         val text = binding.textInput
-        val isLabelValid = viewModel.isLabelValid(label.text.toString(), skipUniqueCheck)
+        val isLabelValid = viewModel.isLabelValid(label.text.toString(), editedShortcutId)
         if (!isLabelValid) {
             binding.labelInputLayout.error = "Label must be unique and cannot be empty"
             valid = false

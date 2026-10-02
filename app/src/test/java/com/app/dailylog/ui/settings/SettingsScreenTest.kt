@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.view.View
 import android.widget.EditText
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
@@ -17,6 +18,7 @@ import com.app.dailylog.R
 import com.app.dailylog.repository.Shortcut
 import com.app.dailylog.repository.ShortcutType
 import com.app.dailylog.testutil.AppRobolectricTest
+import com.google.android.material.textfield.TextInputLayout
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -128,6 +130,45 @@ class SettingsScreenTest : AppRobolectricTest() {
                 dialog.type(R.id.textInput, "uno")
                 dialog.click(R.id.btnSaveShortcut)
                 assertEquals("uno", activity.shortcuts().single { it.label == "First" }.value)
+            }
+        }
+    }
+
+    @Test
+    fun editDialog_renamesShortcutKeepingId() {
+        openSettings().use { scenario ->
+            scenario.onActivity { activity ->
+                val list = activity.findViewById<RecyclerView>(R.id.recycler_view)
+                idleUntil { list.childCount == 2 }
+                val id = activity.shortcuts().single { it.label == "First" }.id
+                list.getChildAt(0).performClick()
+                idleUntil(500) { false }
+                val dialog = activity.dialog("fragment_edit")
+                dialog.type(R.id.labelInput, "Renamed")
+                dialog.click(R.id.btnSaveShortcut)
+                idleUntil { list.getChildAt(0).findViewById<TextView>(R.id.label).text.toString() == "Renamed" }
+                assertEquals("Renamed", list.getChildAt(0).findViewById<TextView>(R.id.label).text.toString())
+                val renamed = activity.shortcuts().filter { it.id == id || it.label == "Renamed" }
+                assertEquals(listOf(id to "Renamed"), renamed.map { it.id to it.label })
+                assertEquals(2, activity.shortcuts().size)
+            }
+        }
+    }
+
+    @Test
+    fun editDialog_rejectsOtherShortcutsLabel() {
+        openSettings().use { scenario ->
+            scenario.onActivity { activity ->
+                val list = activity.findViewById<RecyclerView>(R.id.recycler_view)
+                idleUntil { list.childCount == 2 }
+                list.getChildAt(0).performClick()
+                idleUntil(500) { false }
+                val dialog = activity.dialog("fragment_edit")
+                dialog.type(R.id.labelInput, "Second")
+                dialog.click(R.id.btnSaveShortcut)
+                assertNotNull(dialog.requireView().findViewById<TextInputLayout>(R.id.labelInputLayout).error)
+                assertTrue(dialog.isAdded)
+                assertEquals(listOf("First", "Second"), activity.shortcuts().map { it.label })
             }
         }
     }

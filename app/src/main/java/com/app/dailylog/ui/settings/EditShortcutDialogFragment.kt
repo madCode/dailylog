@@ -17,15 +17,16 @@ class EditShortcutDialogFragment(viewModel: ShortcutDialogViewModel) : ModifySho
                 it.getInt(ARG_CURSOR_INDEX),
                 it.getString(ARG_TYPE)!!,
                 it.getInt(ARG_POSITION),
+                it.getString(ARG_ID)!!,
             )
         }
     private val listener get() = parentFragment as EditShortcutDialogListener
 
     override var keepCursorValueAtMax = false
-    override var skipUniqueCheck = true
+    override val editedShortcutId get() = shortcut.id
 
     interface EditShortcutDialogListener {
-        fun onFinishEditShortcutDialog(label: String, text: String, cursor: Int, position: Int, type: String)
+        fun onFinishEditShortcutDialog(id: String, label: String, text: String, cursor: Int, position: Int, type: String)
     }
 
     companion object {
@@ -34,6 +35,7 @@ class EditShortcutDialogFragment(viewModel: ShortcutDialogViewModel) : ModifySho
         private const val ARG_CURSOR_INDEX = "cursorIndex"
         private const val ARG_TYPE = "type"
         private const val ARG_POSITION = "position"
+        private const val ARG_ID = "id"
 
         fun newInstance(shortcut: Shortcut, viewModel: ShortcutDialogViewModel) =
             EditShortcutDialogFragment(viewModel).apply {
@@ -43,6 +45,7 @@ class EditShortcutDialogFragment(viewModel: ShortcutDialogViewModel) : ModifySho
                     putInt(ARG_CURSOR_INDEX, shortcut.cursorIndex)
                     putString(ARG_TYPE, shortcut.type)
                     putInt(ARG_POSITION, shortcut.position)
+                    putString(ARG_ID, shortcut.id)
                 }
             }
     }
@@ -57,8 +60,6 @@ class EditShortcutDialogFragment(viewModel: ShortcutDialogViewModel) : ModifySho
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val label = binding.labelInput
-        label.isEnabled = false
         binding.btnSaveShortcut.setOnClickListener {
             validateView()
             submit()
@@ -89,6 +90,7 @@ class EditShortcutDialogFragment(viewModel: ShortcutDialogViewModel) : ModifySho
         }
         if (canSubmit()) {
             listener.onFinishEditShortcutDialog(
+                shortcut.id,
                 label.text.toString(),
                 text.text.toString(),
                 cursor.value.toInt(),

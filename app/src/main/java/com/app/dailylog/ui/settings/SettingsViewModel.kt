@@ -31,16 +31,16 @@ class SettingsViewModel(
 ) : ViewModel() {
     var exportFileUri: Uri? = null
 
-    fun removeCallback(label: String) = viewModelScope.launch(dispatcher) {
-        repository.removeShortcut(label)
+    fun removeCallback(id: String) = viewModelScope.launch(dispatcher) {
+        repository.removeShortcut(id)
     }
 
     fun saveFilename(filename: String) {
         repository.storeFilename(filename)
     }
 
-    fun updateShortcut(label: String, text: String, cursor: Int, position: Int, type:String) = viewModelScope.launch(dispatcher) {
-        repository.updateShortcut(label,text,cursor, position, type)
+    fun updateShortcut(id: String, label: String, text: String, cursor: Int, position: Int, type:String) = viewModelScope.launch(dispatcher) {
+        repository.updateShortcut(id, label, text, cursor, position, type)
     }
 
     fun bulkAddShortcuts(shortcutsData: List<Array<String>>) = viewModelScope.launch(dispatcher) {
