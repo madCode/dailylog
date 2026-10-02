@@ -1,7 +1,7 @@
 # Repository Overview
 
 ## Project Description
-- **What this project does**: dailyLog is an Android application that enables rapid logging with customizable keyboard shortcuts. It allows users to quickly add information to text files (particularly markdown files) using predefined shortcuts for fast journaling, habit tracking, or note-taking.
+- **What this project does**: DailyLog is an Android application that enables rapid logging with customizable keyboard shortcuts. It allows users to quickly add information to text files (particularly markdown files) using predefined shortcuts for fast journaling, habit tracking, or note-taking.
 
 - **Main purpose and goals**: The main goal is to provide a distraction-free typing environment with customizable shortcuts for quick text insertion. It's designed for journaling, habit tracking, and fast note-taking into text-based systems like Obsidian vaults.
 

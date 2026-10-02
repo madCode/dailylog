@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-dailyLog is a native Android app (Kotlin) for distraction-free journaling with customizable text shortcuts. Users select a markdown/text file, define shortcut buttons with templated text (including datetime patterns), and insert them at cursor position with one tap. Shortcuts are stored in a Room database; the log file and cursor position are persisted via SharedPreferences and the Android file system.
+DailyLog is a native Android app (Kotlin) for distraction-free journaling with customizable text shortcuts. Users select a markdown/text file, define shortcut buttons with templated text (including datetime patterns), and insert them at cursor position with one tap. Shortcuts are stored in a Room database; the log file and cursor position are persisted via SharedPreferences and the Android file system.
 
 ## Build & Test Commands
 
