@@ -1,0 +1,34 @@
+package com.app.dailylog.utils
+
+import android.content.Context
+import android.util.TypedValue
+import android.widget.TextView
+import com.google.android.material.textfield.TextInputEditText
+
+/**
+ * The log editor's text size. A chosen size is in dp, not sp, so it stays the same whatever the
+ * phone's font size is; with none chosen the editor keeps its theme size, which follows the phone.
+ */
+object EditorTextSize {
+    const val MIN = 12
+    const val MAX = 28
+    const val STEP = 2
+
+    /** The theme's size for the editor, in px, which already includes the phone's font scale. */
+    fun defaultPx(context: Context): Float = TextInputEditText(context).textSize
+
+    fun apply(view: TextView, size: Int?) {
+        if (size == null) {
+            view.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultPx(view.context))
+        } else {
+            view.setTextSize(TypedValue.COMPLEX_UNIT_DIP, size.toFloat())
+        }
+    }
+
+    /** The slider position that best shows the default size, which can fall between steps. */
+    fun nearestStep(context: Context): Int {
+        val dp = defaultPx(context) / context.resources.displayMetrics.density
+        val step = Math.round((dp - MIN) / STEP) * STEP + MIN
+        return step.coerceIn(MIN, MAX)
+    }
+}

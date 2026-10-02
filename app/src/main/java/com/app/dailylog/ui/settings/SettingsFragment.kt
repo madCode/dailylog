@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.dailylog.R
 import com.app.dailylog.repository.Shortcut
 import com.app.dailylog.utils.DetermineBuild
+import com.app.dailylog.utils.EditorTextSize
 import com.app.dailylog.databinding.SettingsViewBinding
 
 class SettingsFragment(
@@ -85,6 +86,7 @@ class SettingsFragment(
             }
         })
         renderFileNameRow()
+        setUpEditorTextSize()
         renderShortcutList()
         binding.addShortcutButton.setOnClickListener {
             val addDialog: AddShortcutDialogFragment =
@@ -153,6 +155,34 @@ class SettingsFragment(
                 }
             }
         }
+
+    private fun setUpEditorTextSize() {
+        val slider = binding.editorTextSizeSlider
+        slider.valueFrom = EditorTextSize.MIN.toFloat()
+        slider.valueTo = EditorTextSize.MAX.toFloat()
+        slider.stepSize = EditorTextSize.STEP.toFloat()
+        slider.value = (viewModel.getEditorTextSize() ?: EditorTextSize.nearestStep(requireContext())).toFloat()
+        // fromUser only: setting the slider for Reset must not save a size.
+        slider.addOnChangeListener { _, value, fromUser ->
+            if (fromUser) {
+                viewModel.setEditorTextSize(value.toInt())
+                renderEditorTextSize()
+            }
+        }
+        binding.editorTextSizeReset.setOnClickListener {
+            viewModel.setEditorTextSize(null)
+            slider.value = EditorTextSize.nearestStep(requireContext()).toFloat()
+            renderEditorTextSize()
+        }
+        renderEditorTextSize()
+    }
+
+    private fun renderEditorTextSize() {
+        val size = viewModel.getEditorTextSize()
+        binding.editorTextSizeValue.text = size?.toString() ?: getString(R.string.editor_text_size_default)
+        binding.editorTextSizeReset.isEnabled = size != null
+        EditorTextSize.apply(binding.editorTextSizePreview, size)
+    }
 
     private fun bulkAddShortcuts() {
         val addBulkDialog: BulkAddShortcutsDialogFragment =

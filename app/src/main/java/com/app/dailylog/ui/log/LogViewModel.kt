@@ -25,6 +25,8 @@ class LogViewModel(var repository: RepositoryInterface) : ViewModel() {
         cursorIndex = index
     }
 
+    fun getEditorTextSize(): Int? = repository.getEditorTextSize()
+
     fun smartSave(text: String): Boolean {
         return repository.saveToFile(text, false)
     }

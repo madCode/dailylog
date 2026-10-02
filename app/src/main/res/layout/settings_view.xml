@@ -9,7 +9,6 @@
         android:id="@+id/fileRow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/shortcutTitleGroup"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -52,6 +51,77 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <LinearLayout
+        android:id="@+id/appearanceGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fileRow">
+
+        <TextView
+            android:id="@+id/appearanceTitle"
+            style="@style/TextAppearance.MaterialComponents.Overline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/appearanceTitle"
+            android:textColor="?attr/colorSecondary" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/editorTextSizeLabel"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:labelFor="@id/editorTextSizeSlider"
+                android:text="@string/editor_text_size" />
+
+            <TextView
+                android:id="@+id/editorTextSizeValue"
+                style="@style/TextAppearance.MaterialComponents.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="14" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/editorTextSizeReset"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/reset"
+                android:textColor="@color/secondary_text_button" />
+        </LinearLayout>
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/editorTextSizeSlider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/editor_text_size"
+            app:haloColor="?attr/colorControlHighlight"
+            app:thumbColor="?attr/colorSecondary"
+            app:tickVisible="false"
+            app:trackColorActive="?attr/colorSecondary"
+            app:trackColorInactive="?attr/colorControlNormal" />
+
+        <TextView
+            android:id="@+id/editorTextSizePreview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorSurface"
+            android:importantForAccessibility="no"
+            android:padding="10dp"
+            android:text="@string/editor_text_size_preview"
+            android:textColor="?android:attr/textColorPrimary" />
+    </LinearLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/shortcutTitleGroup"
         android:layout_width="match_parent"
@@ -59,7 +129,7 @@
         android:paddingTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fileRow">
+        app:layout_constraintTop_toBottomOf="@id/appearanceGroup">
 
         <TextView
             android:id="@+id/shortcutTitle"

@@ -55,6 +55,10 @@ class SettingsViewModel(
         repository.addShortcut(label, text, cursor, type)
     }
 
+    fun getEditorTextSize(): Int? = repository.getEditorTextSize()
+
+    fun setEditorTextSize(size: Int?) = repository.setEditorTextSize(size)
+
     fun getFilename(): String {
         return repository.retrieveFilename()
     }
