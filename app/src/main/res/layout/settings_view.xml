@@ -116,8 +116,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorSurface"
+            android:ellipsize="end"
             android:importantForAccessibility="no"
-            android:padding="10dp"
+            android:maxLines="1"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
             android:text="@string/editor_text_size_preview"
             android:textColor="?android:attr/textColorPrimary" />
     </LinearLayout>

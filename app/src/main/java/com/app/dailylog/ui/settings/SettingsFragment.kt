@@ -23,6 +23,7 @@ import com.app.dailylog.R
 import com.app.dailylog.repository.Shortcut
 import com.app.dailylog.utils.DetermineBuild
 import com.app.dailylog.utils.EditorTextSize
+import com.google.android.material.slider.Slider
 import com.app.dailylog.databinding.SettingsViewBinding
 
 class SettingsFragment(
@@ -161,19 +162,29 @@ class SettingsFragment(
         slider.valueFrom = EditorTextSize.MIN.toFloat()
         slider.valueTo = EditorTextSize.MAX.toFloat()
         slider.stepSize = EditorTextSize.STEP.toFloat()
-        slider.value = (viewModel.getEditorTextSize() ?: EditorTextSize.nearestStep(requireContext())).toFloat()
+        slider.value = (viewModel.getEditorTextSize()?.let { EditorTextSize.snap(it.toFloat()) }
+            ?: EditorTextSize.nearestStep(requireContext())).toFloat()
         // fromUser only: setting the slider for Reset must not save a size.
         slider.addOnChangeListener { _, value, fromUser ->
             if (fromUser) {
-                viewModel.setEditorTextSize(value.toInt())
-                renderEditorTextSize()
+                chooseEditorTextSize(value)
             }
         }
+        // A tap on the step the thumb already shows changes nothing, so it would otherwise never save.
+        slider.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
+            override fun onStartTrackingTouch(slider: Slider) {}
+            override fun onStopTrackingTouch(slider: Slider) = chooseEditorTextSize(slider.value)
+        })
         binding.editorTextSizeReset.setOnClickListener {
             viewModel.setEditorTextSize(null)
             slider.value = EditorTextSize.nearestStep(requireContext()).toFloat()
             renderEditorTextSize()
         }
+        renderEditorTextSize()
+    }
+
+    private fun chooseEditorTextSize(value: Float) {
+        viewModel.setEditorTextSize(value.toInt())
         renderEditorTextSize()
     }
 

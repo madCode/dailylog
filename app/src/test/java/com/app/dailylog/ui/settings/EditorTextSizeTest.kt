@@ -13,28 +13,29 @@ import com.app.dailylog.MainActivity
 import com.app.dailylog.R
 import com.app.dailylog.repository.Constants
 import com.app.dailylog.testutil.AppRobolectricTest
-import com.app.dailylog.utils.EditorTextSize
 import com.google.android.material.slider.Slider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RuntimeEnvironment
+import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
+// Density 2, so a size applied in px instead of dp shows.
+@Config(qualifiers = "xhdpi")
 class EditorTextSizeTest : AppRobolectricTest() {
 
     private val prefs get() = context.getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE)
 
-    // A large phone font size, so a chosen size and the phone's size can't coincide.
+    // The largest phone font size: the setting must still be able to go bigger, and can't coincide with it.
     @Before
     fun largePhoneFont() {
-        RuntimeEnvironment.setFontScale(1.5f)
+        RuntimeEnvironment.setFontScale(2.0f)
     }
 
     private fun MainActivity.dp(value: Int) = value * resources.displayMetrics.density
@@ -60,24 +61,26 @@ class EditorTextSizeTest : AppRobolectricTest() {
 
                 tapSliderEnd(activity.findViewById(R.id.editorTextSizeSlider))
 
-                assertEquals("28", value.text)
+                assertEquals("40", value.text)
                 assertTrue(activity.findViewById<View>(R.id.editorTextSizeReset).isEnabled)
                 assertEquals(
-                    activity.dp(28),
+                    activity.dp(40),
                     activity.findViewById<TextView>(R.id.editorTextSizePreview).textSize,
                     0.01f
                 )
-                assertEquals(28, prefs.getInt(Constants.EDITOR_TEXT_SIZE_KEY, 0))
+                assertEquals(40, prefs.getInt(Constants.EDITOR_TEXT_SIZE_KEY, 0))
 
                 activity.backToLog()
-                assertEquals(activity.dp(28), activity.editorSize(), 0.01f)
-                assertNotEquals(phoneSize, activity.editorSize(), 0.01f)
+                assertEquals(activity.dp(40), activity.editorSize(), 0.01f)
+                assertTrue("can't go bigger than the phone's size", activity.editorSize() > phoneSize)
             }
         }
     }
 
     @Test
     fun reset_returnsTheEditorToThePhoneFontSize() {
+        var phoneSize = 0f
+        launchApp().use { scenario -> scenario.onActivity { phoneSize = it.editorSize() } }
         prefs.edit().putInt(Constants.EDITOR_TEXT_SIZE_KEY, 14).commit()
         launchApp().use { scenario ->
             scenario.onActivity { assertEquals(it.dp(14), it.editorSize(), 0.01f) }
@@ -91,8 +94,7 @@ class EditorTextSizeTest : AppRobolectricTest() {
                 assertFalse(prefs.contains(Constants.EDITOR_TEXT_SIZE_KEY))
 
                 activity.backToLog()
-                assertEquals(EditorTextSize.defaultPx(activity), activity.editorSize(), 0.01f)
-                assertNotEquals(activity.dp(14), activity.editorSize(), 0.01f)
+                assertEquals(phoneSize, activity.editorSize(), 0.01f)
             }
         }
     }

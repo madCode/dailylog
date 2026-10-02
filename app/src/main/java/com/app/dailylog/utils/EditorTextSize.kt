@@ -11,7 +11,8 @@ import com.google.android.material.textfield.TextInputEditText
  */
 object EditorTextSize {
     const val MIN = 12
-    const val MAX = 28
+    // Well above a large phone font's default (about 30dp at 200%), so it can still be made bigger.
+    const val MAX = 40
     const val STEP = 2
 
     /** The theme's size for the editor, in px, which already includes the phone's font scale. */
@@ -26,9 +27,9 @@ object EditorTextSize {
     }
 
     /** The slider position that best shows the default size, which can fall between steps. */
-    fun nearestStep(context: Context): Int {
-        val dp = defaultPx(context) / context.resources.displayMetrics.density
-        val step = Math.round((dp - MIN) / STEP) * STEP + MIN
-        return step.coerceIn(MIN, MAX)
-    }
+    fun nearestStep(context: Context): Int =
+        snap(defaultPx(context) / context.resources.displayMetrics.density)
+
+    /** The nearest size the slider can show: Slider throws on any other value, e.g. one saved under an older range. */
+    fun snap(size: Float): Int = (Math.round((size - MIN) / STEP) * STEP + MIN).coerceIn(MIN, MAX)
 }

@@ -107,7 +107,7 @@ Now if you hit the calendar shortcut, you get the date!
 A description of the available datetime patterns can be found in the [Java documentation of DateTimeFormatter](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns).
 
 ## Editor text size
-Settings has an "Editor text size" slider (12 to 28). A size you pick stays the same whatever your phone's font size is; shortcuts and the settings screen still follow the phone. "Reset" goes back to following the phone's font size.
+Settings has an "Editor text size" slider (12 to 40). A size you pick stays the same whatever your phone's font size is; shortcuts and the settings screen still follow the phone. "Reset" goes back to following the phone's font size.
 
 ## Drag to reorder shortcuts
 When you have a list of shortcuts in the settings page, you can drag them around to reorder them. This will also change the order by which they appear in the shortcuts tray.
