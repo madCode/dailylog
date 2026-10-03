@@ -6,6 +6,7 @@ import android.net.Uri
 import android.view.View
 import android.widget.EditText
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
@@ -58,11 +59,12 @@ class SettingsScreenTest : AppRobolectricTest() {
         idleUntil(500) { false }
     }
 
-    private fun MainActivity.answerFilePicker(uri: Uri) {
+    private fun MainActivity.answerFilePicker(uri: Uri): Intent {
         val request = shadowOf(this).nextStartedActivityForResult
         assertNotNull("expected a file picker", request)
         shadowOf(this).receiveResult(request.intent, Activity.RESULT_OK, Intent().setData(uri))
         idleUntil(500) { false }
+        return request.intent.getParcelableExtra(Intent.EXTRA_INTENT)!!
     }
 
     private fun MainActivity.chooseMenuItem(id: Int) {
@@ -219,7 +221,10 @@ class SettingsScreenTest : AppRobolectricTest() {
         openSettings().use { scenario ->
             scenario.onActivity { activity ->
                 activity.findViewById<View>(R.id.selectFileButton).performClick()
-                activity.answerFilePicker(Uri.fromFile(other))
+                val picker = activity.answerFilePicker(Uri.fromFile(other))
+                // A text/* filter greys out .md files that the provider reports with another type.
+                assertEquals(Intent.ACTION_OPEN_DOCUMENT, picker.action)
+                assertEquals("*/*", picker.type)
                 assertEquals(
                     Uri.fromFile(other).toString(),
                     activity.findViewById<android.widget.TextView>(R.id.fileName).text.toString()
@@ -227,6 +232,25 @@ class SettingsScreenTest : AppRobolectricTest() {
                 assertEquals(Uri.fromFile(other).toString(), activity.repository.filename)
             }
         }
+        other.delete()
+    }
+
+    @Test
+    fun selectFile_thenLeavingTheApp_leavesTheNewFileUntouched() {
+        // CRLF and no trailing newline: reading normalizes both, so any save would change the bytes.
+        val original = "first\r\nsecond"
+        val other = File(context.filesDir, "other.md").apply { writeText(original) }
+        openSettings().use { scenario ->
+            scenario.onActivity { activity ->
+                activity.findViewById<View>(R.id.selectFileButton).performClick()
+                activity.answerFilePicker(Uri.fromFile(other))
+                activity.onBackPressedDispatcher.onBackPressed()
+                idleUntil(500) { false }
+                assertEquals("first\nsecond\n", activity.findViewById<EditText>(R.id.todayLog).text.toString())
+            }
+            scenario.moveToState(Lifecycle.State.CREATED)
+        }
+        assertEquals(original, other.readText())
         other.delete()
     }
 

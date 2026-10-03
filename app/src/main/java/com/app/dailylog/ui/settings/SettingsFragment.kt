@@ -266,7 +266,8 @@ class SettingsFragment(
             val intent =
                 Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                     addCategory(Intent.CATEGORY_OPENABLE)
-                    type = "text/*"
+                    // Not text/*: many providers report .md as application/octet-stream, greying it out.
+                    type = "*/*"
                 }
             selectImportFileLauncher.launch(Intent.createChooser(intent, "Select a file"))
         }
