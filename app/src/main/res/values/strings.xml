@@ -47,5 +47,20 @@
     <string name="create_a_file">Create file</string>
     <string name="isDateTime"><![CDATA[Contains datetime format ({DATETIME: <format>})]]></string>
     <string name="dateTimeExplanation"><![CDATA[Add timestamps using {DATETIME: <datetime format>} in your shortcut text. The current time will be inserted on shortcut selection.]]></string>
+    <string name="log_file_mode_title">Log file</string>
+    <string name="one_file">One file</string>
+    <string name="new_file_by_date">New file by date</string>
+    <string name="folder">Folder</string>
+    <string name="choose_folder">Choose folder</string>
+    <string name="no_folder_chosen">Not available, choose it again</string>
+    <string name="log_folder_missing">Can\'t reach the log folder. Choose it again in Settings, or your writing won\'t be saved.</string>
+    <string name="date_order_preset">Date order %1$s, today %2$s</string>
+    <string name="date_order_ymd">year, month, day</string>
+    <string name="date_order_dmy">day, month, year</string>
+    <string name="date_order_mdy">month, day, year</string>
+    <string name="date_order_year_folder">year folder, then month and day</string>
+    <string name="file_name_template">File name</string>
+    <string name="todays_file">Today\'s file: %1$s</string>
+    <string name="dated_file_hint">A new file is made the first time you save each day.</string>
     <string name="errorPerformingActivity">Error performing task</string>
 </resources>

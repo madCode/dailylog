@@ -17,7 +17,7 @@ object ShortcutUtils {
     @SuppressLint("NewApi")
     private fun replaceDateTimePatterns(value: String, clock: Clock? = null,
                                         determineBuild: DetermineBuildInterface = DetermineBuild): String {
-        return value.replace(Regex("\\{DATETIME: (.*)\\}"),
+        return value.replace(FileNameTemplate.DATETIME_TOKEN,
             transform = { matchResult: MatchResult ->
                 if (determineBuild.isOreoOrGreater()) {
                     matchResultToDateString(clock, matchResult)

@@ -123,11 +123,18 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
     }
 
     private fun loadFile() {
+        viewModel.openCurrentFile()
         val todayLog = binding.todayLog
         todayLog.setText(viewModel.getLog(), TextView.BufferType.EDITABLE)
         val cursorIndex = getCursorIndex(todayLog.text!!.toString())
         todayLog.setSelection(cursorIndex)
-        Toast.makeText(context, "Loaded file", Toast.LENGTH_SHORT).show()
+        if (viewModel.logFolderMissing()) {
+            Toast.makeText(context, R.string.log_folder_missing, Toast.LENGTH_LONG).show()
+            return
+        }
+        val datedFile = viewModel.datedFileName()
+        val message = if (datedFile != null) getString(R.string.todays_file, datedFile) else "Loaded file"
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
     override fun onCreateView(
