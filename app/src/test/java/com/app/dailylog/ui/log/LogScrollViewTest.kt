@@ -2,6 +2,7 @@ package com.app.dailylog.ui.log
 
 import android.os.Looper
 import android.os.SystemClock
+import android.view.InputDevice
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -32,12 +33,16 @@ class LogScrollViewTest : AppRobolectricTest() {
         logFile.writeText((1..200).joinToString("\n") { "line $it" })
     }
 
-    private class Screen(val log: EditText, val scrollView: ScrollView, val tray: View)
+    private class Screen(activity: MainActivity) {
+        val log: EditText = activity.findViewById(R.id.todayLog)
+        val scrollView: ScrollView = activity.findViewById(R.id.logScrollView)
+        val tray: View = activity.findViewById(R.id.shortcutTray)
+    }
 
     private fun withLog(test: Screen.() -> Unit) {
         launchApp().use { scenario ->
-            scenario.onActivity { activity: MainActivity ->
-                val screen = Screen(activity.findViewById(R.id.todayLog), activity.findViewById(R.id.logScrollView), activity.findViewById(R.id.shortcutTray))
+            scenario.onActivity { activity ->
+                val screen = Screen(activity)
                 // The log opens with the cursor at the end, scrolled to it.
                 assertTrue("never scrolled to the cursor", idleUntil { screen.cursorVisible() && screen.scrollView.scrollY > 0 })
                 screen.test()
@@ -60,6 +65,14 @@ class LogScrollViewTest : AppRobolectricTest() {
         val top = log.top + log.totalPaddingTop + layout.getLineTop(line)
         val bottom = log.top + log.totalPaddingTop + layout.getLineBottom(line)
         return top >= scrollView.scrollY && bottom <= scrollView.scrollY + scrollView.height
+    }
+
+    // The tray's bottom margin is how LogFragment makes room for the keyboard.
+    private fun Screen.openKeyboard() {
+        val params = tray.layoutParams as ViewGroup.MarginLayoutParams
+        params.bottomMargin = scrollView.height / 2
+        tray.layoutParams = params
+        settle()
     }
 
     // Drags down by [distance] px, pausing before lifting so the gesture doesn't end in a fling.
@@ -111,6 +124,31 @@ class LogScrollViewTest : AppRobolectricTest() {
     }
 
     @Test
+    fun relayoutAfterMouseWheelScroll_keepsScrollPosition() = withLog {
+        val bottom = scrollView.scrollY
+        val time = SystemClock.uptimeMillis()
+        val pointer = MotionEvent.PointerProperties().apply { toolType = MotionEvent.TOOL_TYPE_MOUSE }
+        val coords = MotionEvent.PointerCoords().apply {
+            x = scrollView.width / 2f
+            y = scrollView.height / 2f
+            setAxisValue(MotionEvent.AXIS_VSCROLL, 10f)
+        }
+        val wheelUp = MotionEvent.obtain(
+            time, time, MotionEvent.ACTION_SCROLL, 1, arrayOf(pointer), arrayOf(coords),
+            0, 0, 1f, 1f, 0, 0, InputDevice.SOURCE_MOUSE, 0
+        )
+        scrollView.dispatchGenericMotionEvent(wheelUp)
+        wheelUp.recycle()
+        settle()
+        val scrolledTo = scrollView.scrollY
+        assertTrue("wheel didn't scroll up", scrolledTo < bottom)
+
+        relayout()
+
+        assertEquals("relayout scrolled back toward the cursor", scrolledTo, scrollView.scrollY)
+    }
+
+    @Test
     fun typingAfterUserScrolls_bringsCursorBackIntoView() = withLog {
         dragDown(scrollView.height / 2)
         assertTrue("cursor still visible after scrolling away", !cursorVisible())
@@ -154,11 +192,21 @@ class LogScrollViewTest : AppRobolectricTest() {
         dragDown(40)
         assertTrue("cursor left the screen", cursorVisible())
 
-        // The tray's bottom margin is how LogFragment makes room for the keyboard.
-        val params = tray.layoutParams as ViewGroup.MarginLayoutParams
-        params.bottomMargin = scrollView.height / 2
-        tray.layoutParams = params
+        openKeyboard()
+
+        assertTrue("keyboard covered the cursor", cursorVisible())
+    }
+
+    @Test
+    fun keyboardOpeningWhileScrollingToCursor_keepsCursorInView() = withLog {
+        dragDown(scrollView.height / 2)
+        log.setSelection(0)
         settle()
+
+        // Robolectric runs smooth scrolls instantly, so this stands in for a frame of the
+        // view's own animation toward the cursor, before the cursor is on screen.
+        scrollView.scrollTo(0, scrollView.height * 2)
+        openKeyboard()
 
         assertTrue("keyboard covered the cursor", cursorVisible())
     }
@@ -167,7 +215,7 @@ class LogScrollViewTest : AppRobolectricTest() {
     fun returningToTheApp_bringsCursorBackIntoView() {
         launchApp().use { scenario ->
             scenario.onActivity { activity ->
-                val screen = Screen(activity.findViewById(R.id.todayLog), activity.findViewById(R.id.logScrollView), activity.findViewById(R.id.shortcutTray))
+                val screen = Screen(activity)
                 idleUntil { screen.cursorVisible() }
                 screen.dragDown(screen.scrollView.height / 2)
                 assertTrue(!screen.cursorVisible())
@@ -175,7 +223,7 @@ class LogScrollViewTest : AppRobolectricTest() {
             scenario.moveToState(Lifecycle.State.CREATED)
             scenario.moveToState(Lifecycle.State.RESUMED)
             scenario.onActivity { activity ->
-                val screen = Screen(activity.findViewById(R.id.todayLog), activity.findViewById(R.id.logScrollView), activity.findViewById(R.id.shortcutTray))
+                val screen = Screen(activity)
                 settle()
                 assertTrue("resuming didn't bring the cursor into view", screen.cursorVisible())
             }

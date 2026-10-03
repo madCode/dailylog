@@ -2,9 +2,11 @@ package com.app.dailylog.ui.log
 
 import android.content.Context
 import android.graphics.Rect
+import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import android.widget.ScrollView
 import android.widget.TextView
@@ -19,8 +21,11 @@ import android.widget.TextView
 class LogScrollView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
     ScrollView(context, attrs) {
 
-    // The editor's selection when the last scroll left the cursor off screen; null while following it.
+    // The editor's selection when the user last scrolled the cursor off screen; null while following it.
     private var offscreenSelection: Pair<Int, Int>? = null
+
+    // Off while this view animates toward the cursor, so those frames don't count as scrolling away.
+    private var userScrolling = false
 
     private val editor: TextView? get() = getChildAt(0) as? TextView
 
@@ -35,9 +40,25 @@ class LogScrollView @JvmOverloads constructor(context: Context, attrs: Attribute
         })
     }
 
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        userScrolling = true
+        return super.dispatchTouchEvent(ev)
+    }
+
+    override fun onGenericMotionEvent(event: MotionEvent): Boolean {
+        userScrolling = true
+        return super.onGenericMotionEvent(event)
+    }
+
+    override fun performAccessibilityAction(action: Int, arguments: Bundle?): Boolean {
+        userScrolling = true
+        return super.performAccessibilityAction(action, arguments)
+    }
+
     override fun onScrollChanged(l: Int, t: Int, oldl: Int, oldt: Int) {
         super.onScrollChanged(l, t, oldl, oldt)
-        val editor = editor ?: return
+        val editor = editor
+        if (!userScrolling || editor == null) return
         offscreenSelection = if (isCursorOnScreen(editor)) null else selectionOf(editor)
     }
 
@@ -47,7 +68,9 @@ class LogScrollView @JvmOverloads constructor(context: Context, attrs: Attribute
             if (child === editor && selectionOf(child as TextView) == offscreen) return false
             offscreenSelection = null
         }
-        return super.requestChildRectangleOnScreen(child, rectangle, immediate)
+        val scrolled = super.requestChildRectangleOnScreen(child, rectangle, immediate)
+        if (scrolled) userScrolling = false
+        return scrolled
     }
 
     private fun selectionOf(editor: TextView) = editor.selectionStart to editor.selectionEnd
