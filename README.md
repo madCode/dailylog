@@ -1,6 +1,6 @@
-# dailyLog
+# DailyLog
 
-dailyLog enables you to rapid log with customizable shortcuts. Tired of trying to log workouts on your phone? Want to build a custom habit tracker? Looking for the fastest way to get notes into your Obsidian vault? dailyLog can help.
+DailyLog enables you to rapid log with customizable shortcuts. Tired of trying to log workouts on your phone? Want to build a custom habit tracker? Looking for the fastest way to get notes into your Obsidian vault? DailyLog can help.
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
      alt="Get it on F-Droid"
@@ -8,7 +8,7 @@ dailyLog enables you to rapid log with customizable shortcuts. Tired of trying t
 
 Or download the latest APK from the [Releases Section](https://github.com/madCode/dailylog/releases/latest).
 
-Initially designed as a rapid logging system for journaling, dailyLog allows you to quickly add info to a text file with customizable button shortcuts. Here's how it works:
+Initially designed as a rapid logging system for journaling, DailyLog allows you to quickly add info to a text file with customizable button shortcuts. Here's how it works:
 
 ## Step 1: Select Your File
 Opening the app for the first time will allow you to either create a file or select an existing one:
@@ -39,7 +39,7 @@ Type something and hit the save button. You should see a Toast message saying "S
 ](#i-cant-edit-the-file-i-selected-when-i-edit-and-hit-save-all-my-edits-disappear) or [Step 1: Select Your File](#step-1-select-your-file) for more.
 
 # Step 3: Create your first shortcut
-If you're using dailyLog, it's likely because you have a format you like to journal in and you need keyboard shortcuts to keep it fast and easy on your phone. Hit the gear icon on the log screen to navigate to the settings page:
+If you're using DailyLog, it's likely because you have a format you like to journal in and you need keyboard shortcuts to keep it fast and easy on your phone. Hit the gear icon on the log screen to navigate to the settings page:
 
 <img alt="Screen as described below" src="/README_screenshots/blank_settings_screen.png" height="500px"/>
 
@@ -74,13 +74,13 @@ Hit the 🥣 button, you'll see the text you chose inserted into the log.
 
 <img alt="The log screen now contains '- dinner: '" src="/README_screenshots/paste_dinner.png" height="500px"/>
 
-Tada! You've now successfully used dailyLog. To get a rundown of the other features, please continue reading:
+Tada! You've now successfully used DailyLog. To get a rundown of the other features, please continue reading:
 # Other features
 ## Autosave
 While the save button is available, the app also saves to your file every time you navigate away from the log screen. Going to the settings page or minimizing the app will both trigger file saves. While this is not the exact "Autosave" mechanism other apps may provide, in my experience using the app it's just as effective.
 ## Cursor positioning
 1. In the log itself, the app remembers where your cursor was when you closed the app and brings you exactly back there. No matter if you journal in chronological or reverse chronological order, the app has your back.
-2. Sometimes you have a complicated shortcut template and you want your cursor to be placed in a specific spot when you're done. Say, for example, we want to change our dinner shortcut to something like this: "- dinner: food{ }, location{ }, people{ }". We want space to track the food we ate, where we had dinner, and who we had dinner with. And after the shortcut gets pasted in, we want the cursor to be inside the food block so we're ready to fill it in. dailyLog supports this. Here's how.
+2. Sometimes you have a complicated shortcut template and you want your cursor to be placed in a specific spot when you're done. Say, for example, we want to change our dinner shortcut to something like this: "- dinner: food{ }, location{ }, people{ }". We want space to track the food we ate, where we had dinner, and who we had dinner with. And after the shortcut gets pasted in, we want the cursor to be inside the food block so we're ready to fill it in. DailyLog supports this. Here's how.
 
 Navigate back to the shortcut page and click on the dinner shortcut to edit it. 
 
@@ -96,9 +96,9 @@ Let's move the cursor slider until the pink line is inside the food's curly brac
 
 Now, when you use the shortcut, your cursor will automatically be exactly where you want it to be!
 ## Shortcuts with timestamps
-It wouldn't be a journaling app without timestamps. dailyLog supports adding timestamp regexes in shortcuts. Let's say you want a shortcut that adds today's date as an H1 title in your markdown file. For example: "# 03 March 1970".
+It wouldn't be a journaling app without timestamps. DailyLog supports adding timestamp regexes in shortcuts. Let's say you want a shortcut that adds today's date as an H1 title in your markdown file. For example: "# 03 March 1970".
 
-Start by opening the "Create new shortcut" dialog. Let's make the label the calendar emoji: 📅, and then we need to fill in the text. dailyLog's format is: `{DATETIME: <whatever format you want>}`. So in our case that would look like "# {DATETIME: DD MMMM yyyy}". And make sure to toggle the "Contains datetime format" switch at the bottom like so:
+Start by opening the "Create new shortcut" dialog. Let's make the label the calendar emoji: 📅, and then we need to fill in the text. DailyLog's format is: `{DATETIME: <whatever format you want>}`. So in our case that would look like "# {DATETIME: DD MMMM yyyy}". And make sure to toggle the "Contains datetime format" switch at the bottom like so:
 
 <img alt="Screen as described above" src="/README_screenshots/datetime_example.png" height="500px"/>
 
