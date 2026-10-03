@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">dailylog</string>
+    <string name="app_name">DailyLog</string>
     <string name="write_something_to_save">begin typing or click a button below to create today\'s entry</string>
     <string name="save">Save</string>
     <string name="refresh">Reload File</string>
