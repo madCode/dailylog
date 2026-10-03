@@ -1,6 +1,6 @@
-# dailyLog Developer Documentation
+# DailyLog Developer Documentation
 
-This document provides instructions for setting up a development environment and building the dailyLog application.
+This document provides instructions for setting up a development environment and building the DailyLog application.
 
 ## Prerequisites
 
@@ -96,7 +96,7 @@ You can read about F-Droid's update process [here](https://gitlab.com/fdroid/wik
 After publishing a new release, wait at least 24 hours, then check the following:
 1. The [DailyLog F-Droid page](https://f-droid.org/packages/com.app.dailylog/): see if the version at the bottom matches the new version.
 2. If not, check the [metadata file](https://gitlab.com/fdroid/fdroiddata/-/blob/master/metadata/com.app.dailylog.yml?ref_type=heads): see if F-Droid successfully updated the version number.
-3. If not, search [existing dailyLog merge requests](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/?sort=created_date&state=opened&search=dailyLog&first_page_size=20): see if the check-updates bot had issues and if anyone is working on it
+3. If not, search [existing DailyLog merge requests](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/?sort=created_date&state=opened&search=DailyLog&first_page_size=20): see if the check-updates bot had issues and if anyone is working on it
 
 ## Testing
 

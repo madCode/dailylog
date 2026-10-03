@@ -179,7 +179,20 @@ with the attribution footer and then the marker on its own line:
     <!-- claude-issue-check -->
 
 Labels are fine to add when they're obviously right (`bug`, `enhancement`,
-`documentation`, `question`); don't invent new ones.
+`documentation`, `question`); don't invent new ones, apart from the one below.
+
+`waiting on madCode` marks an issue whose next step is madCode's, so they
+can filter for their turn. Keep it accurate on every issue you touch:
+
+- Add it when your comment asks madCode something: an approval ("OK to
+  build?"), a `question for madCode`, a test only they can do, or an
+  account or key they must supply (see "Blocked on madCode").
+- Remove it when madCode replies after your latest question, when you
+  close the question yourself (a PR opened for an approved proposal), or
+  when the issue closes.
+- Not for questions to a reporter who isn't madCode.
+
+Keep the issue's other labels when you change it.
 
 ## Privacy
 
@@ -190,5 +203,7 @@ PR: no file contents, paths or accounts from anyone's own setup.
 
 End the run with a short summary for madCode, grouped as: PRs opened (with
 links), questions waiting on you, waiting on reporters, stuck PRs, and
-skipped. If
-nothing needed you, say that in one line.
+skipped. Link every issue, PR and comment you mention, as
+`[#N](https://github.com/<owner>/<repo>/issues/N)` (`/pull/N` for PRs), so
+madCode can click straight through; a bare `#N` isn't clickable outside
+GitHub. If nothing needed you, say that in one line.
