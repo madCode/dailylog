@@ -140,6 +140,45 @@ class DatedFileRepositoryTest {
     }
 
     @Test
+    fun aFileThatAppearsAfterOpening_isKeptAndAddedTo() {
+        repository.setDatedMode(true)
+        repository.openCurrentFile(oct3)
+        repository.readFile(true)
+        // e.g. a sync app brings in today's file from another device
+        File(folderDir, "2026").mkdirs()
+        File(folderDir, "2026/10-03-journal.md").writeText("from the laptop\n")
+
+        assertTrue(repository.saveToFile("from the phone\n", false))
+        assertEquals("from the laptop\nfrom the phone\n", File(folderDir, "2026/10-03-journal.md").readText())
+        assertEquals(listOf("10-03-journal.md"), File(folderDir, "2026").list()!!.toList())
+    }
+
+    @Test
+    fun aFileDeletedElsewhere_isNotRecreatedEmpty() {
+        repository.setDatedMode(true)
+        repository.openCurrentFile(oct3)
+        repository.readFile(true)
+        repository.saveToFile("hello\n", false)
+        File(folderDir, "2026/10-03-journal.md").delete()
+
+        assertFalse(repository.openCurrentFile(oct3))
+        assertEquals("", repository.readFile(true))
+        assertFalse(repository.saveToFile("", false))
+        assertFalse(File(folderDir, "2026/10-03-journal.md").exists())
+    }
+
+    @Test
+    fun anUnreachableFolder_failsToSaveWithoutCrashing() {
+        repository.storeLogFolder(Uri.parse("content://com.example.gone/tree/root"))
+        repository.setDatedMode(true)
+        repository.openCurrentFile(oct3)
+
+        assertNull(repository.retrieveLogFolderName())
+        assertEquals("", repository.readFile(true))
+        assertFalse(repository.saveToFile("hello\n", false))
+    }
+
+    @Test
     fun namesTheFolder() {
         assertEquals("Journal", repository.retrieveLogFolderName())
     }

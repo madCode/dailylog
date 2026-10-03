@@ -109,7 +109,7 @@ A description of the available datetime patterns can be found in the [Java docum
 ## A new file each day
 If you'd rather keep one file per day, open settings and switch **Log file** from "One file" to "New file by date". Pick a folder once (for example `Documents/Journal`), and the app writes each day to its own file in that folder.
 
-The **File name** uses the same `{DATETIME: ...}` patterns as shortcuts, and can include folders. For example, `{DATETIME: yyyy}/{DATETIME: MM-dd}-journal.md` writes to `2026/10-03-journal.md`. Tap one of the dates under the name to change the date order but keep the rest of the name. The line below shows today's file.
+The **File name** uses the same `{DATETIME: ...}` patterns as shortcuts, and can include folders. For example, `{DATETIME: yyyy}/{DATETIME: MM-dd}-journal.md` writes to `2026/10-03-journal.md`. Tap one of the dates under the name to change the date order but keep the rest of the name. Names can't contain `\ : * ? " < > |`, because phone storage renames them. The line below shows today's file.
 
 Each day starts with an empty log. The file, and any folders in its name, are only created the first time you save that day. If the app is still open at midnight, it switches to the new day's file the next time you come back to it. New file by date needs Android 8 or newer.
 

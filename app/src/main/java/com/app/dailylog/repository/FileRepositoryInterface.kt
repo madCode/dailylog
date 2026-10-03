@@ -59,6 +59,7 @@ interface FileRepositoryInterface {
     fun retrieveLogFolder(): Uri? =
         preferences.getString(Constants.LOG_FOLDER_PREF_KEY, null)?.let { Uri.parse(it) }
 
+    /** Null when no folder is chosen, or the app can no longer reach it. */
     fun retrieveLogFolderName(): String? = retrieveLogFolder()?.let { LogFolder(context, it).name }
 
     fun storeLogFolder(folder: Uri) {
@@ -163,24 +164,33 @@ interface FileRepositoryInterface {
             return false
         }
         return try {
+            var contents = data
             if (filename == Constants.FILE_NOT_CREATED) {
-                val folder = retrieveLogFolder()
+                val folder = retrieveLogFolder()?.let { LogFolder(context, it) }
                 val path = datedFilePath
-                val created = if (folder != null && path != null) LogFolder(context, folder).create(path) else null
-                if (created == null) {
-                    Toast.makeText(context, "Could not create $path", Toast.LENGTH_LONG).show()
-                    return false
+                // The file can appear after the log opened it as new, e.g. from a sync app. Keep
+                // what's in it rather than overwriting it with what was typed here.
+                val existing = path?.let { folder?.find(it) }
+                if (existing != null) {
+                    filename = existing.toString()
+                    contents = readFile(false) + data
+                } else {
+                    val created = path?.let { folder?.create(it) }
+                    if (created == null) {
+                        Toast.makeText(context, "Could not create $path", Toast.LENGTH_LONG).show()
+                        return false
+                    }
+                    filename = created.toString()
                 }
-                filename = created.toString()
             }
             val uri = Uri.parse(filename)
             val openFileDescriptor = context.contentResolver.openFileDescriptor(uri, "rwt")
             val fileDescriptor = openFileDescriptor?.fileDescriptor
             val fileStream = FileOutputStream(fileDescriptor)
-            fileStream.write((data).toByteArray())
+            fileStream.write((contents).toByteArray())
             fileStream.close()
             openFileDescriptor?.close()
-            updateLastSavedHash(data)
+            updateLastSavedHash(contents)
             true
         } catch (ex: IllegalArgumentException) {
             Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show()

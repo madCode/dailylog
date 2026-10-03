@@ -13,10 +13,14 @@ class LogViewModel(var repository: RepositoryInterface) : ViewModel() {
     /** Switches to the file the settings call for now, e.g. a new day's file. */
     fun openCurrentFile() {
         if (repository.openCurrentFile()) {
-            loadedFileForFirstTime = false
             cursorIndex = repository.getCursorIndex()
         }
+        // The file may also have been created, changed or deleted elsewhere since it was last read.
+        loadedFileForFirstTime = false
     }
+
+    /** True when writing to a dated folder the app can no longer reach. */
+    fun logFolderMissing(): Boolean = repository.datedFilePath != null && repository.retrieveLogFolderName() == null
 
     /** The dated file being edited, marked "(new)" until its first save creates it. */
     fun datedFileName(): String? = repository.datedFilePath?.let {

@@ -60,8 +60,6 @@ class SettingsViewModel(
         return repository.retrieveFilename()
     }
 
-    fun canUseDatedFiles(): Boolean = build.isOreoOrGreater()
-
     fun isDatedMode(): Boolean = repository.isDatedMode()
 
     fun useOneFile() = repository.setDatedMode(false)
@@ -77,6 +75,8 @@ class SettingsViewModel(
         repository.storeLogFolder(folder)
         repository.setDatedMode(true)
     }
+
+    fun getLogFolder(): Uri? = repository.retrieveLogFolder()
 
     fun getLogFolderName(): String? = repository.retrieveLogFolderName()
 

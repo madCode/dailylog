@@ -2,6 +2,7 @@ package com.app.dailylog.ui.settings
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.DocumentsContract
 import android.util.TypedValue
@@ -130,11 +131,22 @@ class SettingsFragment(
         ) { result ->
             val folder = result.data?.data
             if (result.resultCode == AppCompatActivity.RESULT_OK && folder != null) {
-                requireContext().contentResolver.takePersistableUriPermission(
-                    folder,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                )
-                viewModel.chooseLogFolder(folder)
+                val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                val contentResolver = requireContext().contentResolver
+                try {
+                    contentResolver.takePersistableUriPermission(folder, flags)
+                    // The system caps how many grants an app keeps, so let go of the folder this replaces.
+                    viewModel.getLogFolder()?.takeIf { it != folder }?.let {
+                        try {
+                            contentResolver.releasePersistableUriPermission(it, flags)
+                        } catch (e: SecurityException) {
+                            // Already gone.
+                        }
+                    }
+                    viewModel.chooseLogFolder(folder)
+                } catch (e: SecurityException) {
+                    Toast.makeText(requireContext(), R.string.log_folder_missing, Toast.LENGTH_LONG).show()
+                }
             }
             renderFileMode()
         }
@@ -292,7 +304,8 @@ class SettingsFragment(
     }
 
     private fun renderFileModeSection() {
-        if (!viewModel.canUseDatedFiles()) {
+        // Date templates need java.time.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             binding.fileModeTitle.visibility = View.GONE
             binding.fileModeToggle.visibility = View.GONE
             return
@@ -312,9 +325,13 @@ class SettingsFragment(
         }
         binding.chooseFolderButton.setOnClickListener { selectLogFolder() }
         binding.fileNameTemplate.doAfterTextChanged { renderTemplate() }
-        for (datePart in FileNameTemplate.PRESET_DATE_PARTS) {
+        val orderNames = listOf(
+            R.string.date_order_ymd, R.string.date_order_dmy, R.string.date_order_mdy, R.string.date_order_year_folder
+        )
+        for ((datePart, orderName) in FileNameTemplate.PRESET_DATE_PARTS.zip(orderNames)) {
             val chip = Chip(requireContext())
             chip.text = FileNameTemplate.resolve(datePart)
+            chip.contentDescription = getString(R.string.date_order_preset, getString(orderName), chip.text)
             chip.setOnClickListener {
                 val template = binding.fileNameTemplate.text.toString()
                 binding.fileNameTemplate.setText(FileNameTemplate.withDatePart(template, datePart))
@@ -342,6 +359,7 @@ class SettingsFragment(
     }
 
     private fun renderTemplate() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         val template = binding.fileNameTemplate.text.toString()
         val error = viewModel.setFileNameTemplate(template)
         binding.fileNameTemplateLayout.error = error

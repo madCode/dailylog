@@ -12,6 +12,7 @@ object FileNameTemplate {
 
     const val DEFAULT = "{DATETIME: yyyy-MM-dd}-journal.md"
     private const val DEFAULT_NAME = "-journal.md"
+    private const val INVALID_CHARACTERS = "\\:*?\"<>|"
 
     val PRESET_DATE_PARTS = listOf(
         "{DATETIME: yyyy-MM-dd}",
@@ -42,21 +43,24 @@ object FileNameTemplate {
         val segments = path.split("/")
         return when {
             path.isEmpty() -> "Enter a file name"
+            DATETIME_TOKEN.replace(template, "").contains('{') -> "Write dates as {DATETIME: pattern}"
             segments.any { it.isBlank() } -> "Folder and file names can't be empty"
             segments.any { it == "." || it == ".." } -> "\".\" and \"..\" can't be used as names"
-            segments.any { it.contains('\\') || it.contains('\n') } -> "Names can't contain \\ or line breaks"
+            // Most phone storage is FAT-style and renames these, so the file could never be found again.
+            segments.any { name -> name.any { it in INVALID_CHARACTERS || it.isISOControl() } } ->
+                "Names can't contain $INVALID_CHARACTERS or line breaks"
             else -> null
         }
     }
 
-    /** [datePart] followed by whatever the user wrote after the last date token, so a preset keeps their name. */
+    /** Replaces the dates in [template] with [datePart], keeping the text around them. */
     fun withDatePart(template: String, datePart: String): String {
-        val lastToken = DATETIME_TOKEN.findAll(template).lastOrNull()
-        val rest = when {
-            lastToken != null -> template.substring(lastToken.range.last + 1)
-            template.isNotBlank() -> "-" + template.trim()
-            else -> ""
+        val tokens = DATETIME_TOKEN.findAll(template).toList()
+        if (tokens.isEmpty()) {
+            return datePart + if (template.isBlank()) DEFAULT_NAME else "-" + template.trim()
         }
-        return datePart + rest.ifEmpty { DEFAULT_NAME }
+        val before = template.substring(0, tokens.first().range.first)
+        val after = template.substring(tokens.last().range.last + 1)
+        return before + datePart + after.ifEmpty { DEFAULT_NAME }
     }
 }

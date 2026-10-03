@@ -39,6 +39,19 @@ class FileNameTemplateTest {
     }
 
     @Test
+    fun rejectsCharactersPhoneStorageRenames() {
+        assertNotNull(FileNameTemplate.error("{DATETIME: yyyy-MM-dd HH:mm}.md", clock))
+        assertNotNull(FileNameTemplate.error("what?.md", clock))
+    }
+
+    @Test
+    fun rejectsAMistypedDate() {
+        // Without the token this would quietly be one file forever.
+        assertNotNull(FileNameTemplate.error("{DATETIME:yyyy-MM-dd}.md", clock))
+        assertNotNull(FileNameTemplate.error("{datetime: yyyy}.md", clock))
+    }
+
+    @Test
     fun rejectsBadDatePatterns() {
         assertNotNull(FileNameTemplate.error("{DATETIME: bbbb}.md", clock))
         // A time zone can't be read from the local date and time the name is made from.
@@ -58,6 +71,10 @@ class FileNameTemplateTest {
         assertEquals(
             "{DATETIME: yyyy-MM-dd}-journal.md",
             FileNameTemplate.withDatePart("{DATETIME: yyyy}", "{DATETIME: yyyy-MM-dd}")
+        )
+        assertEquals(
+            "notes/journal-{DATETIME: dd-MM-yyyy}.md",
+            FileNameTemplate.withDatePart("notes/journal-{DATETIME: yyyy-MM-dd}.md", "{DATETIME: dd-MM-yyyy}")
         )
     }
 }
