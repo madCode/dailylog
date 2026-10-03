@@ -24,6 +24,11 @@
     <string name="defaultStringPlaceholder">%1$s</string>
     <string name="fileNameTitle">Current file</string>
     <string name="select_file">Select file</string>
+    <string name="appearanceTitle">Appearance</string>
+    <string name="editor_text_size">Editor text size</string>
+    <string name="editor_text_size_default">Default</string>
+    <string name="reset">Reset</string>
+    <string name="editor_text_size_preview">- dinner: pasta with greens</string>
     <string name="settings">settings</string>
     <string name="delete">delete</string>
     <string name="drag_icon">drag icon</string>
