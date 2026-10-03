@@ -2,13 +2,26 @@ package com.app.dailylog.ui.log
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.app.dailylog.repository.Repository
+import com.app.dailylog.repository.Constants
 import com.app.dailylog.repository.RepositoryInterface
 import com.app.dailylog.repository.Shortcut
 
 class LogViewModel(var repository: RepositoryInterface) : ViewModel() {
     var cursorIndex = repository.getCursorIndex()
     private var loadedFileForFirstTime = false
+
+    /** Switches to the file the settings call for now, e.g. a new day's file. */
+    fun openCurrentFile() {
+        if (repository.openCurrentFile()) {
+            loadedFileForFirstTime = false
+            cursorIndex = repository.getCursorIndex()
+        }
+    }
+
+    /** The dated file being edited, marked "(new)" until its first save creates it. */
+    fun datedFileName(): String? = repository.datedFilePath?.let {
+        if (repository.filename == Constants.FILE_NOT_CREATED) "$it (new)" else it
+    }
 
     fun getLog(): String {
         val fileContents = repository.readFile(!loadedFileForFirstTime)

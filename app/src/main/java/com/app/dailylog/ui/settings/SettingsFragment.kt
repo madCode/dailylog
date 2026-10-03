@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MenuRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
+import androidx.core.widget.doAfterTextChanged
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
@@ -22,7 +23,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.dailylog.R
 import com.app.dailylog.repository.Shortcut
 import com.app.dailylog.utils.DetermineBuild
+import com.app.dailylog.utils.FileNameTemplate
 import com.app.dailylog.databinding.SettingsViewBinding
+import com.google.android.material.chip.Chip
 
 class SettingsFragment(
     private val viewModel: SettingsViewModel
@@ -85,6 +88,7 @@ class SettingsFragment(
             }
         })
         renderFileNameRow()
+        renderFileModeSection()
         renderShortcutList()
         binding.addShortcutButton.setOnClickListener {
             val addDialog: AddShortcutDialogFragment =
@@ -118,6 +122,21 @@ class SettingsFragment(
                     binding.fileName.text = viewModel.getFilename()
                 }
             }
+        }
+
+    private val selectLogFolderLauncher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            val folder = result.data?.data
+            if (result.resultCode == AppCompatActivity.RESULT_OK && folder != null) {
+                requireContext().contentResolver.takePersistableUriPermission(
+                    folder,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
+                viewModel.chooseLogFolder(folder)
+            }
+            renderFileMode()
         }
 
     private val selectLegacyShortcutFileLauncher: ActivityResultLauncher<Intent> =
@@ -269,6 +288,68 @@ class SettingsFragment(
                     type = "text/*"
                 }
             selectImportFileLauncher.launch(Intent.createChooser(intent, "Select a file"))
+        }
+    }
+
+    private fun renderFileModeSection() {
+        if (!viewModel.canUseDatedFiles()) {
+            binding.fileModeTitle.visibility = View.GONE
+            binding.fileModeToggle.visibility = View.GONE
+            return
+        }
+        binding.fileNameTemplate.setText(viewModel.getFileNameTemplate())
+        renderFileMode()
+        binding.fileModeToggle.addOnButtonCheckedListener { _, buttonId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+            if (buttonId == R.id.oneFileButton) {
+                viewModel.useOneFile()
+            } else if (!viewModel.useDatedFiles()) {
+                // Rendered again when the picker returns; a cancelled pick switches back to one file.
+                selectLogFolder()
+                return@addOnButtonCheckedListener
+            }
+            renderFileMode()
+        }
+        binding.chooseFolderButton.setOnClickListener { selectLogFolder() }
+        binding.fileNameTemplate.doAfterTextChanged { renderTemplate() }
+        for (datePart in FileNameTemplate.PRESET_DATE_PARTS) {
+            val chip = Chip(requireContext())
+            chip.text = FileNameTemplate.resolve(datePart)
+            chip.setOnClickListener {
+                val template = binding.fileNameTemplate.text.toString()
+                binding.fileNameTemplate.setText(FileNameTemplate.withDatePart(template, datePart))
+            }
+            binding.templatePresets.addView(chip)
+        }
+    }
+
+    private fun selectLogFolder() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).addFlags(
+            Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION or
+                    Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+        )
+        selectLogFolderLauncher.launch(intent)
+    }
+
+    private fun renderFileMode() {
+        val dated = viewModel.isDatedMode()
+        binding.fileModeToggle.check(if (dated) R.id.datedFileButton else R.id.oneFileButton)
+        binding.fileRow.visibility = if (dated) View.GONE else View.VISIBLE
+        binding.datedFileGroup.visibility = if (dated) View.VISIBLE else View.GONE
+        binding.folderName.text = viewModel.getLogFolderName() ?: getString(R.string.no_folder_chosen)
+        renderTemplate()
+    }
+
+    private fun renderTemplate() {
+        val template = binding.fileNameTemplate.text.toString()
+        val error = viewModel.setFileNameTemplate(template)
+        binding.fileNameTemplateLayout.error = error
+        binding.todaysFilePreview.text = if (error == null) {
+            val path = FileNameTemplate.resolve(template)
+            getString(R.string.todays_file, listOfNotNull(viewModel.getLogFolderName(), path).joinToString("/"))
+        } else {
+            ""
         }
     }
 

@@ -6,36 +6,98 @@ import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.app.dailylog.R
+import com.app.dailylog.utils.FileNameTemplate
 import com.opencsv.CSVReader
 import com.opencsv.CSVWriter
 import java.io.*
 import java.lang.Exception
 import java.math.BigInteger
 import java.security.MessageDigest
+import java.time.Clock
 
 
 
 interface FileRepositoryInterface {
+    /** URI of the file being edited, or [Constants.FILE_NOT_CREATED] for a dated file not saved yet. */
     var filename: String
     val context: Context
     var lastSavedContentsHash: String
+    /** In dated mode, the path of the file being edited inside the log folder. */
+    var datedFilePath: String?
+
+    private val preferences
+        get() = context.getSharedPreferences(
+            context.getString(R.string.preference_file_key),
+            Context.MODE_PRIVATE
+        )
 
     fun initializeFilename() {
         filename = retrieveFilename()
     }
 
     fun userMustSelectFile(): Boolean {
-        return filename == Constants.NO_FILE_SELECTED
+        return !isDatedMode() && retrieveFilename() == Constants.NO_FILE_SELECTED
     }
 
     fun retrieveFilename(): String {
-        val preferences =
-            context.getSharedPreferences(
-                context.getString(R.string.preference_file_key),
-                Context.MODE_PRIVATE
-            )
         return preferences.getString(Constants.FILENAME_PREF_KEY, Constants.NO_FILE_SELECTED)
             ?: Constants.NO_FILE_SELECTED
+    }
+
+    // Date templates need java.time, so older phones always use one file.
+    fun isDatedMode(): Boolean =
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+            preferences.getString(Constants.FILE_MODE_PREF_KEY, null) == Constants.FILE_MODE_DATED &&
+            retrieveLogFolder() != null
+
+    fun setDatedMode(dated: Boolean) {
+        preferences.edit()
+            .putString(Constants.FILE_MODE_PREF_KEY, if (dated) Constants.FILE_MODE_DATED else null)
+            .apply()
+    }
+
+    fun retrieveLogFolder(): Uri? =
+        preferences.getString(Constants.LOG_FOLDER_PREF_KEY, null)?.let { Uri.parse(it) }
+
+    fun retrieveLogFolderName(): String? = retrieveLogFolder()?.let { LogFolder(context, it).name }
+
+    fun storeLogFolder(folder: Uri) {
+        preferences.edit().putString(Constants.LOG_FOLDER_PREF_KEY, folder.toString()).apply()
+    }
+
+    fun retrieveFileNameTemplate(): String =
+        preferences.getString(Constants.FILE_NAME_TEMPLATE_PREF_KEY, null) ?: FileNameTemplate.DEFAULT
+
+    fun storeFileNameTemplate(template: String) {
+        preferences.edit().putString(Constants.FILE_NAME_TEMPLATE_PREF_KEY, template).apply()
+    }
+
+    /**
+     * Points [filename] at the file the settings call for now: the chosen file, or today's file in
+     * the log folder. Returns true when that is a different file from last time, in which case the
+     * saved cursor position belonged to the old file and is reset.
+     */
+    fun openCurrentFile(clock: Clock? = null): Boolean {
+        val folder = retrieveLogFolder()
+        val key: String
+        if (isDatedMode() && folder != null) {
+            val path = FileNameTemplate.resolve(retrieveFileNameTemplate(), clock)
+            filename = LogFolder(context, folder).find(path)?.toString() ?: Constants.FILE_NOT_CREATED
+            datedFilePath = path
+            key = "$folder/$path"
+        } else {
+            filename = retrieveFilename()
+            datedFilePath = null
+            key = filename
+        }
+        val previous = preferences.getString(Constants.OPEN_FILE_PREF_KEY, null)
+        if (previous == key) return false
+        // Before this pref existed only the chosen file was ever open, so its saved cursor still applies.
+        val changed = previous != null || datedFilePath != null
+        val editor = preferences.edit().putString(Constants.OPEN_FILE_PREF_KEY, key)
+        if (changed) editor.putInt(Constants.CURSOR_KEY, Constants.DEFAULT_CURSOR_INDEX)
+        editor.apply()
+        return changed
     }
 
     fun storeFilename(filename: String) {
@@ -52,6 +114,10 @@ interface FileRepositoryInterface {
     }
 
     fun readFile(firstTime: Boolean): String {
+        if (filename == Constants.FILE_NOT_CREATED) {
+            if (firstTime) updateLastSavedHash("")
+            return ""
+        }
         try {
             val stringBuilder = StringBuilder()
             val uri = Uri.parse(filename)
@@ -97,6 +163,16 @@ interface FileRepositoryInterface {
             return false
         }
         return try {
+            if (filename == Constants.FILE_NOT_CREATED) {
+                val folder = retrieveLogFolder()
+                val path = datedFilePath
+                val created = if (folder != null && path != null) LogFolder(context, folder).create(path) else null
+                if (created == null) {
+                    Toast.makeText(context, "Could not create $path", Toast.LENGTH_LONG).show()
+                    return false
+                }
+                filename = created.toString()
+            }
             val uri = Uri.parse(filename)
             val openFileDescriptor = context.contentResolver.openFileDescriptor(uri, "rwt")
             val fileDescriptor = openFileDescriptor?.fileDescriptor
