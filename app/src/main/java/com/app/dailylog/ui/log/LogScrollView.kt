@@ -2,73 +2,64 @@ package com.app.dailylog.ui.log
 
 import android.content.Context
 import android.graphics.Rect
-import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.AttributeSet
-import android.view.MotionEvent
 import android.view.View
-import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.ScrollView
 import android.widget.TextView
 
 /**
- * A [ScrollView] that stops scrolling back to the editor's cursor once the user has scrolled
- * away from it, until they type or move the cursor.
+ * A [ScrollView] for the log editor that stops scrolling back to the cursor once the cursor has
+ * been scrolled off screen, until the text or the cursor changes.
  *
- * The editor asks to bring its cursor into view on every relayout (spell check, keyboard
- * opening or closing), not only on edits, so mid-scroll the page snapped back to the cursor.
+ * The editor asks to bring its cursor into view on every relayout (spell check, keyboard opening
+ * or closing), not only on edits; honouring those while the user reads elsewhere yanks the page back.
  */
 class LogScrollView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
     ScrollView(context, attrs) {
 
-    private data class Cursor(val textLength: Int, val selectionStart: Int, val selectionEnd: Int)
+    // The editor's selection when the last scroll left the cursor off screen; null while following it.
+    private var offscreenSelection: Pair<Int, Int>? = null
 
-    private var touching = false
+    private val editor: TextView? get() = getChildAt(0) as? TextView
 
-    // The editor's cursor when the user last scrolled; null while the view follows the cursor.
-    private var cursorWhenScrolledAway: Cursor? = null
-
-    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        if (ev.actionMasked == MotionEvent.ACTION_DOWN) touching = true
-        val handled = super.dispatchTouchEvent(ev)
-        if (ev.actionMasked == MotionEvent.ACTION_UP || ev.actionMasked == MotionEvent.ACTION_CANCEL) {
-            touching = false
-        }
-        return handled
+    override fun onViewAdded(child: View) {
+        super.onViewAdded(child)
+        (child as? TextView)?.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                offscreenSelection = null
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
     }
 
     override fun onScrollChanged(l: Int, t: Int, oldl: Int, oldt: Int) {
         super.onScrollChanged(l, t, oldl, oldt)
-        if (touching && t != oldt) userScrolled()
-    }
-
-    override fun performAccessibilityAction(action: Int, arguments: Bundle?): Boolean {
-        val handled = super.performAccessibilityAction(action, arguments)
-        if (handled && action in accessibilityScrollActions) userScrolled()
-        return handled
+        val editor = editor ?: return
+        offscreenSelection = if (isCursorOnScreen(editor)) null else selectionOf(editor)
     }
 
     override fun requestChildRectangleOnScreen(child: View, rectangle: Rect, immediate: Boolean): Boolean {
-        val scrolledAwayFrom = cursorWhenScrolledAway
-        if (scrolledAwayFrom != null) {
-            if (cursorOf(child) == scrolledAwayFrom) return false
-            cursorWhenScrolledAway = null
+        val offscreen = offscreenSelection
+        if (offscreen != null) {
+            if (child === editor && selectionOf(child as TextView) == offscreen) return false
+            offscreenSelection = null
         }
         return super.requestChildRectangleOnScreen(child, rectangle, immediate)
     }
 
-    private fun userScrolled() {
-        cursorWhenScrolledAway = cursorOf(getChildAt(0))
-    }
+    private fun selectionOf(editor: TextView) = editor.selectionStart to editor.selectionEnd
 
-    private fun cursorOf(child: View?): Cursor? =
-        (child as? TextView)?.let { Cursor(it.text.length, it.selectionStart, it.selectionEnd) }
-
-    private companion object {
-        val accessibilityScrollActions = setOf(
-            AccessibilityNodeInfo.ACTION_SCROLL_FORWARD,
-            AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD,
-            android.R.id.accessibilityActionScrollUp,
-            android.R.id.accessibilityActionScrollDown,
-        )
+    // True unless the cursor's whole line is outside the viewport.
+    private fun isCursorOnScreen(editor: TextView): Boolean {
+        val layout = editor.layout ?: return true
+        val cursor = editor.selectionEnd
+        if (cursor < 0) return true
+        val line = layout.getLineForOffset(cursor)
+        val textTop = editor.top + editor.totalPaddingTop
+        return textTop + layout.getLineBottom(line) > scrollY &&
+            textTop + layout.getLineTop(line) < scrollY + height
     }
 }

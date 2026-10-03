@@ -3,9 +3,12 @@ package com.app.dailylog.ui.log
 import android.os.Looper
 import android.os.SystemClock
 import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.EditText
 import android.widget.ScrollView
+import androidx.lifecycle.Lifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.app.dailylog.MainActivity
 import com.app.dailylog.R
@@ -29,12 +32,12 @@ class LogScrollViewTest : AppRobolectricTest() {
         logFile.writeText((1..200).joinToString("\n") { "line $it" })
     }
 
-    private class Screen(val log: EditText, val scrollView: ScrollView)
+    private class Screen(val log: EditText, val scrollView: ScrollView, val tray: View)
 
     private fun withLog(test: Screen.() -> Unit) {
         launchApp().use { scenario ->
             scenario.onActivity { activity: MainActivity ->
-                val screen = Screen(activity.findViewById(R.id.todayLog), activity.findViewById(R.id.logScrollView))
+                val screen = Screen(activity.findViewById(R.id.todayLog), activity.findViewById(R.id.logScrollView), activity.findViewById(R.id.shortcutTray))
                 // The log opens with the cursor at the end, scrolled to it.
                 assertTrue("never scrolled to the cursor", idleUntil { screen.cursorVisible() && screen.scrollView.scrollY > 0 })
                 screen.test()
@@ -129,11 +132,53 @@ class LogScrollViewTest : AppRobolectricTest() {
     }
 
     @Test
-    fun relayoutWithoutUserScroll_stillBringsCursorIntoView() = withLog {
-        scrollView.scrollTo(0, 0)
+    fun replacingTextAfterUserScrolls_bringsCursorBackIntoView() = withLog {
+        dragDown(scrollView.height / 2)
+        val cursor = log.selectionStart
 
-        relayout()
+        // Same length and cursor, like tapping an autocorrect suggestion.
+        log.text.replace(cursor - 1, cursor, "Z")
+        settle()
 
-        assertTrue("relayout didn't bring the cursor into view", cursorVisible())
+        assertTrue("the edit didn't bring the cursor into view", cursorVisible())
+    }
+
+    @Test
+    fun keyboardOpeningAfterSmallScroll_keepsCursorInView() = withLog {
+        val layout = log.layout
+        val lineAtThreeQuarters = layout.getLineForVertical(
+            scrollView.scrollY + scrollView.height * 3 / 4 - log.top - log.totalPaddingTop
+        )
+        log.setSelection(layout.getLineStart(lineAtThreeQuarters))
+        settle()
+        dragDown(40)
+        assertTrue("cursor left the screen", cursorVisible())
+
+        // The tray's bottom margin is how LogFragment makes room for the keyboard.
+        val params = tray.layoutParams as ViewGroup.MarginLayoutParams
+        params.bottomMargin = scrollView.height / 2
+        tray.layoutParams = params
+        settle()
+
+        assertTrue("keyboard covered the cursor", cursorVisible())
+    }
+
+    @Test
+    fun returningToTheApp_bringsCursorBackIntoView() {
+        launchApp().use { scenario ->
+            scenario.onActivity { activity ->
+                val screen = Screen(activity.findViewById(R.id.todayLog), activity.findViewById(R.id.logScrollView), activity.findViewById(R.id.shortcutTray))
+                idleUntil { screen.cursorVisible() }
+                screen.dragDown(screen.scrollView.height / 2)
+                assertTrue(!screen.cursorVisible())
+            }
+            scenario.moveToState(Lifecycle.State.CREATED)
+            scenario.moveToState(Lifecycle.State.RESUMED)
+            scenario.onActivity { activity ->
+                val screen = Screen(activity.findViewById(R.id.todayLog), activity.findViewById(R.id.logScrollView), activity.findViewById(R.id.shortcutTray))
+                settle()
+                assertTrue("resuming didn't bring the cursor into view", screen.cursorVisible())
+            }
+        }
     }
 }
