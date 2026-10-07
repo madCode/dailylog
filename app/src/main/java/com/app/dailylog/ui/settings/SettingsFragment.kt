@@ -51,6 +51,7 @@ class SettingsFragment(
         binding = SettingsViewBinding.bind(view)
         
         applySettingsInsets(view, binding.settingsToolbar)
+        useDarkStatusBarIcons(requireActivity().window)
         
         val value = TypedValue()
         context?.theme?.resolveAttribute(R.attr.colorAccent, value, true)
@@ -99,6 +100,7 @@ class SettingsFragment(
 
     override fun onResume() {
         super.onResume()
+        useDarkStatusBarIcons(requireActivity().window)
         // The file can change on the sub-screen, so re-read it when we come back.
         binding.logFileValue.text = viewModel.getFilename()
     }
@@ -232,6 +234,11 @@ class SettingsFragment(
                 viewModel.createShortcutDialogViewModel()
             )
         editDialog.show(childFragmentManager, "fragment_edit")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        restoreThemeStatusBarIcons(requireActivity().window)
     }
 
     private fun renderLogFileRow() {

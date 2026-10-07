@@ -34,6 +34,7 @@ class LogFileSettingsFragment(
         super.onViewCreated(view, savedInstanceState)
         binding = LogFileSettingsViewBinding.bind(view)
         applySettingsInsets(view, binding.logFileToolbar)
+        useDarkStatusBarIcons(requireActivity().window)
 
         binding.logFileToolbar.setNavigationOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
@@ -47,6 +48,16 @@ class LogFileSettingsFragment(
             }
             selectFileLauncher.launch(Intent.createChooser(intent, "Select a file"))
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        useDarkStatusBarIcons(requireActivity().window)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        restoreThemeStatusBarIcons(requireActivity().window)
     }
 
     private val selectFileLauncher: ActivityResultLauncher<Intent> =

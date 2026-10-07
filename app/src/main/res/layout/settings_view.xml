@@ -25,10 +25,10 @@
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
         android:gravity="center_vertical"
-        android:minHeight="48dp"
+        android:minHeight="72dp"
         android:orientation="horizontal"
         android:paddingHorizontal="10dp"
-        android:paddingVertical="4dp"
+        android:paddingVertical="12dp"
         app:layout_constraintTop_toBottomOf="@id/settingsToolbar">
 
         <TextView
