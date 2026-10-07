@@ -70,13 +70,16 @@
         app:layout_constraintTop_toBottomOf="@id/logFileRow" />
 
     <!-- Kept as the headline it has always been: the section is the screen's subject,
-         not a label on a settings block. -->
+         not a label on a settings block.
+         The margins restore the space the 40dp overflow button used to give this row before
+         it moved into the toolbar; without them the list butts straight against the text. -->
     <TextView
         android:id="@+id/shortcutTitle"
         style="@style/TextHeadline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="16dp"
         android:text="@string/shortcutsTitle"
         android:textStyle="normal"
         app:layout_constraintStart_toStartOf="parent"
@@ -96,6 +99,7 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="11dp"
         android:clipToPadding="false"
         android:paddingBottom="80dp"
         app:layout_constraintBottom_toBottomOf="parent"
