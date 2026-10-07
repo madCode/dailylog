@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.DocumentsContract
 import android.util.TypedValue
+import android.widget.PopupMenu
 import android.view.*
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -88,7 +89,12 @@ class SettingsFragment(
         binding.settingsToolbar.setNavigationOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
-        binding.settingsToolbar.setOnMenuItemClickListener { menuItem -> onMenuItem(menuItem) }
+        binding.shortcutMenuButton.setOnClickListener { anchor ->
+            PopupMenu(requireContext(), anchor).apply {
+                menuInflater.inflate(R.menu.shortcut_options_menu, menu)
+                setOnMenuItemClickListener { menuItem -> onMenuItem(menuItem) }
+            }.show()
+        }
     }
 
     override fun onResume() {

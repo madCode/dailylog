@@ -18,7 +18,6 @@ import com.app.dailylog.R
 import com.app.dailylog.repository.Shortcut
 import com.app.dailylog.repository.ShortcutType
 import com.app.dailylog.testutil.AppRobolectricTest
-import com.google.android.material.appbar.MaterialToolbar
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -26,6 +25,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
+import org.robolectric.shadows.ShadowPopupMenu
 import org.robolectric.shadows.ShadowDialog
 import java.io.File
 
@@ -68,7 +68,8 @@ class SettingsScreenTest : AppRobolectricTest() {
     }
 
     private fun MainActivity.chooseMenuItem(id: Int) {
-        findViewById<MaterialToolbar>(R.id.settingsToolbar).menu.performIdentifierAction(id, 0)
+        findViewById<View>(R.id.shortcutMenuButton).performClick()
+        ShadowPopupMenu.getLatestPopupMenu().menu.performIdentifierAction(id, 0)
         idleUntil(500) { false }
     }
 

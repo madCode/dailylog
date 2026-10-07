@@ -40,7 +40,7 @@ class SettingsStructureTest : AppRobolectricTest() {
     private fun openSettings() = launchApp().also { onView(withId(R.id.btnSettings)).perform(click()) }
 
     @Test
-    fun settingsScreen_hasAToolbarWithTitleUpAndOverflow() {
+    fun settingsScreen_hasAToolbarWithTitleAndUp() {
         openSettings().use { scenario ->
             scenario.onActivity { activity ->
                 val toolbar = activity.findViewById<MaterialToolbar>(R.id.settingsToolbar)
@@ -50,7 +50,13 @@ class SettingsStructureTest : AppRobolectricTest() {
                     activity.getString(R.string.navigate_up),
                     toolbar.navigationContentDescription
                 )
-                assertNotNull("overflow not in the toolbar", toolbar.menu.findItem(R.id.bulkAdd))
+                // The shortcut menu deliberately stays with the shortcut section, not the
+                // screen-level bar: every item in it acts on the list.
+                assertEquals("toolbar should carry no screen-level menu", 0, toolbar.menu.size())
+                assertNotNull(
+                    "shortcut overflow should sit with the Shortcuts header",
+                    activity.findViewById<View>(R.id.shortcutMenuButton)
+                )
             }
         }
     }

@@ -13,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
-        app:menu="@menu/shortcut_options_menu"
         app:navigationContentDescription="@string/navigate_up"
         app:navigationIcon="@drawable/ic_arrow_back_24"
         app:title="@string/settings_title"
@@ -71,18 +70,31 @@
 
     <!-- Kept as the headline it has always been: the section is the screen's subject,
          not a label on a settings block.
-         The margins restore the space the 40dp overflow button used to give this row before
-         it moved into the toolbar; without them the list butts straight against the text. -->
+         Its overflow stays with it rather than moving to the toolbar: every item in that menu
+         acts on the shortcut list, and a screen-level bar would imply it covers the file settings
+         too. -->
     <TextView
         android:id="@+id/shortcutTitle"
         style="@style/TextHeadline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="10dp"
         android:text="@string/shortcutsTitle"
         android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="@id/shortcutMenuButton"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/shortcutMenuButton" />
+
+    <ImageButton
+        android:id="@+id/shortcutMenuButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="5dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/shortcut_options"
+        android:src="@drawable/ic_baseline_more_vert_48"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/logFileDivider" />
 
     <TextView
@@ -93,19 +105,19 @@
         android:paddingVertical="20dp"
         android:text="@string/no_shortcuts_info"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/shortcutTitle" />
+        app:layout_constraintTop_toBottomOf="@id/shortcutMenuButton" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="11dp"
+        android:layout_marginTop="10dp"
         android:clipToPadding="false"
         android:paddingBottom="80dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/shortcutTitle" />
+        app:layout_constraintTop_toBottomOf="@id/shortcutMenuButton" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addShortcutButton"
