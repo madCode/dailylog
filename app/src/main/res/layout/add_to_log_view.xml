@@ -7,7 +7,7 @@
     android:background="@android:color/transparent"
     tools:context=".ui.log.LogFragment">
 
-    <ScrollView
+    <com.app.dailylog.ui.log.LogScrollView
         android:id="@+id/logScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -27,7 +27,7 @@
             android:padding="10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-    </ScrollView>
+    </com.app.dailylog.ui.log.LogScrollView>
 
     <ImageButton
         android:id="@+id/btnSettings"
