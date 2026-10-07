@@ -50,7 +50,6 @@
     <string name="errorPerformingActivity">Error performing task</string>
     <string name="settings_title">Settings</string>
     <string name="log_file_settings_title">Log file</string>
-    <string name="shortcuts_section">Shortcuts</string>
     <string name="navigate_up">Navigate up</string>
     <string name="shortcut_options">Shortcut options</string>
 </resources>
