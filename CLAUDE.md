@@ -45,7 +45,7 @@ to one belongs in the other.
 
 # Coverage
 ./gradlew koverHtmlReport   # HTML: app/build/reports/kover/html/index.html
-./gradlew koverXmlReport    # XML:  app/build/reports/kover/xml/report.xml
+./gradlew koverXmlReport    # XML:  app/build/reports/kover/report.xml
 ./gradlew koverVerify       # Fails if line coverage < 85%
 ```
 

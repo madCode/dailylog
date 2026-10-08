@@ -15,6 +15,8 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
+          # Changed-line coverage diffs against the base branch, which needs a merge base.
+          fetch-depth: 0
 
       - name: Set up JDK
         uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
@@ -22,14 +24,46 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      # 1. Run Kover Tasks
-      # koverHtmlReport generates the HTML for manual inspection if needed
-      # koverVerify checks coverage against your defined rules
-      # koverXmlReport is often needed by the reporting action
-      - name: Run Kover Report & Verify
-        run: ./gradlew koverXmlReport
+      - name: Run Kover Report
+        # koverVerify, the 85% floor in app/build.gradle, ran nowhere in CI before this: the
+        # floor was decorative. ./gradlew build doesn't depend on it.
+        run: ./gradlew koverXmlReport koverVerify
 
-      # 2. Post Results as PR Comment
+      - name: Coverage of the lines this branch changed
+        # diff-cover, as rss-to-e-reader and newspaperss use: one tool rather than one of ours
+        # to maintain. --src-roots is needed because kover names packages, not paths, so without
+        # it every diff reads as "no lines with coverage information" and the check can never
+        # fail. The aggregate floor koverVerify enforces can't do this job: at 85% of the whole
+        # app, a pull request can add a few hundred untested lines and still clear it.
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          # Without pipefail the exit code below comes from tee, and a coverage failure passes.
+          set -o pipefail
+          pipx install diff-cover || pip install --quiet diff-cover
+          # grep exits 1 when it filters everything out, which pipefail would otherwise turn
+          # into a failed step on any pull request that changes no production Kotlin.
+          changed=$(git diff --numstat "origin/$BASE_REF...HEAD" -- '*.kt' \
+            | { grep -vE '/(test|androidTest)/' || true; } \
+            | awk '{ s += $1 } END { print s + 0 }')
+          roots="app/src/main/java"
+          # Below 20 changed lines the percentage describes the denominator, not the tests: one
+          # uncovered default argument in a four-line diff is 75%. Reported, not enforced.
+          if [ "${changed:-0}" -lt 20 ]; then
+            echo "Under 20 changed Kotlin lines outside tests: reporting without enforcing."
+            diff-cover app/build/reports/kover/report.xml --compare-branch="origin/$BASE_REF" --src-roots $roots || true
+          else
+            diff-cover app/build/reports/kover/report.xml --compare-branch="origin/$BASE_REF" \
+              --src-roots $roots --fail-under=80 | tee /tmp/diffcover.txt
+            # If --src-roots ever stops matching, diff-cover finds nothing and passes
+            # everything: a check that cannot fail. With this many changed lines it should have
+            # found some, so say so rather than go quiet.
+            if grep -q "No lines with coverage information" /tmp/diffcover.txt; then
+              echo "::error::$changed Kotlin lines changed but diff-cover matched none. --src-roots is probably wrong for this layout."
+              exit 1
+            fi
+          fi
+
       - name: Post Kover Report
         uses: mi-kas/kover-report@5f58465b6f395c8fa3adc2665e27250bad87de50 # v1
         with:
