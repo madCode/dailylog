@@ -23,6 +23,27 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
+      - name: Check the workflows parse
+        # Before zizmor, because zizmor silently SKIPS a workflow it can't parse and still
+        # exits clean: #91 left build-and-test.yml unparseable here, zizmor's own log
+        # omitted the file without a word, and the required check that workflow defines
+        # never reported, so the PR sat blocked with every check it did report green.
+        # actionlint reads the same files and fails on one it can't parse. The release
+        # binary, not an action, so nothing new runs with this job's token; the checksum
+        # pins what's downloaded. shellcheck and pyflakes integration is off until someone
+        # has read what they say here -- this step is about the file being valid at all.
+        env:
+          VERSION: 1.7.12
+          SHA256: 8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
+        run: |
+          set -o pipefail
+          tgz="actionlint_${VERSION}_linux_amd64.tar.gz"
+          curl -sSfL -o "$RUNNER_TEMP/$tgz" \
+            "https://github.com/rhysd/actionlint/releases/download/v${VERSION}/$tgz"
+          echo "$SHA256  $RUNNER_TEMP/$tgz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/$tgz" -C "$RUNNER_TEMP" actionlint
+          "$RUNNER_TEMP/actionlint" -shellcheck= -pyflakes=
+
       - name: Audit the workflows
         uses: zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482 # v0.6.4
         with:
