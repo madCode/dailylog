@@ -1,0 +1,24 @@
+# Pinning to a commit stops a tag being re-pointed under us, and means the pins go stale on
+# their own. In newspaperss a pinned action moved within a day, leaving the "# v1" beside it
+# untrue.
+#
+# The cooldown is the point: most poisoned releases are found in the first few days, so waiting
+# a week takes the fix without being first to run it.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ["*"]
+
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
