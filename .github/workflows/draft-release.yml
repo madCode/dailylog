@@ -5,33 +5,53 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: read
+
 jobs:
   release:
+    # Only to attach the APK to the release it drafts.
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
           java-version: '21'
           distribution: 'temurin'
-          cache: gradle
+          # No Gradle cache here. An entry written by a less-trusted run could be restored into
+          # the build that gets signed, and a release is rare enough not to miss the minute.
 
       - name: Decode keystore
         run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > ${{ github.workspace }}/release.jks
+          # Not in the workspace: that is the checked-out tree, and anything that archives it
+          # would take the signing key with it.
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > "$RUNNER_TEMP/release.jks"
 
       - name: Build signed release APK
         env:
-          KEYSTORE_PATH: ${{ github.workspace }}/release.jks
+          KEYSTORE_PATH: ${{ runner.temp }}/release.jks
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew assembleRelease
 
-      - name: Upload APK to GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          draft: true
-          files: app/build/outputs/apk/release/app-release.apk
+      - name: Draft the GitHub release
+        # gh rather than a third-party action: this is the one step holding a token that can
+        # write a release, so it's the step worth keeping in the runner's own tooling.
+        # zizmor flags the action as superfluous for the same reason, and newspaperss does this.
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          tag="$GITHUB_REF_NAME"
+          apk=app/build/outputs/apk/release/app-release.apk
+          code=$(sed -n 's/^ *versionCode \([0-9]*\)$/\1/p' app/build.gradle)
+          notes="fastlane/metadata/android/en-US/changelogs/$code.txt"
+          if [ -f "$notes" ]; then notes_flag=(--notes-file "$notes"); else notes_flag=(--notes "DailyLog ${tag#v}"); fi
+          gh release create "$tag" "$apk" --draft --verify-tag --title "DailyLog ${tag#v}" "${notes_flag[@]}"

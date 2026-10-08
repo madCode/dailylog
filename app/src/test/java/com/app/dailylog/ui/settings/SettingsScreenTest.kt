@@ -25,8 +25,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
-import org.robolectric.shadows.ShadowDialog
 import org.robolectric.shadows.ShadowPopupMenu
+import org.robolectric.shadows.ShadowDialog
 import java.io.File
 
 @RunWith(AndroidJUnit4::class)
@@ -73,15 +73,23 @@ class SettingsScreenTest : AppRobolectricTest() {
         idleUntil(500) { false }
     }
 
+    /** Taps the "Log file" row and waits for the sub-screen. */
+    private fun MainActivity.openLogFile(): LogFileSettingsFragment {
+        findViewById<View>(R.id.logFileRow).performClick()
+        idleUntil(500) { false }
+        return supportFragmentManager.findFragmentById(R.id.container) as LogFileSettingsFragment
+    }
+
     @Test
     fun listsShortcutsAndFile() {
         openSettings().use { scenario ->
             scenario.onActivity { activity ->
                 idleUntil { activity.findViewById<RecyclerView>(R.id.recycler_view).childCount == 2 }
                 assertEquals(View.GONE, activity.findViewById<View>(R.id.noShortcutsMessage).visibility)
+                // The row shows a readable name, not the SAF URI behind it.
                 assertEquals(
-                    Uri.fromFile(logFile).toString(),
-                    activity.findViewById<android.widget.TextView>(R.id.fileName).text.toString()
+                    logFile.name,
+                    activity.findViewById<android.widget.TextView>(R.id.logFileValue).text.toString()
                 )
             }
         }
@@ -220,16 +228,24 @@ class SettingsScreenTest : AppRobolectricTest() {
         val other = File(context.filesDir, "other.md").apply { writeText("other\n") }
         openSettings().use { scenario ->
             scenario.onActivity { activity ->
+                activity.openLogFile()
                 activity.findViewById<View>(R.id.selectFileButton).performClick()
                 val picker = activity.answerFilePicker(Uri.fromFile(other))
                 // A text/* filter greys out .md files that the provider reports with another type.
                 assertEquals(Intent.ACTION_OPEN_DOCUMENT, picker.action)
                 assertEquals("*/*", picker.type)
                 assertEquals(
-                    Uri.fromFile(other).toString(),
+                    other.name,
                     activity.findViewById<android.widget.TextView>(R.id.fileName).text.toString()
                 )
                 assertEquals(Uri.fromFile(other).toString(), activity.repository.filename)
+                // Back to Settings: the row reflects the new file.
+                activity.onBackPressedDispatcher.onBackPressed()
+                idleUntil(500) { false }
+                assertEquals(
+                    other.name,
+                    activity.findViewById<android.widget.TextView>(R.id.logFileValue).text.toString()
+                )
             }
         }
         other.delete()
@@ -242,10 +258,13 @@ class SettingsScreenTest : AppRobolectricTest() {
         val other = File(context.filesDir, "other.md").apply { writeText(original) }
         openSettings().use { scenario ->
             scenario.onActivity { activity ->
+                activity.openLogFile()
                 activity.findViewById<View>(R.id.selectFileButton).performClick()
                 activity.answerFilePicker(Uri.fromFile(other))
-                activity.onBackPressedDispatcher.onBackPressed()
-                idleUntil(500) { false }
+                repeat(2) {
+                    activity.onBackPressedDispatcher.onBackPressed()
+                    idleUntil(500) { false }
+                }
                 assertEquals("first\nsecond\n", activity.findViewById<EditText>(R.id.todayLog).text.toString())
             }
             scenario.moveToState(Lifecycle.State.CREATED)
