@@ -69,13 +69,13 @@ class ActivityRecreationTest {
     // API 23 emulator does not always get there in time, which failed all three of these tests
     // on #108 and #112 and then passed on a re-run.
     //
-    // Best effort, deliberately not an assertion: when a dialog is open it holds the focus and
-    // the activity's own decor view never regains it, so requiring focus here failed
-    // addShortcutDialog_survivesRecreation on every API level. Give the window a few seconds to
-    // settle and let Espresso be the one to judge.
+    // Best effort, deliberately not an assertion. A dialog holds the focus its activity lost, so
+    // in addShortcutDialog_survivesRecreation this condition can never come true and the loop
+    // always runs to the deadline -- which is why the deadline is short. Asserting it instead
+    // failed that test on every API level.
     private fun ActivityScenario<MainActivity>.recreateAndSettle() {
         recreate()
-        val deadline = System.currentTimeMillis() + 5_000
+        val deadline = System.currentTimeMillis() + 1_500
         while (System.currentTimeMillis() < deadline) {
             var settled = false
             onActivity { settled = it.window.decorView.let { v -> v.hasWindowFocus() && !v.isLayoutRequested } }
