@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ main ]
 
+# Reading the code is all either job does: the APK goes to an artifact, and the test report
+# annotates through the log rather than the checks API. zizmor's excessive-permissions.
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Android CI
