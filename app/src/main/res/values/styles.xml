@@ -16,4 +16,13 @@
     <style name="CustomAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
         <item name="buttonBarPositiveButtonStyle">@style/Widget.MaterialComponents.Button</item>
     </style>
+
+    <!-- Settings surfaces get a primary-coloured bar; the log screen stays chrome-free.
+         It draws behind the status bar, so the fragment pads it by the top window inset. -->
+    <style name="SettingsToolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="titleTextColor">?attr/colorOnPrimary</item>
+        <item name="android:elevation">0dp</item>
+        <item name="titleTextAppearance">@style/TextHeadline</item>
+    </style>
 </resources>
