@@ -86,8 +86,9 @@ class SettingsScreenTest : AppRobolectricTest() {
             scenario.onActivity { activity ->
                 idleUntil { activity.findViewById<RecyclerView>(R.id.recycler_view).childCount == 2 }
                 assertEquals(View.GONE, activity.findViewById<View>(R.id.noShortcutsMessage).visibility)
+                // The row shows a readable name, not the SAF URI behind it.
                 assertEquals(
-                    Uri.fromFile(logFile).toString(),
+                    logFile.name,
                     activity.findViewById<android.widget.TextView>(R.id.logFileValue).text.toString()
                 )
             }
@@ -234,7 +235,7 @@ class SettingsScreenTest : AppRobolectricTest() {
                 assertEquals(Intent.ACTION_OPEN_DOCUMENT, picker.action)
                 assertEquals("*/*", picker.type)
                 assertEquals(
-                    Uri.fromFile(other).toString(),
+                    other.name,
                     activity.findViewById<android.widget.TextView>(R.id.fileName).text.toString()
                 )
                 assertEquals(Uri.fromFile(other).toString(), activity.repository.filename)
@@ -242,7 +243,7 @@ class SettingsScreenTest : AppRobolectricTest() {
                 activity.onBackPressedDispatcher.onBackPressed()
                 idleUntil(500) { false }
                 assertEquals(
-                    Uri.fromFile(other).toString(),
+                    other.name,
                     activity.findViewById<android.widget.TextView>(R.id.logFileValue).text.toString()
                 )
             }

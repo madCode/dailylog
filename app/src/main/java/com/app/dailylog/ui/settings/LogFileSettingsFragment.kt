@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.app.dailylog.R
 import com.app.dailylog.databinding.LogFileSettingsViewBinding
+import com.app.dailylog.utils.FileDisplayName
 
 /**
  * Which file the log is written to. Split out of Settings so that its controls don't compete
@@ -39,7 +40,7 @@ class LogFileSettingsFragment(
         binding.logFileToolbar.setNavigationOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
-        binding.fileName.text = viewModel.getFilename()
+        binding.fileName.text = FileDisplayName.of(requireContext(), viewModel.getFilename())
         binding.selectFileButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
@@ -67,6 +68,6 @@ class LogFileSettingsFragment(
             viewModel.saveFilename(selectedFileUri.toString())
             val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
             requireContext().contentResolver.takePersistableUriPermission(selectedFileUri, takeFlags)
-            binding.fileName.text = viewModel.getFilename()
+            binding.fileName.text = FileDisplayName.of(requireContext(), viewModel.getFilename())
         }
 }

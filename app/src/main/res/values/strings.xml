@@ -49,7 +49,7 @@
     <string name="dateTimeExplanation"><![CDATA[Add timestamps using {DATETIME: <datetime format>} in your shortcut text. The current time will be inserted on shortcut selection.]]></string>
     <string name="errorPerformingActivity">Error performing task</string>
     <string name="settings_title">Settings</string>
-    <string name="log_file_settings_title">Log file</string>
+    <string name="file_settings_title">File</string>
     <string name="navigate_up">Navigate up</string>
     <string name="shortcut_options">Shortcut options</string>
 </resources>

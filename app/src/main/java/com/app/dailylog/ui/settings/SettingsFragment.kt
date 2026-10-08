@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.dailylog.R
 import com.app.dailylog.repository.Shortcut
 import com.app.dailylog.utils.DetermineBuild
+import com.app.dailylog.utils.FileDisplayName
 import com.app.dailylog.databinding.SettingsViewBinding
 
 class SettingsFragment(
@@ -102,7 +103,7 @@ class SettingsFragment(
         super.onResume()
         useDarkStatusBarIcons(requireActivity().window)
         // The file can change on the sub-screen, so re-read it when we come back.
-        binding.logFileValue.text = viewModel.getFilename()
+        binding.logFileValue.text = FileDisplayName.of(requireContext(), viewModel.getFilename())
     }
 
     private val selectLegacyShortcutFileLauncher: ActivityResultLauncher<Intent> =
@@ -242,7 +243,7 @@ class SettingsFragment(
     }
 
     private fun renderLogFileRow() {
-        binding.logFileValue.text = viewModel.getFilename()
+        binding.logFileValue.text = FileDisplayName.of(requireContext(), viewModel.getFilename())
         binding.logFileRow.setOnClickListener { openLogFileSettings() }
     }
 

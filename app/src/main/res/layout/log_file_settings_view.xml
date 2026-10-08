@@ -13,7 +13,7 @@
         android:minHeight="?attr/actionBarSize"
         app:navigationContentDescription="@string/navigate_up"
         app:navigationIcon="@drawable/ic_arrow_back_24"
-        app:title="@string/log_file_settings_title"
+        app:title="@string/file_settings_title"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
