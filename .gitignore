@@ -12,3 +12,5 @@
 .cxx
 /.kotlin/errors/*
 app/release/
+# Per-machine Claude Code permissions, not shared
+.claude/settings.local.json
