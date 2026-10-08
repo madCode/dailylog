@@ -1,0 +1,55 @@
+# The part of a security pass a tool can do by itself, so the reading pass has less to cover.
+# claude-playground's practices/recurring-reviews.md names both: zizmor for the workflows,
+# Scorecard for the repository's own posture.
+name: Security scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths: ['.github/workflows/**', 'app/build.gradle', 'build.gradle', 'gradle/**']
+  schedule:
+    - cron: '41 5 * * 2'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  workflows:
+    name: zizmor
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Audit the workflows
+        uses: zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482 # v0.6.4
+        with:
+          # Everything, not only what a pull request touched: a workflow is only as safe as the
+          # others it can be reached from.
+          advanced-security: false
+          persona: regular
+
+  posture:
+    name: scorecard
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc # v2.4.4
+        with:
+          results_file: scorecard.sarif
+          results_format: sarif
+          # Code review and branch protection score low for a solo owner merging their own pull
+          # requests. That is expected, and publishing it invites chasing the number rather than
+          # the findings under it.
+          publish_results: false
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: scorecard-results
+          path: scorecard.sarif

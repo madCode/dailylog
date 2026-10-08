@@ -1,0 +1,9 @@
+# Findings that are the design rather than a mistake. Everything else is meant to be fixed.
+rules:
+  dangerous-triggers:
+    ignore:
+      # red-main.yml must watch a finished workflow to know main went red, and workflow_run is
+      # the only trigger that reports one. It reads the run's conclusion and log and opens an
+      # issue; it never checks out or runs code from the branch that triggered it, and it only
+      # fires for main.
+      - red-main.yml
