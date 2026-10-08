@@ -6,6 +6,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 DailyLog is a native Android app (Kotlin) for distraction-free journaling with customizable text shortcuts. Users select a markdown/text file, define shortcut buttons with templated text (including datetime patterns), and insert them at cursor position with one tap. Shortcuts are stored in a Room database; the log file and cursor position are persisted via SharedPreferences and the Android file system.
 
+## Posting as madCode
+
+Claude Code posts from madCode's account, so anything it writes says so **at the top**, where
+it's read, not only in a footer a reader scrolls past. The first line of a pull request
+description, an issue or PR comment, or a review:
+
+    🤖 **Claude · <tag>**
+
+Tags: `pull request`, `proposal`, `fix ready`, `needs info`, `update`, `review notes`,
+`question for madCode`. `update` when none of the others fit. The first comment in an issue
+thread also opens by saying who is writing and what to expect, which the `handle-issues` skill
+spells out.
+
+Nothing from the Claude GitHub App needs this: its author already says so.
+
+The same rule, and the rest of the shared ones, live in
+[claude-playground](https://github.com/madCode/claude-playground/blob/main/CLAUDE.md); a change
+to one belongs in the other.
+
 ## Build & Test Commands
 
 ```bash
