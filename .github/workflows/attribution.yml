@@ -1,0 +1,35 @@
+# A pull request opened from madCode's account says at the top when Claude wrote it. Prose in
+# CLAUDE.md only reaches the sessions that read it, and the tag was missing from most PRs until
+# this check existed.
+name: Attribution
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: The description says who wrote it
+        env:
+          BODY: ${{ github.event.pull_request.body }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: |
+          # Only for PRs in madCode's name: the Claude GitHub App's own PRs are already labelled
+          # by their author, and a human's PR needs no tag.
+          case "$AUTHOR" in
+            *'[bot]') echo "Opened by $AUTHOR, not madCode: nothing to check."; exit 0 ;;
+          esac
+          if printf '%s' "$BODY" | head -5 | grep -qE '^🤖 \*\*Claude · '; then
+            echo "Tagged."
+            exit 0
+          fi
+          if printf '%s' "$BODY" | grep -qiE 'Generated (with|by) \[Claude Code\]|Co-Authored-By: Claude'; then
+            echo "::error::Claude wrote this but the description doesn't say so at the top. Start it with '🤖 **Claude · pull request**' (see CLAUDE.md, Posting as madCode)."
+            exit 1
+          fi
+          echo "No sign Claude wrote this; nothing to check."
