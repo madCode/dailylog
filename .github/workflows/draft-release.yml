@@ -41,8 +41,17 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew assembleRelease
 
-      - name: Upload APK to GitHub Release
-        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
-        with:
-          draft: true
-          files: app/build/outputs/apk/release/app-release.apk
+      - name: Draft the GitHub release
+        # gh rather than a third-party action: this is the one step holding a token that can
+        # write a release, so it's the step worth keeping in the runner's own tooling.
+        # zizmor flags the action as superfluous for the same reason, and newspaperss does this.
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          tag="$GITHUB_REF_NAME"
+          apk=app/build/outputs/apk/release/app-release.apk
+          code=$(sed -n 's/^ *versionCode \([0-9]*\)$/\1/p' app/build.gradle)
+          notes="fastlane/metadata/android/en-US/changelogs/$code.txt"
+          if [ -f "$notes" ]; then notes_flag=(--notes-file "$notes"); else notes_flag=(--notes "DailyLog ${tag#v}"); fi
+          gh release create "$tag" "$apk" --draft --verify-tag --title "DailyLog ${tag#v}" "${notes_flag[@]}"
