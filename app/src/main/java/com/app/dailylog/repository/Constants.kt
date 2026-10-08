@@ -6,6 +6,7 @@ object Constants {
     const val FILENAME_PREF_KEY = "filenameFormat"
     const val CURSOR_KEY = "cursorIndex"
     const val DEFAULT_CURSOR_INDEX = -1
+    const val EDITOR_TEXT_SIZE_KEY = "editorTextSize"
     const val CREATE_FILE_CODE = 112
     const val SELECT_FILE_CODE = 111
     const val SELECT_SHORTCUT_FILE_CODE = 113

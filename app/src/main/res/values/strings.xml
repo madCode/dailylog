@@ -52,4 +52,9 @@
     <string name="file_settings_title">File</string>
     <string name="navigate_up">Navigate up</string>
     <string name="shortcut_options">Shortcut options</string>
+<string name="appearanceTitle">Appearance</string>
+    <string name="editor_text_size">Editor text size</string>
+    <string name="editor_text_size_default">Default</string>
+    <string name="reset">Reset</string>
+    <string name="editor_text_size_preview">- dinner: pasta with greens</string>
 </resources>

@@ -127,25 +127,33 @@ class SettingsStructureTest : AppRobolectricTest() {
 
     /**
      * The invariant this restructure exists to protect: everything between the toolbar and the
-     * shortcut list is fixed-height configuration, so the list keeps the rest of the screen.
+     * shortcut list is fixed-height configuration rows, so the list keeps the rest of the screen.
      *
-     * The budget leaves room for a second row (#82's Appearance) and fails loudly if a whole
-     * block of controls is put back above the list, which is what #84 would otherwise do.
+     * The allowance scales with the number of rows rather than being a fixed number, so adding a
+     * row (as #82 does) does not require moving the goalposts, while putting a *block* of controls
+     * back above the list — a slider, a text field, chips, which is what #84 would otherwise do —
+     * still fails loudly. A row is ~72dp; a block of controls is far more.
      */
     @Test
-    fun configurationAboveTheListStaysWithinItsBudget() {
+    fun configurationAboveTheListIsRowsNotBlocksOfControls() {
         openSettings().use { scenario ->
             scenario.onActivity { activity ->
                 val toolbar = activity.findViewById<MaterialToolbar>(R.id.settingsToolbar)
                 val list = activity.findViewById<RecyclerView>(R.id.recycler_view)
                 idleUntil { list.childCount > 0 }
 
+                val rows = listOf(R.id.logFileRow, R.id.appearanceRow)
+                    .count { activity.findViewById<View?>(it) != null }
+                assertTrue("expected configuration rows on the settings screen", rows > 0)
+
                 val density = activity.resources.displayMetrics.density
-                val budgetDp = 160
+                // per row, plus the Shortcuts headline and its margins
+                val allowanceDp = rows * 80 + 64
                 val usedDp = ((list.top - toolbar.bottom) / density).toInt()
                 assertTrue(
-                    "configuration above the shortcut list is ${'$'}usedDp dp, over the ${'$'}budgetDp dp budget",
-                    usedDp <= budgetDp
+                    "configuration above the shortcut list is $usedDp dp across $rows row(s), " +
+                        "over the $allowanceDp dp allowance - is a block of controls inline again?",
+                    usedDp <= allowanceDp
                 )
             }
         }
