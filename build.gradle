@@ -18,7 +18,7 @@ buildscript {
 
 // Apply Kover plugin to root project for multi-module support (if needed)
 plugins {
-    id 'org.jetbrains.kotlinx.kover' version '0.9.8' apply false
+    id 'org.jetbrains.kotlinx.kover' version '0.9.11' apply false
 }
 
 allprojects {
