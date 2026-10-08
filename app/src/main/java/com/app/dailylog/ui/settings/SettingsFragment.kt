@@ -19,7 +19,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.dailylog.R
 import com.app.dailylog.repository.Shortcut
 import com.app.dailylog.utils.DetermineBuild
+import android.os.Build
 import com.app.dailylog.utils.FileDisplayName
+import com.app.dailylog.utils.FileNameTemplate
 import com.app.dailylog.databinding.SettingsViewBinding
 
 class SettingsFragment(
@@ -103,7 +105,7 @@ class SettingsFragment(
         super.onResume()
         useDarkStatusBarIcons(requireActivity().window)
         // The file can change on the sub-screen, so re-read it when we come back.
-        binding.logFileValue.text = FileDisplayName.of(requireContext(), viewModel.getFilename())
+        binding.logFileValue.text = logFileSummary()
     }
 
     private val selectLegacyShortcutFileLauncher: ActivityResultLauncher<Intent> =
@@ -243,9 +245,17 @@ class SettingsFragment(
     }
 
     private fun renderLogFileRow() {
-        binding.logFileValue.text = FileDisplayName.of(requireContext(), viewModel.getFilename())
+        binding.logFileValue.text = logFileSummary()
         binding.logFileRow.setOnClickListener { openLogFileSettings() }
     }
+
+    /** In dated mode the chosen file changes daily, so the row names today's file instead. */
+    private fun logFileSummary(): String =
+        if (viewModel.isDatedMode() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            FileNameTemplate.resolve(viewModel.getFileNameTemplate())
+        } else {
+            FileDisplayName.of(requireContext(), viewModel.getFilename())
+        }
 
     private fun renderShortcutList() {
         val recyclerView = binding.recyclerView

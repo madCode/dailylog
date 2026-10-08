@@ -1,59 +1,173 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/logFileScroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     tools:context=".ui.settings.LogFileSettingsFragment">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/logFileToolbar"
-        style="@style/SettingsToolbar"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?attr/actionBarSize"
-        app:navigationContentDescription="@string/navigate_up"
-        app:navigationIcon="@drawable/ic_arrow_back_24"
-        app:title="@string/file_settings_title"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/fileNameTitle"
-        style="@style/TextHeadline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="@string/fileNameTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/settingsToolbarSpacer" />
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/logFileToolbar"
+            style="@style/SettingsToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            app:navigationContentDescription="@string/navigate_up"
+            app:navigationIcon="@drawable/ic_arrow_back_24"
+            app:title="@string/file_settings_title" />
 
-    <View
-        android:id="@+id/settingsToolbarSpacer"
-        android:layout_width="match_parent"
-        android:layout_height="8dp"
-        app:layout_constraintTop_toBottomOf="@id/logFileToolbar" />
+        <!-- Hidden below Android 8: date templates need java.time. -->
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/fileModeToggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="16dp"
+            app:selectionRequired="true"
+            app:singleSelection="true">
 
-    <TextView
-        android:id="@+id/fileName"
-        style="@style/TextAppearance.MaterialComponents.Subtitle1"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="4dp"
-        android:ellipsize="start"
-        android:singleLine="true"
-        android:textColor="?android:attr/textColorSecondary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fileNameTitle"
-        tools:text="content://com.android.providers.media.documents/document/document%3A18" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/oneFileButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/one_file"
+                android:textColor="?attr/colorSecondary" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/selectFileButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="@string/select_file"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fileName" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/datedFileButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/new_file_by_date"
+                android:textColor="?attr/colorSecondary" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- One file -->
+        <LinearLayout
+            android:id="@+id/fileRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="10dp"
+            android:paddingTop="16dp">
+
+            <TextView
+                android:id="@+id/fileNameTitle"
+                style="@style/TextHeadline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fileNameTitle" />
+
+            <TextView
+                android:id="@+id/fileName"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_weight="1"
+                android:ellipsize="start"
+                android:gravity="end"
+                android:singleLine="true"
+                android:textColor="?android:attr/textColorSecondary"
+                tools:text="journal.md" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/selectFileButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/select_file" />
+        </LinearLayout>
+
+        <!-- New file by date -->
+        <LinearLayout
+            android:id="@+id/datedFileGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="10dp"
+            android:paddingTop="8dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/folderTitle"
+                    style="@style/TextHeadline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="10dp"
+                    android:text="@string/folder" />
+
+                <TextView
+                    android:id="@+id/folderName"
+                    style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_weight="1"
+                    android:ellipsize="start"
+                    android:gravity="end"
+                    android:singleLine="true"
+                    android:textColor="?android:attr/textColorSecondary"
+                    tools:text="Journal" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/chooseFolderButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/choose_folder" />
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/fileNameTemplateLayout"
+                style="@style/SecondaryTextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/file_name_template">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/fileNameTemplate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:importantForAutofill="no"
+                    android:inputType="textUri|textMultiLine" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/templatePresets"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp" />
+
+            <TextView
+                android:id="@+id/todaysFilePreview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                tools:text="Today's file: Journal/2026/10-03-journal.md" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:text="@string/dated_file_hint"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

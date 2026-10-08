@@ -29,6 +29,19 @@ class ShortcutUtilsTest : TestCase() {
         assertEquals("hello darkness my old10:03:02 sldkfjsldfkj", result)
     }
 
+    fun testTwoDateTokensOnOneLine() {
+        val buildMock = Mockito.mock(DetermineBuildInterface::class.java)
+        Mockito.`when`(buildMock.isOreoOrGreater()).thenReturn(true)
+        val clock = Clock.fixed(Instant.parse("2018-08-22T10:03:02Z"), ZoneId.of("UTC"))
+        val shortcut = Shortcut(
+            label = "TEST",
+            value = "{DATETIME: yyyy-MM-dd} at {DATETIME: HH:mm}",
+            cursorIndex = 0,
+            position = 0,
+            type = ShortcutType.DATETIME
+        )
+        assertEquals("2018-08-22 at 10:03", ShortcutUtils.getValueOfShortcut(shortcut, clock, buildMock))
+    }
 
     @Test
     fun `test date properly formatted using default date string`() {
