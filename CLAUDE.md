@@ -124,6 +124,23 @@ Keep comments to what the code can't say on its own:
 - **One comment per block.** When several lines share a reason (e.g. a group of CI settings), put one comment above the block saying why it exists, not a comment on each line.
 - **Keep them short.** Usually one line, two at most.
 
+## Code Review
+
+Review changed code for these, beyond the usual correctness pass:
+
+- File I/O and error handling for markdown or plaintext files.
+- Memory management in `MainActivity` and UI components.
+- Kotlin best practices and idiomatic usage.
+- Android lifecycle management and resource cleanup.
+- UI responsiveness and performance in the logging interface.
+- Handling of user-defined shortcuts and text insertion.
+- Data persistence and repository implementation.
+- UX and UI consistency: matches existing screens' styling and spacing, keeps the
+  journaling flow distraction-free, and works with the on-screen keyboard, small
+  screens and dark theme.
+
+Give specific, actionable feedback.
+
 ## Library Choices
 
 When adding dependencies, prefer Kotlin-native libraries (no Java plugin requirement). Current key deps: Room (database), Gson (JSON), OpenCSV (legacy CSV import), Kover (coverage), Mockito (test mocks), Robolectric (JVM UI tests), Espresso (UI tests).
