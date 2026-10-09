@@ -19,6 +19,9 @@ import java.security.MessageDigest
 interface RepositoryInterface: FileRepositoryInterface, ShortcutRepositoryInterface {
     fun getCursorIndex(): Int
     fun setCursorIndex(index: Int)
+    /** The log editor's text size in dp, or null to follow the phone's font size. */
+    fun getEditorTextSize(): Int?
+    fun setEditorTextSize(size: Int?)
     fun getAllShortcuts(): LiveData<List<Shortcut>>
     fun labelExists(label: String): LiveData<Boolean>
 
@@ -71,6 +74,34 @@ class Repository(override val context: Context): RepositoryInterface {
             )
         val editor = preferences.edit()
         editor.putInt(Constants.CURSOR_KEY, index)
+        editor.apply()
+    }
+
+    override fun getEditorTextSize(): Int? {
+        val preferences =
+            context.getSharedPreferences(
+                context.getString(R.string.preference_file_key),
+                Context.MODE_PRIVATE
+            )
+        return if (preferences.contains(Constants.EDITOR_TEXT_SIZE_KEY)) {
+            preferences.getInt(Constants.EDITOR_TEXT_SIZE_KEY, 0)
+        } else {
+            null
+        }
+    }
+
+    override fun setEditorTextSize(size: Int?) {
+        val preferences =
+            context.getSharedPreferences(
+                context.getString(R.string.preference_file_key),
+                Context.MODE_PRIVATE
+            )
+        val editor = preferences.edit()
+        if (size == null) {
+            editor.remove(Constants.EDITOR_TEXT_SIZE_KEY)
+        } else {
+            editor.putInt(Constants.EDITOR_TEXT_SIZE_KEY, size)
+        }
         editor.apply()
     }
 

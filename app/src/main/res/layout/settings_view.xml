@@ -61,12 +61,54 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/appearanceRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:minHeight="72dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="12dp"
+        app:layout_constraintTop_toBottomOf="@id/logFileRow">
+
+        <TextView
+            android:id="@+id/appearanceRowTitle"
+            style="@style/TextHeadline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/appearanceTitle" />
+
+        <TextView
+            android:id="@+id/appearanceValue"
+            style="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:singleLine="true"
+            android:textColor="?android:attr/textColorSecondary"
+            tools:text="Default" />
+
+        <ImageView
+            android:id="@+id/appearanceChevron"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_chevron_right_24"
+            app:tint="?android:attr/textColorSecondary" />
+
+    </LinearLayout>
+
     <View
         android:id="@+id/logFileDivider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="?android:attr/listDivider"
-        app:layout_constraintTop_toBottomOf="@id/logFileRow" />
+        app:layout_constraintTop_toBottomOf="@id/appearanceRow" />
 
     <!-- Kept as the headline it has always been: the section is the screen's subject,
          not a label on a settings block.

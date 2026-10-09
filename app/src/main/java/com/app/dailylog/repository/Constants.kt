@@ -12,6 +12,7 @@ object Constants {
     const val OPEN_FILE_PREF_KEY = "openFile"
     const val FILE_NOT_CREATED = "FILE_NOT_CREATED"
     const val DEFAULT_CURSOR_INDEX = -1
+    const val EDITOR_TEXT_SIZE_KEY = "editorTextSize"
     const val CREATE_FILE_CODE = 112
     const val SELECT_FILE_CODE = 111
     const val SELECT_SHORTCUT_FILE_CODE = 113

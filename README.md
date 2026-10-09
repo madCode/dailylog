@@ -43,7 +43,7 @@ If you're using DailyLog, it's likely because you have a format you like to jour
 
 <img alt="Screen as described below" src="/README_screenshots/blank_settings_screen.png" height="500px"/>
 
-You'll see at the top the option to change the file you're working in, and under that a section labeled "Shortcuts" with a three dot menu next to it. At the bottom of the screen you'll see a big blue circle with a plus in it. Click the plus button.
+You'll see at the top the option to change the file you're working in, then an "Appearance" section for the editor's text size, and under that a section labeled "Shortcuts" with a three dot menu next to it. At the bottom of the screen you'll see a big blue circle with a plus in it. Click the plus button.
 
 <img alt="Shorcut creation dialog. Description below." src="/README_screenshots/empty_shortcut_create.png" height="500px"/>
 
@@ -112,6 +112,9 @@ If you'd rather keep one file per day, open settings and switch **Log file** fro
 The **File name** uses the same `{DATETIME: ...}` patterns as shortcuts, and can include folders. For example, `{DATETIME: yyyy}/{DATETIME: MM-dd}-journal.md` writes to `2026/10-03-journal.md`. Tap one of the dates under the name to change the date order but keep the rest of the name. Names can't contain `\ : * ? " < > |`, because phone storage renames them. The line below shows today's file.
 
 Each day starts with an empty log. The file, and any folders in its name, are only created the first time you save that day. If the app is still open at midnight, it switches to the new day's file the next time you come back to it. New file by date needs Android 8 or newer.
+
+## Editor text size
+Settings has an "Editor text size" slider (12 to 40). A size you pick stays the same whatever your phone's font size is; shortcuts and the settings screen still follow the phone. "Reset" goes back to following the phone's font size.
 
 ## Drag to reorder shortcuts
 When you have a list of shortcuts in the settings page, you can drag them around to reorder them. This will also change the order by which they appear in the shortcuts tray.

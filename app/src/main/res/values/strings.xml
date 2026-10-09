@@ -68,4 +68,9 @@
     <string name="file_name_template">File name</string>
     <string name="todays_file">Today\'s file: %1$s</string>
     <string name="dated_file_hint">A new file is made the first time you save each day.</string>
+<string name="appearanceTitle">Appearance</string>
+    <string name="editor_text_size">Editor text size</string>
+    <string name="editor_text_size_default">Default</string>
+    <string name="reset">Reset</string>
+    <string name="editor_text_size_preview">- dinner: pasta with greens</string>
 </resources>
