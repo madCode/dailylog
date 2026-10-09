@@ -25,22 +25,56 @@ jobs:
           RUN_ID: ${{ github.event.workflow_run.id }}
         run: |
           gh run view "$RUN_ID" --repo "$GITHUB_REPOSITORY" --log-failed > log.txt 2>/dev/null || true
-          # Gradle prints "Class > method FAILED" per failing test; the instrumentation matrix
-          # prints the same. None means the build broke before the tests ran.
-          grep -ohE '[A-Za-z0-9_]+Test[A-Za-z0-9_]* > [A-Za-z0-9_]+ FAILED' log.txt | sort -u > tests.txt || true
+          # The instrumentation matrix does NOT print the same shape as the unit build. It
+          # prints "Class > method[emulator-5554 - 6.0] FAILED", with the device between the
+          # method and FAILED and an ANSI colour around FAILED, so the unit-test pattern missed
+          # every emulator failure and this workflow reported "no failing test was named" for
+          # all of them -- see #117 and #124, where that read as a silent build break.
+          sed $'s/\033\[[0-9;]*m//g' log.txt > clean.txt
+          {
+            # Unit build, and the matrix's own summary line, with any [device] stripped.
+            grep -ohE '[A-Za-z0-9_]+Test[A-Za-z0-9_]* > [A-Za-z0-9_]+(\[[^]]*\])? +FAILED' clean.txt \
+              | sed -E 's/\[[^]]*\]//; s/ +FAILED$/ FAILED/'
+            # The matrix also prints this cleaner form, with no colour and no device.
+            grep -ohE 'Execute [A-Za-z0-9_.]+\.[A-Za-z0-9_]+: FAILED' clean.txt \
+              | sed -E 's/^Execute //; s/: FAILED$//' \
+              | awk -F. '{ print $(NF-1) " > " $NF " FAILED" }'
+          } 2>/dev/null | sort -u > tests.txt || true
           # Which job failed matters here: a red emulator matrix and a red unit build are
           # different problems.
           gh run view "$RUN_ID" --repo "$GITHUB_REPOSITORY" --json jobs \
             --jq '.jobs[] | select(.conclusion=="failure") | "- job: \(.name)"' > jobs.txt 2>/dev/null || true
+          # A job that failed before running a test is a third case, and the commonest one on
+          # the emulator matrix. Saying "the build itself failed" for it sent several
+          # investigations after the diff when the diff was fine. Name what the log matched.
+          cause=""
+          if grep -qE 'Error on ZipFile unknown archive|Error reading Zip content' log.txt; then
+            cause='an SDK package failed to unzip while the runner was installing it'
+          elif grep -q 'DELETE_FAILED_INTERNAL_ERROR' log.txt; then
+            cause='a leftover install could not be removed, so the test APK never went on'
+          elif grep -q 'Timeout waiting for emulator to boot' log.txt; then
+            cause='the emulator never finished booting'
+          elif grep -q 'Instrumentation run failed due to Process crashed' log.txt; then
+            cause='the instrumentation process crashed'
+          fi
+          # Zero tests is the tell that separates this from a real break, whatever the cause.
+          no_tests=""
+          grep -qE 'Starting 0 tests' log.txt && no_tests=yes
           {
             echo 'summary<<EOF'
             cat jobs.txt
+            echo
             if [ -s tests.txt ]; then
-              echo
               sed 's/ FAILED$//; s/^/- `/; s/$/`/' tests.txt
+            elif [ -n "$no_tests" ] || [ -n "$cause" ]; then
+              echo '_No test failed here: the job never ran one.'
+              [ -n "$cause" ] && echo "Matched in the log: $cause."
+              echo 'That is infrastructure, not the change that landed. Re-running the failed'
+              echo 'jobs is the right response -- but say in this issue that you did, because'
+              echo '`gh run view --log` then serves the re-run and hides that attempt 1 failed._'
             else
-              echo
-              echo '_No failing test was named: the build itself failed._'
+              echo '_No failing test was named, and no known infrastructure signature matched:'
+              echo 'the build itself failed._'
             fi
             echo EOF
           } >> "$GITHUB_OUTPUT"
