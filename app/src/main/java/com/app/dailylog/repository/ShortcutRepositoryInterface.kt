@@ -105,7 +105,10 @@ interface ShortcutRepositoryInterface {
             return false
         }
         if (!skipUniqueCheck) {
-            for (shortcut in shortcutLiveData.value!!) {
+            // orEmpty, not !!: the list is null until Room's first emission reaches the
+            // observer, and validation can be asked before that. nextShortcutPosition guards
+            // the same value; this did not, so an import before the list loaded threw NPE.
+            for (shortcut in shortcutLiveData.value.orEmpty()) {
                 if (shortcut.label == label) {
                     return false
                 }
