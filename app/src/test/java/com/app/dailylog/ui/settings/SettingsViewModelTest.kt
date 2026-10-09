@@ -154,7 +154,9 @@ class SettingsViewModelTest {
         doThrow(RuntimeException("Export failed")).`when`(repository).exportShortcutsAsJson(uri)
         val error = settingsViewModel.exportShortcuts()
         assertNotNull(error)
-        assertTrue(error?.message?.contains("Error:") == true)
+        // The exception's own message, not just the "Error:" prefix: asserting only the prefix
+        // is what let this pass while it read "Error: kotlin.Unit".
+        assertTrue(error!!.message!!, error.message!!.contains("Export failed"))
     }
 
     @Test
