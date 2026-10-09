@@ -6,8 +6,10 @@ name: Security scan
 on:
   push:
     branches: [main]
+  # Every pull request, not only the ones touching workflows or Gradle. A required check that
+  # does not run never reports, and GitHub waits for it forever: that is what left #91 BLOCKED
+  # with every check it did report passing. The two jobs take about 30 seconds between them.
   pull_request:
-    paths: ['.github/workflows/**', 'app/build.gradle', 'build.gradle', 'gradle/**']
   schedule:
     - cron: '41 5 * * 2'
   workflow_dispatch:
