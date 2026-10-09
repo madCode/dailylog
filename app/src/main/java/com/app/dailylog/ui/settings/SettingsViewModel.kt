@@ -6,6 +6,7 @@ import androidx.lifecycle.*
 import com.app.dailylog.repository.RepositoryInterface
 import com.app.dailylog.repository.Shortcut
 import com.app.dailylog.utils.DetermineBuildInterface
+import com.app.dailylog.utils.FileNameTemplate
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -61,6 +62,36 @@ class SettingsViewModel(
 
     fun getFilename(): String {
         return repository.retrieveFilename()
+    }
+
+    fun isDatedMode(): Boolean = repository.isDatedMode()
+
+    fun useOneFile() = repository.setDatedMode(false)
+
+    /** Returns false when no folder has been chosen yet, so the caller should ask for one. */
+    fun useDatedFiles(): Boolean {
+        if (repository.retrieveLogFolder() == null) return false
+        repository.setDatedMode(true)
+        return true
+    }
+
+    fun chooseLogFolder(folder: Uri) {
+        repository.storeLogFolder(folder)
+        repository.setDatedMode(true)
+    }
+
+    fun getLogFolder(): Uri? = repository.retrieveLogFolder()
+
+    fun getLogFolderName(): String? = repository.retrieveLogFolderName()
+
+    fun getFileNameTemplate(): String = repository.retrieveFileNameTemplate()
+
+    /** Saves [template] when it can name a file, otherwise returns why it can't. */
+    @SuppressLint("NewApi")
+    fun setFileNameTemplate(template: String): String? {
+        val error = FileNameTemplate.error(template)
+        if (error == null) repository.storeFileNameTemplate(template.trim())
+        return error
     }
 
     fun getAllShortcuts(): LiveData<List<Shortcut>> {
