@@ -161,9 +161,11 @@ The project follows standard Android conventions:
    - Ensure JDK 21 (OpenJDK 21) is installed and set as the Gradle JDK in Android Studio (**Settings → Build, Execution, Deployment → Build Tools → Gradle → Gradle JDK**)
    - On macOS with Homebrew: `brew install openjdk@21`, then symlink it: `sudo ln -sfn /opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-21.jdk`
 
-2. **Permission issues with external storage**:
-   - The app requires read/write permissions to external storage
-   - These are properly declared in AndroidManifest.xml
+2. **File access problems**:
+   - The app declares no permissions at all. It reaches the log file through a `content://`
+     URI the user picks, and keeps access with `takePersistableUriPermission`.
+   - So a file that has stopped opening usually means the URI is no longer grantable: the
+     file was moved, renamed or deleted, or its provider revoked access. Pick the file again.
 
 3. **F-Droid build errors**:
    - Ensure all dependencies are compatible with F-Droid's build environment
