@@ -64,6 +64,26 @@ class ActivityRecreationTest {
         return scenario
     }
 
+    // Espresso gives the root view 10 seconds to hold window focus and stop requesting layout
+    // before it gives up with RootViewWithoutFocusException. A freshly recreated activity on the
+    // API 23 emulator does not always get there in time, which failed all three of these tests
+    // on #108 and #112 and then passed on a re-run.
+    //
+    // Best effort, deliberately not an assertion. A dialog holds the focus its activity lost, so
+    // in addShortcutDialog_survivesRecreation this condition can never come true and the loop
+    // always runs to the deadline -- which is why the deadline is short. Asserting it instead
+    // failed that test on every API level.
+    private fun ActivityScenario<MainActivity>.recreateAndSettle() {
+        recreate()
+        val deadline = System.currentTimeMillis() + 1_500
+        while (System.currentTimeMillis() < deadline) {
+            var settled = false
+            onActivity { settled = it.window.decorView.let { v -> v.hasWindowFocus() && !v.isLayoutRequested } }
+            if (settled) return
+            Thread.sleep(50)
+        }
+    }
+
     // The log field's keyboard can cover the settings button on a small screen.
     private fun openSettings() {
         onView(withId(R.id.btnSettings)).perform(closeSoftKeyboard(), click())
@@ -72,7 +92,7 @@ class ActivityRecreationTest {
     @Test
     fun logScreen_survivesRecreation() {
         launchWithShortcutsLoaded().use { scenario ->
-            scenario.recreate()
+            scenario.recreateAndSettle()
 
             onView(withId(R.id.todayLog)).check(matches(isDisplayed()))
             onView(withText("TestShortcut")).check(matches(isDisplayed()))
@@ -85,7 +105,7 @@ class ActivityRecreationTest {
             openSettings()
             onView(withId(R.id.addShortcutButton)).check(matches(isDisplayed()))
 
-            scenario.recreate()
+            scenario.recreateAndSettle()
 
             onView(withId(R.id.addShortcutButton)).check(matches(isDisplayed()))
             onView(withText("TestShortcut")).check(matches(isDisplayed()))
@@ -104,7 +124,7 @@ class ActivityRecreationTest {
             val dialogTitle = onView(withId(R.id.addShortcutTitle)).inRoot(isDialog())
             dialogTitle.perform(closeSoftKeyboard()).check(matches(isDisplayed()))
 
-            scenario.recreate()
+            scenario.recreateAndSettle()
 
             dialogTitle.perform(closeSoftKeyboard()).check(matches(isDisplayed()))
         }
