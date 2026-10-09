@@ -211,6 +211,45 @@ class SettingsScreenTest : AppRobolectricTest() {
     }
 
     @Test
+    fun editDialog_renamesShortcutKeepingId() {
+        openSettings().use { scenario ->
+            scenario.onActivity { activity ->
+                val list = activity.findViewById<RecyclerView>(R.id.recycler_view)
+                idleUntil { list.childCount == 2 }
+                val id = activity.shortcuts().single { it.label == "First" }.id
+                list.getChildAt(0).performClick()
+                idleUntil(500) { false }
+                val dialog = activity.dialog("fragment_edit")
+                dialog.type(R.id.labelInput, "Renamed")
+                dialog.click(R.id.btnSaveShortcut)
+                idleUntil { list.getChildAt(0).findViewById<TextView>(R.id.label).text.toString() == "Renamed" }
+                assertEquals("Renamed", list.getChildAt(0).findViewById<TextView>(R.id.label).text.toString())
+                val renamed = activity.shortcuts().filter { it.id == id || it.label == "Renamed" }
+                assertEquals(listOf(id to "Renamed"), renamed.map { it.id to it.label })
+                assertEquals(2, activity.shortcuts().size)
+            }
+        }
+    }
+
+    @Test
+    fun editDialog_rejectsOtherShortcutsLabel() {
+        openSettings().use { scenario ->
+            scenario.onActivity { activity ->
+                val list = activity.findViewById<RecyclerView>(R.id.recycler_view)
+                idleUntil { list.childCount == 2 }
+                list.getChildAt(0).performClick()
+                idleUntil(500) { false }
+                val dialog = activity.dialog("fragment_edit")
+                dialog.type(R.id.labelInput, "Second")
+                dialog.click(R.id.btnSaveShortcut)
+                assertNotNull(dialog.requireView().findViewById<TextInputLayout>(R.id.labelInputLayout).error)
+                assertTrue(dialog.isAdded)
+                assertEquals(listOf("First", "Second"), activity.shortcuts().map { it.label })
+            }
+        }
+    }
+
+    @Test
     fun deleteButton_removesShortcut() {
         openSettings().use { scenario ->
             scenario.onActivity { activity ->

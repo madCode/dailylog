@@ -16,8 +16,8 @@ interface ShortcutRepositoryInterface {
         return  Shortcut(label = label, value = text, cursorIndex = cursorIndex, position = nextShortcutPosition(), type=type)
     }
 
-    private suspend fun deleteShortcutFromDB(label: String): Boolean {
-        shortcutDao.deleteByLabel(label)
+    private suspend fun deleteShortcutFromDB(id: String): Boolean {
+        shortcutDao.deleteById(id)
         return true
     }
 
@@ -25,8 +25,8 @@ interface ShortcutRepositoryInterface {
         shortcutDao.updateAll(*shortcuts.toTypedArray())
     }
 
-    suspend fun updateShortcut(label: String, text: String, cursorIndex: Int, position: Int, type: String): Boolean {
-        val shortcut = Shortcut(label = label, value = text, cursorIndex = cursorIndex, position = position, type= type)
+    suspend fun updateShortcut(id: String, label: String, text: String, cursorIndex: Int, position: Int, type: String): Boolean {
+        val shortcut = Shortcut(id = id, label = label, value = text, cursorIndex = cursorIndex, position = position, type= type)
         shortcutDao.updateAll(shortcut)
         return true
     }
@@ -100,21 +100,14 @@ interface ShortcutRepositoryInterface {
         return text.isNotEmpty()
     }
 
-    fun isLabelValid(label: String, skipUniqueCheck: Boolean = false): Boolean {
+    /** [excludeId] is the shortcut being edited, which may keep its own label. */
+    fun isLabelValid(label: String, excludeId: String? = null): Boolean {
         if (label.isEmpty()) {
             return false
         }
-        if (!skipUniqueCheck) {
-            // orEmpty, not !!: the list is null until Room's first emission reaches the
-            // observer, and validation can be asked before that. nextShortcutPosition guards
-            // the same value; this did not, so an import before the list loaded threw NPE.
-            for (shortcut in shortcutLiveData.value.orEmpty()) {
-                if (shortcut.label == label) {
-                    return false
-                }
-            }
-        }
-        return true
+        // orEmpty, not !!: the list is null until Room's first emission reaches the
+        // observer, and validation can be asked before that (#120).
+        return shortcutLiveData.value.orEmpty().none { it.label == label && it.id != excludeId }
     }
 
     fun validateShortcutRow(shortcutInfo: Array<String>, index: Int): Boolean {
@@ -143,8 +136,8 @@ interface ShortcutRepositoryInterface {
         return true
     }
 
-    suspend fun removeShortcut(label: String): Boolean {
-        deleteShortcutFromDB(label)
+    suspend fun removeShortcut(id: String): Boolean {
+        deleteShortcutFromDB(id)
         return true
     }
 

@@ -9,7 +9,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 
-@Database(entities = [Shortcut::class], version = 4, exportSchema = true)
+@Database(entities = [Shortcut::class], version = 5, exportSchema = true)
 abstract class ShortcutDatabase : RoomDatabase() {
     abstract fun shortcutDao(): ShortcutDao
 
@@ -35,6 +35,19 @@ abstract class ShortcutDatabase : RoomDatabase() {
                 db.execSQL("INSERT INTO shortcut_tmp(label, value, cursorIndex, type, position) SELECT label, text, cursorIndex, type, position FROM Shortcut;")
                 db.execSQL("DROP TABLE Shortcut;")
                 db.execSQL("ALTER TABLE shortcut_tmp RENAME TO Shortcut;")
+            }
+        }
+
+        // Labels were the primary key, which stopped them from being edited.
+        @VisibleForTesting
+        val MIGRATION_4_5: Migration = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE shortcut_tmp(`label` TEXT NOT NULL, `value` TEXT NOT NULL, `cursorIndex` INTEGER NOT NULL, `type` TEXT NOT NULL DEFAULT 'TEXT', `position` INTEGER NOT NULL, `id` TEXT NOT NULL, PRIMARY KEY(`id`));")
+                // Existing labels are already unique, so they double as ids.
+                db.execSQL("INSERT INTO shortcut_tmp(label, value, cursorIndex, type, position, id) SELECT label, value, cursorIndex, type, position, label FROM Shortcut;")
+                db.execSQL("DROP TABLE Shortcut;")
+                db.execSQL("ALTER TABLE shortcut_tmp RENAME TO Shortcut;")
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_Shortcut_label` ON `Shortcut` (`label`);")
             }
         }
 
@@ -65,7 +78,7 @@ abstract class ShortcutDatabase : RoomDatabase() {
                         context,
                         ShortcutDatabase::class.java,
                         "shortcut_database"
-                    ).addMigrations(MIGRATION_3_4).build()
+                    ).addMigrations(MIGRATION_3_4, MIGRATION_4_5).build()
                     INSTANCE = instance
                     return instance
                 }
