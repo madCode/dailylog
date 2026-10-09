@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.app.dailylog.R
 import com.app.dailylog.databinding.AddToLogViewBinding
+import com.app.dailylog.utils.EditorTextSize
 
 class LogFragment(private val viewModel: LogViewModel, private val goToSettings: () -> Unit) : Fragment() {
     private lateinit var binding: AddToLogViewBinding
@@ -66,6 +67,7 @@ class LogFragment(private val viewModel: LogViewModel, private val goToSettings:
 
     override fun onResume() {
         super.onResume()
+        EditorTextSize.apply(binding.todayLog, viewModel.getEditorTextSize())
         loadFile()
         binding.todayLog.requestFocus()
 

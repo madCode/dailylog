@@ -43,7 +43,7 @@ If you're using DailyLog, it's likely because you have a format you like to jour
 
 <img alt="Screen as described below" src="/README_screenshots/blank_settings_screen.png" height="500px"/>
 
-You'll see at the top the option to change the file you're working in, and under that a section labeled "Shortcuts" with a three dot menu next to it. At the bottom of the screen you'll see a big blue circle with a plus in it. Click the plus button.
+You'll see at the top the option to change the file you're working in, then an "Appearance" section for the editor's text size, and under that a section labeled "Shortcuts" with a three dot menu next to it. At the bottom of the screen you'll see a big blue circle with a plus in it. Click the plus button.
 
 <img alt="Shorcut creation dialog. Description below." src="/README_screenshots/empty_shortcut_create.png" height="500px"/>
 
@@ -105,6 +105,9 @@ Start by opening the "Create new shortcut" dialog. Let's make the label the cale
 Now if you hit the calendar shortcut, you get the date!
 
 A description of the available datetime patterns can be found in the [Java documentation of DateTimeFormatter](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns).
+
+## Editor text size
+Settings has an "Editor text size" slider (12 to 40). A size you pick stays the same whatever your phone's font size is; shortcuts and the settings screen still follow the phone. "Reset" goes back to following the phone's font size.
 
 ## Drag to reorder shortcuts
 When you have a list of shortcuts in the settings page, you can drag them around to reorder them. This will also change the order by which they appear in the shortcuts tray.

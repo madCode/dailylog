@@ -23,7 +23,8 @@ import com.app.dailylog.databinding.SettingsViewBinding
 
 class SettingsFragment(
     private val viewModel: SettingsViewModel,
-    private val openLogFileSettings: () -> Unit = {}
+    private val openLogFileSettings: () -> Unit = {},
+    private val openAppearanceSettings: () -> Unit = {},
 ) : Fragment(),
     AddShortcutDialogFragment.AddShortcutDialogListener,
     BulkAddShortcutsDialogFragment.BulkAddListener,
@@ -35,8 +36,11 @@ class SettingsFragment(
     private lateinit var binding: SettingsViewBinding
 
     companion object {
-        fun newInstance(viewModel: SettingsViewModel, openLogFileSettings: () -> Unit = {}) =
-            SettingsFragment(viewModel, openLogFileSettings)
+        fun newInstance(
+            viewModel: SettingsViewModel,
+            openLogFileSettings: () -> Unit = {},
+            openAppearanceSettings: () -> Unit = {},
+        ) = SettingsFragment(viewModel, openLogFileSettings, openAppearanceSettings)
     }
 
     override fun onCreateView(
@@ -72,6 +76,7 @@ class SettingsFragment(
             }
         })
         renderLogFileRow()
+        renderAppearanceRow()
         renderShortcutList()
         binding.addShortcutButton.setOnClickListener {
             val addDialog: AddShortcutDialogFragment =
@@ -100,6 +105,7 @@ class SettingsFragment(
         useDarkStatusBarIcons(requireActivity().window)
         // The file can change on the sub-screen, so re-read it when we come back.
         binding.logFileValue.text = FileDisplayName.of(requireContext(), viewModel.getFilename())
+        binding.appearanceValue.text = appearanceSummary()
     }
 
     private val selectLegacyShortcutFileLauncher: ActivityResultLauncher<Intent> =
@@ -237,6 +243,14 @@ class SettingsFragment(
         super.onDestroyView()
         restoreThemeStatusBarIcons(requireActivity().window)
     }
+
+    private fun renderAppearanceRow() {
+        binding.appearanceValue.text = appearanceSummary()
+        binding.appearanceRow.setOnClickListener { openAppearanceSettings() }
+    }
+
+    private fun appearanceSummary(): String =
+        viewModel.getEditorTextSize()?.toString() ?: getString(R.string.editor_text_size_default)
 
     private fun renderLogFileRow() {
         binding.logFileValue.text = FileDisplayName.of(requireContext(), viewModel.getFilename())
