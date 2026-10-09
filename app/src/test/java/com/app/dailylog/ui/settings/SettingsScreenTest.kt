@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
@@ -18,6 +19,7 @@ import com.app.dailylog.R
 import com.app.dailylog.repository.Shortcut
 import com.app.dailylog.repository.ShortcutType
 import com.app.dailylog.testutil.AppRobolectricTest
+import com.google.android.material.slider.Slider
 import com.google.android.material.textfield.TextInputLayout
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -26,8 +28,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
-import org.robolectric.shadows.ShadowDialog
 import org.robolectric.shadows.ShadowPopupMenu
+import org.robolectric.shadows.ShadowDialog
 import java.io.File
 
 @RunWith(AndroidJUnit4::class)
@@ -60,11 +62,12 @@ class SettingsScreenTest : AppRobolectricTest() {
         idleUntil(500) { false }
     }
 
-    private fun MainActivity.answerFilePicker(uri: Uri) {
+    private fun MainActivity.answerFilePicker(uri: Uri): Intent {
         val request = shadowOf(this).nextStartedActivityForResult
         assertNotNull("expected a file picker", request)
         shadowOf(this).receiveResult(request.intent, Activity.RESULT_OK, Intent().setData(uri))
         idleUntil(500) { false }
+        return request.intent.getParcelableExtra(Intent.EXTRA_INTENT)!!
     }
 
     private fun MainActivity.chooseMenuItem(id: Int) {
@@ -73,15 +76,23 @@ class SettingsScreenTest : AppRobolectricTest() {
         idleUntil(500) { false }
     }
 
+    /** Taps the "Log file" row and waits for the sub-screen. */
+    private fun MainActivity.openLogFile(): LogFileSettingsFragment {
+        findViewById<View>(R.id.logFileRow).performClick()
+        idleUntil(500) { false }
+        return supportFragmentManager.findFragmentById(R.id.container) as LogFileSettingsFragment
+    }
+
     @Test
     fun listsShortcutsAndFile() {
         openSettings().use { scenario ->
             scenario.onActivity { activity ->
                 idleUntil { activity.findViewById<RecyclerView>(R.id.recycler_view).childCount == 2 }
                 assertEquals(View.GONE, activity.findViewById<View>(R.id.noShortcutsMessage).visibility)
+                // The row shows a readable name, not the SAF URI behind it.
                 assertEquals(
-                    Uri.fromFile(logFile).toString(),
-                    activity.findViewById<android.widget.TextView>(R.id.fileName).text.toString()
+                    logFile.name,
+                    activity.findViewById<android.widget.TextView>(R.id.logFileValue).text.toString()
                 )
             }
         }
@@ -113,6 +124,67 @@ class SettingsScreenTest : AppRobolectricTest() {
                 dialog.click(R.id.btnSaveShortcut)
                 assertEquals("one", activity.shortcuts().single { it.label == "First" }.value)
                 assertTrue(dialog.isAdded)
+                assertEquals(
+                    activity.getString(R.string.duplicateNameError),
+                    dialog.requireView().findViewById<TextInputLayout>(R.id.labelInputLayout).error.toString()
+                )
+            }
+        }
+    }
+
+    @Test
+    fun addDialog_rejectsEmptyName() {
+        openSettings().use { scenario ->
+            onView(withId(R.id.addShortcutButton)).perform(click())
+            scenario.onActivity { activity ->
+                val dialog = activity.dialog("fragment_add_shortcut")
+                dialog.type(R.id.textInput, "nameless")
+                dialog.click(R.id.btnSaveShortcut)
+                assertTrue(dialog.isAdded)
+                assertEquals(
+                    activity.getString(R.string.emptyNameError),
+                    dialog.requireView().findViewById<TextInputLayout>(R.id.labelInputLayout).error.toString()
+                )
+            }
+        }
+    }
+
+    @Test
+    fun addDialog_previewFollowsTextAndSlider() {
+        openSettings().use { scenario ->
+            onView(withId(R.id.addShortcutButton)).perform(click())
+            scenario.onActivity { activity ->
+                val dialog = activity.dialog("fragment_add_shortcut")
+                val preview = dialog.requireView().findViewById<TextView>(R.id.previewText)
+                val slider = dialog.requireView().findViewById<Slider>(R.id.cursorSlider)
+
+                dialog.type(R.id.textInput, "hello")
+                assertEquals("Preview\nhello|", preview.text.toString())
+
+                slider.value = 2f
+                assertEquals("Preview\nhe|llo", preview.text.toString())
+                assertEquals(activity.getString(R.string.previewDescription, "he", "llo"), preview.contentDescription)
+
+                slider.value = 0f
+                assertEquals("Preview\n|hello", preview.text.toString())
+
+                // Tokens are previewed as typed: the saved cursor index counts the raw text.
+                dialog.type(R.id.textInput, "{DATETIME: HH:mm}")
+                assertEquals("Preview\n{DATETIME: HH:mm}|", preview.text.toString())
+
+                dialog.type(R.id.textInput, "")
+                assertEquals("", preview.text.toString())
+            }
+        }
+    }
+
+    @Test
+    fun list_showsTextWithoutCursorMarker() {
+        openSettings().use { scenario ->
+            scenario.onActivity { activity ->
+                val list = activity.findViewById<RecyclerView>(R.id.recycler_view)
+                idleUntil { list.childCount == 2 }
+                assertEquals("one", list.getChildAt(0).findViewById<TextView>(R.id.text).text.toString())
             }
         }
     }
@@ -127,6 +199,10 @@ class SettingsScreenTest : AppRobolectricTest() {
                 idleUntil(500) { false }
                 val dialog = activity.dialog("fragment_edit")
                 assertEquals("First", dialog.requireView().findViewById<EditText>(R.id.labelInput).text.toString())
+                assertEquals(
+                    "Preview\n|one",
+                    dialog.requireView().findViewById<TextView>(R.id.previewText).text.toString()
+                )
                 dialog.type(R.id.textInput, "uno")
                 dialog.click(R.id.btnSaveShortcut)
                 assertEquals("uno", activity.shortcuts().single { it.label == "First" }.value)
@@ -259,15 +335,48 @@ class SettingsScreenTest : AppRobolectricTest() {
         val other = File(context.filesDir, "other.md").apply { writeText("other\n") }
         openSettings().use { scenario ->
             scenario.onActivity { activity ->
+                activity.openLogFile()
                 activity.findViewById<View>(R.id.selectFileButton).performClick()
-                activity.answerFilePicker(Uri.fromFile(other))
+                val picker = activity.answerFilePicker(Uri.fromFile(other))
+                // A text/* filter greys out .md files that the provider reports with another type.
+                assertEquals(Intent.ACTION_OPEN_DOCUMENT, picker.action)
+                assertEquals("*/*", picker.type)
                 assertEquals(
-                    Uri.fromFile(other).toString(),
+                    other.name,
                     activity.findViewById<android.widget.TextView>(R.id.fileName).text.toString()
                 )
                 assertEquals(Uri.fromFile(other).toString(), activity.repository.filename)
+                // Back to Settings: the row reflects the new file.
+                activity.onBackPressedDispatcher.onBackPressed()
+                idleUntil(500) { false }
+                assertEquals(
+                    other.name,
+                    activity.findViewById<android.widget.TextView>(R.id.logFileValue).text.toString()
+                )
             }
         }
+        other.delete()
+    }
+
+    @Test
+    fun selectFile_thenLeavingTheApp_leavesTheNewFileUntouched() {
+        // CRLF and no trailing newline: reading normalizes both, so any save would change the bytes.
+        val original = "first\r\nsecond"
+        val other = File(context.filesDir, "other.md").apply { writeText(original) }
+        openSettings().use { scenario ->
+            scenario.onActivity { activity ->
+                activity.openLogFile()
+                activity.findViewById<View>(R.id.selectFileButton).performClick()
+                activity.answerFilePicker(Uri.fromFile(other))
+                repeat(2) {
+                    activity.onBackPressedDispatcher.onBackPressed()
+                    idleUntil(500) { false }
+                }
+                assertEquals("first\nsecond\n", activity.findViewById<EditText>(R.id.todayLog).text.toString())
+            }
+            scenario.moveToState(Lifecycle.State.CREATED)
+        }
+        assertEquals(original, other.readText())
         other.delete()
     }
 

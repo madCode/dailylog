@@ -53,4 +53,14 @@ class LogViewModelTest : TestCase() {
         verify(repository).readFile(false)
     }
 
+    fun `switching files loads the new file as a first load`() {
+        val repository: RepositoryInterface = mock(RepositoryInterface::class.java)
+        `when`(repository.filename).thenReturn("content://old")
+        val viewModel = LogViewModel(repository)
+        viewModel.getLog()
+        `when`(repository.filename).thenReturn("content://new")
+        viewModel.getLog()
+        verify(repository, times(2)).readFile(true)
+    }
+
 }

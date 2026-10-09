@@ -1,0 +1,98 @@
+# The two whole-codebase passes, on a clock rather than when someone remembers. A PR review
+# sees one diff; these see what only the whole tree shows.
+# Findings become an issue, not a PR: each wants checking before anything is changed.
+name: Recurring review
+
+on:
+  schedule:
+    # Security on the 8th, architecture on the 22nd: a week off newspaperss's 1st and 15th, so
+    # the two repos' passes don't land in the same sitting.
+    - cron: '17 4 8 * *'
+    - cron: '17 4 22 * *'
+  workflow_dispatch:
+    inputs:
+      pass:
+        description: Which pass to run
+        required: true
+        type: choice
+        options: [security, architecture]
+
+permissions:
+  contents: read
+  issues: write
+  id-token: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Which pass
+        id: which
+        env:
+          DISPATCHED: ${{ inputs.pass }}
+          CRON: ${{ github.event.schedule }}
+        run: |
+          if [ -n "$DISPATCHED" ]; then pass="$DISPATCHED"
+          elif [ "$CRON" = '17 4 8 * *' ]; then pass=security
+          else pass=architecture
+          fi
+          echo "pass=$pass" >> "$GITHUB_OUTPUT"
+
+      - uses: anthropics/claude-code-action@6fed3ca145920b639991cb756090506e1bcaf515 # v1.0.245
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            PASS: ${{ steps.which.outputs.pass }}
+
+            Run the "${{ steps.which.outputs.pass }}" whole-codebase pass. The specification is
+            practices/recurring-reviews.md in madCode/claude-playground -- fetch it and follow
+            it, rather than a generic checklist. This repository has no docs/ directory: CLAUDE.md
+            carries the architecture and the rules, so read it first.
+
+            What this app is matters for both passes: it keeps a person's journal. The file is
+            the user's own, reached through a content:// URI they picked, and its text is the
+            most private thing here.
+
+            For security it names OWASP MASVS as the areas to cover so none is skipped (storage,
+            crypto, network, platform, code, privacy), then: whether any journal text, file name
+            or URI reaches logcat, a crash report or an exception message; what android:backup
+            carries off the device, given allowBackup="true" and a SharedPreferences file
+            holding the log URI; the exported activity and what an arbitrary app can send it;
+            hostile input through import (a crafted shortcuts JSON or legacy CSV: huge files,
+            duplicate labels, a cursorIndex out of range) and through datetime patterns;
+            what each CI job can write and whether actions are pinned to a commit; the signing
+            key secrets; dependencies; and the Android specifics (cleartext off, components not
+            exported unless they must be, content:// over file://, as few permissions as will do).
+
+            For architecture: duplication and code passing many values around, how features fit
+            together and what one deletes that another still uses, save paths that can be cut
+            short or run twice (smart save by MD5 hash, save on pause against the explicit save
+            button), the cursor index surviving rotation and process death, shortcut reordering
+            leaving positions consistent, tests that can never fail, waits that flake under
+            load, copied test helpers, coverage that counts generated code, and CLAUDE.md,
+            AGENTS.md, README.md and README-developer.md checked against the code.
+
+            Report findings as `file:line`, each with the input or state that produces the wrong
+            result, most severe first. Make no edits and open no pull request.
+
+            The practice has findings checked and then fixed in a PR per area; a scheduled run
+            stops before that. Open ONE issue with `gh issue create`, labelled `audit`, titled
+            "<pass> pass: <n> findings" (or "<pass> pass: nothing worth changing"). Put the
+            findings in it, worst first, and say plainly which you are unsure about. A pass that
+            finds little should say so in a few lines: padding it makes the next one easier to
+            ignore.
+
+            The issue is posted from madCode's account, so its first line is
+            `🤖 **Claude · review notes**`, as CLAUDE.md requires.
+
+            Do not repeat a finding that an open `audit` issue already lists -- check first with
+            `gh issue list --label audit --state open`.
+
+          claude_args: |
+            --allowedTools "Bash(gh issue create:*),Bash(gh issue list:*),Bash(gh label create:*),Bash(gh api repos/madCode/claude-playground/contents/*),Bash(git log:*),Bash(git diff:*),Read,Grep,Glob"

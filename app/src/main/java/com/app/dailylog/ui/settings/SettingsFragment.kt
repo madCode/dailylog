@@ -4,16 +4,12 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.DocumentsContract
-import android.util.TypedValue
-import android.view.*
 import android.widget.PopupMenu
+import android.view.*
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.MenuRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -22,10 +18,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.dailylog.R
 import com.app.dailylog.repository.Shortcut
 import com.app.dailylog.utils.DetermineBuild
+import android.os.Build
+import com.app.dailylog.utils.FileDisplayName
+import com.app.dailylog.utils.FileNameTemplate
 import com.app.dailylog.databinding.SettingsViewBinding
 
 class SettingsFragment(
-    private val viewModel: SettingsViewModel
+    private val viewModel: SettingsViewModel,
+    private val openLogFileSettings: () -> Unit = {},
+    private val openAppearanceSettings: () -> Unit = {},
 ) : Fragment(),
     AddShortcutDialogFragment.AddShortcutDialogListener,
     BulkAddShortcutsDialogFragment.BulkAddListener,
@@ -37,7 +38,11 @@ class SettingsFragment(
     private lateinit var binding: SettingsViewBinding
 
     companion object {
-        fun newInstance(viewModel: SettingsViewModel) = SettingsFragment(viewModel)
+        fun newInstance(
+            viewModel: SettingsViewModel,
+            openLogFileSettings: () -> Unit = {},
+            openAppearanceSettings: () -> Unit = {},
+        ) = SettingsFragment(viewModel, openLogFileSettings, openAppearanceSettings)
     }
 
     override fun onCreateView(
@@ -51,20 +56,9 @@ class SettingsFragment(
         super.onViewCreated(view, savedInstanceState)
         binding = SettingsViewBinding.bind(view)
         
-        // Apply window insets to handle notch and navigation areas
-        ViewCompat.setOnApplyWindowInsetsListener(view) { view, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(
-                systemBars.left,
-                systemBars.top,    // avoids notch/status bar
-                systemBars.right,
-                systemBars.bottom  // avoids nav buttons
-            )
-            insets
-        }
+        applySettingsInsets(view, binding.settingsToolbar)
+        useDarkStatusBarIcons(requireActivity().window)
         
-        val value = TypedValue()
-        context?.theme?.resolveAttribute(R.attr.colorAccent, value, true)
         adapter = ShortcutListAdapter(
             removeCallback = { id -> viewModel.removeCallback(id) },
             updateShortcutPositions = { shortcuts ->
@@ -75,7 +69,6 @@ class SettingsFragment(
             editCallback = { shortcut ->
                 onEdit(shortcut)
             },
-            cursorColor = if (value.type == TypedValue.TYPE_INT_COLOR_RGB8 || value.type == TypedValue.TYPE_INT_COLOR_RGB4 || value.type == TypedValue.TYPE_INT_COLOR_ARGB4 || value.type == TypedValue.TYPE_INT_COLOR_ARGB8) value.data else -0x10000
         )
         shortcutsLiveData.observe(viewLifecycleOwner, Observer { shortcuts ->
             // Update the cached copy of the words in the adapter.
@@ -84,7 +77,8 @@ class SettingsFragment(
                 renderShortcutInstructions()
             }
         })
-        renderFileNameRow()
+        renderLogFileRow()
+        renderAppearanceRow()
         renderShortcutList()
         binding.addShortcutButton.setOnClickListener {
             val addDialog: AddShortcutDialogFragment =
@@ -97,28 +91,24 @@ class SettingsFragment(
             bulkAddShortcuts()
             return@setOnLongClickListener true
         }
-        binding.shortcutMenuButton.setOnClickListener { v: View ->
-            showMenu(v, R.menu.shortcut_options_menu)
+        binding.settingsToolbar.setNavigationOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+        binding.shortcutMenuButton.setOnClickListener { anchor ->
+            PopupMenu(requireContext(), anchor).apply {
+                menuInflater.inflate(R.menu.shortcut_options_menu, menu)
+                setOnMenuItemClickListener { menuItem -> onMenuItem(menuItem) }
+            }.show()
         }
     }
 
-    private val selectImportFileLauncher: ActivityResultLauncher<Intent> =
-        registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) { result ->
-            if (result.resultCode == AppCompatActivity.RESULT_OK && result.data != null) {
-                val selectedFileUri = result.data?.data
-                if (selectedFileUri != null) {
-                    viewModel.saveFilename(selectedFileUri.toString())
-                    val contentResolver = requireContext().contentResolver
-                    val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                    contentResolver.takePersistableUriPermission(selectedFileUri, takeFlags)
-                    //                TODO("if we didn't get the permissions we needed, ask for permission or have the user select a different file")
-                    binding.fileName.text = viewModel.getFilename()
-                }
-            }
-        }
+    override fun onResume() {
+        super.onResume()
+        useDarkStatusBarIcons(requireActivity().window)
+        // The file can change on the sub-screen, so re-read it when we come back.
+        binding.logFileValue.text = logFileSummary()
+        binding.appearanceValue.text = appearanceSummary()
+    }
 
     private val selectLegacyShortcutFileLauncher: ActivityResultLauncher<Intent> =
         registerForActivityResult(
@@ -231,24 +221,15 @@ class SettingsFragment(
         )
     }
 
-    private fun showMenu(v: View, @MenuRes menuRes: Int) {
-        val popup = PopupMenu(requireContext(), v)
-        popup.menuInflater.inflate(menuRes, popup.menu)
-
-        popup.setOnMenuItemClickListener { menuItem: MenuItem ->
-            when (menuItem.itemId) {
-                R.id.bulkAdd -> bulkAddShortcuts()
-                R.id.exportShortcuts -> selectExportFile()
-                R.id.importShortcuts -> selectImportFile()
-                R.id.importShortcutsLegacy -> selectImportFileLegacyCSV()
-            }
-            return@setOnMenuItemClickListener true
+    private fun onMenuItem(menuItem: MenuItem): Boolean {
+        when (menuItem.itemId) {
+            R.id.bulkAdd -> bulkAddShortcuts()
+            R.id.exportShortcuts -> selectExportFile()
+            R.id.importShortcuts -> selectImportFile()
+            R.id.importShortcutsLegacy -> selectImportFileLegacyCSV()
+            else -> return false
         }
-        popup.setOnDismissListener {
-            // Respond to popup being dismissed.
-        }
-        // Show the popup menu.
-        popup.show()
+        return true
     }
 
     private fun onEdit(shortcut: Shortcut) {
@@ -260,17 +241,31 @@ class SettingsFragment(
         editDialog.show(childFragmentManager, "fragment_edit")
     }
 
-    private fun renderFileNameRow() {
-        binding.fileName.text = viewModel.getFilename()
-        binding.selectFileButton.setOnClickListener {
-            val intent =
-                Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                    addCategory(Intent.CATEGORY_OPENABLE)
-                    type = "text/*"
-                }
-            selectImportFileLauncher.launch(Intent.createChooser(intent, "Select a file"))
-        }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        restoreThemeStatusBarIcons(requireActivity().window)
     }
+
+    private fun renderAppearanceRow() {
+        binding.appearanceValue.text = appearanceSummary()
+        binding.appearanceRow.setOnClickListener { openAppearanceSettings() }
+    }
+
+    private fun appearanceSummary(): String =
+        viewModel.getEditorTextSize()?.toString() ?: getString(R.string.editor_text_size_default)
+
+    private fun renderLogFileRow() {
+        binding.logFileValue.text = logFileSummary()
+        binding.logFileRow.setOnClickListener { openLogFileSettings() }
+    }
+
+    /** In dated mode the chosen file changes daily, so the row names today's file instead. */
+    private fun logFileSummary(): String =
+        if (viewModel.isDatedMode() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            FileNameTemplate.resolve(viewModel.getFileNameTemplate())
+        } else {
+            FileDisplayName.of(requireContext(), viewModel.getFilename())
+        }
 
     private fun renderShortcutList() {
         val recyclerView = binding.recyclerView

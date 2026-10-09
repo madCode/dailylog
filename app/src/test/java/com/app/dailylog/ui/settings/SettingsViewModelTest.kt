@@ -4,26 +4,34 @@ import android.net.Uri
 import com.app.dailylog.repository.RepositoryInterface
 import com.app.dailylog.repository.Shortcut
 import com.app.dailylog.utils.DetermineBuildInterface
-import junit.framework.TestCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.doThrow
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
-import org.mockito.Mockito.any
 
 @ExperimentalCoroutinesApi
-class SettingsViewModelTest : TestCase() {
+class SettingsViewModelTest {
 
-    private val testDispatcher = TestCoroutineDispatcher()
+    // Unconfined, not Standard: these tests call a method on the view model and verify the
+    // repository on the next line, which only holds if the coroutine has already run.
+    private val testDispatcher = UnconfinedTestDispatcher()
+
+    // Not Uri.EMPTY: these are plain JVM tests, where the android.net stubs leave it null.
+    // The view model only passes the uri through, so any instance identifies it.
+    private val uri: Uri = mock(Uri::class.java)
     private var settingsViewModel: SettingsViewModel? = null
     private var buildMock: DetermineBuildInterface = mock(DetermineBuildInterface::class.java)
     private var repository: RepositoryInterface = mock(RepositoryInterface::class.java)
@@ -38,7 +46,6 @@ class SettingsViewModelTest : TestCase() {
     @After
     fun takeDown() {
         Dispatchers.resetMain()
-        testDispatcher.cleanupTestCoroutines()
     }
 
     @Test
@@ -131,18 +138,20 @@ class SettingsViewModelTest : TestCase() {
     fun `when export called correctly call repository`() {
         `when`(buildMock.isOreoOrGreater()).thenReturn(true)
         val settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
-        settingsViewModel.exportFileUri = Uri.EMPTY
+        settingsViewModel.exportFileUri = uri
         val error = settingsViewModel.exportShortcuts()
         assertNull(error)
-        verify(repository).exportShortcutsAsJson(Uri.EMPTY)
+        verify(repository).exportShortcutsAsJson(uri)
     }
 
     @Test
     fun `when exportShortcuts throws exception returns error`() {
         `when`(buildMock.isOreoOrGreater()).thenReturn(true)
         val settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
-        settingsViewModel.exportFileUri = Uri.EMPTY
-        doThrow(Exception("Export failed")).`when`(repository).exportShortcutsAsJson(any())
+        settingsViewModel.exportFileUri = uri
+        // Unchecked: exportShortcutsAsJson declares no checked exception, so Mockito refuses to
+        // throw one from it. exportShortcuts catches Exception, so either reaches the catch.
+        doThrow(RuntimeException("Export failed")).`when`(repository).exportShortcutsAsJson(uri)
         val error = settingsViewModel.exportShortcuts()
         assertNotNull(error)
         assertTrue(error?.message?.contains("Error:") == true)
@@ -173,10 +182,9 @@ class SettingsViewModelTest : TestCase() {
         `when`(buildMock.isOreoOrGreater()).thenReturn(true)
         val toastMessages = mutableListOf<String>()
         val vm = SettingsViewModel(repository, buildMock, { msg -> toastMessages.add(msg) }, testDispatcher)
-        vm.importShortcutsLegacy(Uri.EMPTY)
-        // Use the proper way to advance coroutines instead of deprecated advanceUntilIdle()
+        vm.importShortcutsLegacy(uri)
         testDispatcher.scheduler.advanceUntilIdle()
-        verify(repository).importShortcuts(Uri.EMPTY)
+        verify(repository).importShortcuts(uri)
     }
 
     @Test
@@ -184,8 +192,7 @@ class SettingsViewModelTest : TestCase() {
         `when`(buildMock.isOreoOrGreater()).thenReturn(false)
         val toastMessages = mutableListOf<String>()
         val vm = SettingsViewModel(repository, buildMock, { msg -> toastMessages.add(msg) }, testDispatcher)
-        vm.importShortcutsLegacy(Uri.EMPTY)
-        // Use the proper way to advance coroutines instead of deprecated advanceUntilIdle()
+        vm.importShortcutsLegacy(uri)
         testDispatcher.scheduler.advanceUntilIdle()
         assertTrue(toastMessages.contains("Need OS of Oreo or greater to import from CSV"))
     }
@@ -195,10 +202,9 @@ class SettingsViewModelTest : TestCase() {
         `when`(buildMock.isOreoOrGreater()).thenReturn(true)
         val toastMessages = mutableListOf<String>()
         val vm = SettingsViewModel(repository, buildMock, { msg -> toastMessages.add(msg) }, testDispatcher)
-        vm.importShortcuts(Uri.EMPTY)
-        // Use the proper way to advance coroutines instead of deprecated advanceUntilIdle()
+        vm.importShortcuts(uri)
         testDispatcher.scheduler.advanceUntilIdle()
-        verify(repository).importShortcutsFromJson(Uri.EMPTY)
+        verify(repository).importShortcutsFromJson(uri)
     }
 
     @Test
@@ -206,8 +212,7 @@ class SettingsViewModelTest : TestCase() {
         `when`(buildMock.isOreoOrGreater()).thenReturn(false)
         val toastMessages = mutableListOf<String>()
         val vm = SettingsViewModel(repository, buildMock, { msg -> toastMessages.add(msg) }, testDispatcher)
-        vm.importShortcuts(Uri.EMPTY)
-        // Use the proper way to advance coroutines instead of deprecated advanceUntilIdle()
+        vm.importShortcuts(uri)
         testDispatcher.scheduler.advanceUntilIdle()
         assertTrue(toastMessages.contains("Need OS of Oreo or greater to import from CSV"))
     }

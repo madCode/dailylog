@@ -1,0 +1,34 @@
+# Pinning to a commit stops a tag being re-pointed under us, and means the pins go stale on
+# their own. In newspaperss a pinned action moved within a day, leaving the "# v1" beside it
+# untrue.
+#
+# The cooldown is the point: most poisoned releases are found in the first few days, so waiting
+# a week takes the fix without being first to run it.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ["*"]
+
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    # One pull request per family, because a family split across two is how #100 and #101
+    # deadlocked: both edited the mockito-core line, so whichever merged first left the other
+    # CONFLICTING and needing a rebase. Room arrived the same way, as #97 and #99.
+    groups:
+      room:
+        patterns: ["androidx.room:*"]
+      mockito:
+        patterns: ["org.mockito:*"]
+      androidx-test:
+        patterns: ["androidx.test:*", "androidx.test.*:*"]

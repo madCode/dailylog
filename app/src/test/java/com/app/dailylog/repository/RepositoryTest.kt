@@ -210,6 +210,15 @@ class RepositoryTest {
     }
 
     @Test
+    fun isLabelValid_whenTheListHasNotLoadedYet() {
+        // No observer on this instance, so its LiveData has never emitted and its value is
+        // null. That is the state a bulk add hits when it runs before Room's first emission,
+        // and it used to throw NullPointerException from inside isLabelValid.
+        val beforeFirstEmission = Repository(context)
+        assertTrue(beforeFirstEmission.isLabelValid("anything"))
+    }
+
+    @Test
     fun labelExists_reflectsDatabase() = runBlocking {
         repository.addShortcut("a", "one", 0, ShortcutType.TEXT)
         val exists = repository.labelExists("a")

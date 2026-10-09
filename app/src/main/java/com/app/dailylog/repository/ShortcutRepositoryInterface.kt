@@ -105,7 +105,9 @@ interface ShortcutRepositoryInterface {
         if (label.isEmpty()) {
             return false
         }
-        return shortcutLiveData.value!!.none { it.label == label && it.id != excludeId }
+        // orEmpty, not !!: the list is null until Room's first emission reaches the
+        // observer, and validation can be asked before that (#120).
+        return shortcutLiveData.value.orEmpty().none { it.label == label && it.id != excludeId }
     }
 
     fun validateShortcutRow(shortcutInfo: Array<String>, index: Int): Boolean {

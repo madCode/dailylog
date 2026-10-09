@@ -5,84 +5,141 @@
     android:layout_height="match_parent"
     tools:context=".ui.settings.SettingsFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/fileRow"
+    <!-- Padded by the top window inset in the fragment so the primary colour runs
+         behind the status bar; without that the bar sits under a white band. -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/settingsToolbar"
+        style="@style/SettingsToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/shortcutTitleGroup"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:minHeight="?attr/actionBarSize"
+        app:navigationContentDescription="@string/navigate_up"
+        app:navigationIcon="@drawable/ic_arrow_back_24"
+        app:title="@string/settings_title"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Configuration rows are fixed height, so adding settings never shrinks the list. -->
+    <LinearLayout
+        android:id="@+id/logFileRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:minHeight="72dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="12dp"
+        app:layout_constraintTop_toBottomOf="@id/settingsToolbar">
 
         <TextView
-            android:id="@+id/fileNameTitle"
+            android:id="@+id/logFileRowTitle"
             style="@style/TextHeadline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="@string/fileNameTitle"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:text="@string/file_settings_title" />
 
         <TextView
-            android:id="@+id/fileName"
+            android:id="@+id/logFileValue"
             style="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_marginHorizontal="10dp"
+            android:layout_weight="1"
             android:ellipsize="start"
+            android:gravity="end"
             android:singleLine="true"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintBottom_toBottomOf="@id/fileNameTitle"
-            app:layout_constraintEnd_toStartOf="@+id/selectFileButton"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@id/fileNameTitle"
-            app:layout_constraintTop_toTopOf="@id/fileNameTitle"
-            tools:text="really really really really long text really really really really long text" />
+            android:textColor="?android:attr/textColorSecondary"
+            tools:text="really really really long/path/to/journal.md" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/selectFileButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="@string/select_file"
-            app:layout_constraintBottom_toBottomOf="@id/fileNameTitle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/fileNameTitle" />
+        <ImageView
+            android:id="@+id/logFileChevron"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_chevron_right_24"
+            app:tint="?android:attr/textColorSecondary" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/shortcutTitleGroup"
+    <LinearLayout
+        android:id="@+id/appearanceRow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fileRow">
+        android:background="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:minHeight="72dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="12dp"
+        app:layout_constraintTop_toBottomOf="@id/logFileRow">
 
         <TextView
-            android:id="@+id/shortcutTitle"
+            android:id="@+id/appearanceRowTitle"
             style="@style/TextHeadline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="@string/shortcutsTitle"
-            android:textStyle="normal"
-            app:layout_constraintBottom_toBottomOf="@id/shortcutMenuButton"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:text="@string/appearanceTitle" />
 
-        <ImageButton
-            android:id="@+id/shortcutMenuButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@null"
-            android:src="@drawable/ic_baseline_more_vert_48"
-            app:layout_constraintBottom_toBottomOf="@id/shortcutTitle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/shortcutTitle" />
+        <TextView
+            android:id="@+id/appearanceValue"
+            style="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:singleLine="true"
+            android:textColor="?android:attr/textColorSecondary"
+            tools:text="Default" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/appearanceChevron"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_chevron_right_24"
+            app:tint="?android:attr/textColorSecondary" />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/logFileDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@id/appearanceRow" />
+
+    <!-- Kept as the headline it has always been: the section is the screen's subject,
+         not a label on a settings block.
+         Its overflow stays with it rather than moving to the toolbar: every item in that menu
+         acts on the shortcut list, and a screen-level bar would imply it covers the file settings
+         too. -->
+    <TextView
+        android:id="@+id/shortcutTitle"
+        style="@style/TextHeadline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/shortcutsTitle"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="@id/shortcutMenuButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/shortcutMenuButton" />
+
+    <ImageButton
+        android:id="@+id/shortcutMenuButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="1dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/shortcut_options"
+        android:padding="12dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_baseline_more_vert_48"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/logFileDivider" />
 
     <TextView
         android:id="@+id/noShortcutsMessage"
@@ -92,17 +149,19 @@
         android:paddingVertical="20dp"
         android:text="@string/no_shortcuts_info"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/shortcutTitleGroup" />
+        app:layout_constraintTop_toBottomOf="@id/shortcutMenuButton" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
+        android:clipToPadding="false"
+        android:paddingBottom="80dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/shortcutTitleGroup" />
+        app:layout_constraintTop_toBottomOf="@id/shortcutMenuButton" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addShortcutButton"
@@ -112,8 +171,8 @@
         android:contentDescription="@string/add_a_shortcut"
         android:src="@drawable/ic_add_48"
         app:backgroundTint="?attr/colorPrimary"
-        app:tint="?attr/colorOnPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="?attr/colorOnPrimary" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

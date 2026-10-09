@@ -1,0 +1,80 @@
+# A failure on main that the next pull request heals teaches the loop that flaky tests are free.
+# Filing an issue means someone has to close it.
+name: Red main
+
+on:
+  workflow_run:
+    workflows: ["Android CI"]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+  actions: read
+  issues: write
+
+jobs:
+  file-it:
+    if: github.event.workflow_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Name what failed
+        id: failed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          gh run view "$RUN_ID" --repo "$GITHUB_REPOSITORY" --log-failed > log.txt 2>/dev/null || true
+          # Gradle prints "Class > method FAILED" per failing test; the instrumentation matrix
+          # prints the same. None means the build broke before the tests ran.
+          grep -ohE '[A-Za-z0-9_]+Test[A-Za-z0-9_]* > [A-Za-z0-9_]+ FAILED' log.txt | sort -u > tests.txt || true
+          # Which job failed matters here: a red emulator matrix and a red unit build are
+          # different problems.
+          gh run view "$RUN_ID" --repo "$GITHUB_REPOSITORY" --json jobs \
+            --jq '.jobs[] | select(.conclusion=="failure") | "- job: \(.name)"' > jobs.txt 2>/dev/null || true
+          {
+            echo 'summary<<EOF'
+            cat jobs.txt
+            if [ -s tests.txt ]; then
+              echo
+              sed 's/ FAILED$//; s/^/- `/; s/$/`/' tests.txt
+            else
+              echo
+              echo '_No failing test was named: the build itself failed._'
+            fi
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+
+      - name: File or update the issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+          TITLE: ${{ github.event.workflow_run.display_title }}
+          SUMMARY: ${{ steps.failed.outputs.summary }}
+        run: |
+          gh label create "red main" --repo "$GITHUB_REPOSITORY" \
+            --color B60205 --description "CI failed on main" --force >/dev/null 2>&1 || true
+
+          body=$(cat <<EOF
+          \`main\` failed CI at \`${SHA:0:8}\` — [run]($RUN_URL).
+
+          Landed as: $TITLE
+
+          $SUMMARY
+
+          A real break and a flaky test need opposite responses. If it's flaky, fix the test
+          rather than re-running it -- the next pull request landing green will hide it again.
+
+          Close this once the cause is understood, not once CI is green.
+          EOF
+          )
+
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --label "red main" --state open \
+            --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" --body "$body"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --label "red main" \
+              --title "main is red: ${SHA:0:8}" --body "$body"
+          fi

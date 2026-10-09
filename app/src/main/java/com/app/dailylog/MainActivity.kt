@@ -15,6 +15,8 @@ import com.app.dailylog.ui.settings.AddShortcutDialogFragment
 import com.app.dailylog.ui.settings.BulkAddShortcutsDialogFragment
 import com.app.dailylog.ui.settings.EditShortcutDialogFragment
 import com.app.dailylog.ui.settings.ShortcutDialogViewModel
+import com.app.dailylog.ui.settings.AppearanceSettingsFragment
+import com.app.dailylog.ui.settings.LogFileSettingsFragment
 import com.app.dailylog.ui.settings.SettingsFragment
 import com.app.dailylog.ui.settings.SettingsViewModel
 import com.app.dailylog.ui.settings.SettingsViewModelFactory
@@ -56,7 +58,13 @@ class MainActivity : AppCompatActivity() {
             when (loadFragmentClass(classLoader, className)) {
                 WelcomeFragment::class.java -> WelcomeFragment(WelcomeViewModel(repository) { openLog() })
                 LogFragment::class.java -> LogFragment(LogViewModel(repository)) { openSettings() }
-                SettingsFragment::class.java -> SettingsFragment(getSettingsViewModel())
+                SettingsFragment::class.java -> SettingsFragment(
+                    getSettingsViewModel(),
+                    openLogFileSettings = { openLogFileSettings() },
+                    openAppearanceSettings = { openAppearanceSettings() },
+                )
+                LogFileSettingsFragment::class.java -> LogFileSettingsFragment(getSettingsViewModel())
+                AppearanceSettingsFragment::class.java -> AppearanceSettingsFragment(getSettingsViewModel())
                 AddShortcutDialogFragment::class.java -> AddShortcutDialogFragment(ShortcutDialogViewModel(repository))
                 EditShortcutDialogFragment::class.java -> EditShortcutDialogFragment(ShortcutDialogViewModel(repository))
                 BulkAddShortcutsDialogFragment::class.java -> BulkAddShortcutsDialogFragment(ShortcutDialogViewModel(repository))
@@ -88,6 +96,12 @@ class MainActivity : AppCompatActivity() {
     private fun openLog() = showFragment(LogFragment::class.java, addToBackStack = false)
 
     private fun openSettings() = showFragment(SettingsFragment::class.java, addToBackStack = true)
+
+    private fun openLogFileSettings() =
+        showFragment(LogFileSettingsFragment::class.java, addToBackStack = true)
+
+    private fun openAppearanceSettings() =
+        showFragment(AppearanceSettingsFragment::class.java, addToBackStack = true)
 
     fun showErrorDialog(message: String) {
         runOnUiThread(Runnable {

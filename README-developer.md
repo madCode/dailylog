@@ -1,13 +1,13 @@
-# dailyLog Developer Documentation
+# DailyLog Developer Documentation
 
-This document provides instructions for setting up a development environment and building the dailyLog application.
+This document provides instructions for setting up a development environment and building the DailyLog application.
 
 ## Prerequisites
 
 - Android Studio (recommended) or command-line tools
 - JDK 21 / OpenJDK 21 (required for building)
 - Kotlin SDK 2.2.10 (as specified in build.gradle)
-- Android SDK with API level 36
+- Android SDK with API level 37
 - Gradle 8.0 or higher
 
 ## Setting Up Development Environment Using Android Studio
@@ -69,7 +69,7 @@ Download the latest version of Android Studio.
    defaultConfig {
        applicationId "com.app.dailylog"
        minSdkVersion 23
-       targetSdkVersion 36
+       targetSdkVersion 37
        versionCode 3001  // Increment this number
        versionName "3.0.1"  // Update to new semantic version
    }
@@ -96,7 +96,7 @@ You can read about F-Droid's update process [here](https://gitlab.com/fdroid/wik
 After publishing a new release, wait at least 24 hours, then check the following:
 1. The [DailyLog F-Droid page](https://f-droid.org/packages/com.app.dailylog/): see if the version at the bottom matches the new version.
 2. If not, check the [metadata file](https://gitlab.com/fdroid/fdroiddata/-/blob/master/metadata/com.app.dailylog.yml?ref_type=heads): see if F-Droid successfully updated the version number.
-3. If not, search [existing dailyLog merge requests](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/?sort=created_date&state=opened&search=dailyLog&first_page_size=20): see if the check-updates bot had issues and if anyone is working on it
+3. If not, search [existing DailyLog merge requests](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/?sort=created_date&state=opened&search=DailyLog&first_page_size=20): see if the check-updates bot had issues and if anyone is working on it
 
 ## Testing
 
@@ -161,9 +161,11 @@ The project follows standard Android conventions:
    - Ensure JDK 21 (OpenJDK 21) is installed and set as the Gradle JDK in Android Studio (**Settings → Build, Execution, Deployment → Build Tools → Gradle → Gradle JDK**)
    - On macOS with Homebrew: `brew install openjdk@21`, then symlink it: `sudo ln -sfn /opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-21.jdk`
 
-2. **Permission issues with external storage**:
-   - The app requires read/write permissions to external storage
-   - These are properly declared in AndroidManifest.xml
+2. **File access problems**:
+   - The app declares no permissions at all. It reaches the log file through a `content://`
+     URI the user picks, and keeps access with `takePersistableUriPermission`.
+   - So a file that has stopped opening usually means the URI is no longer grantable: the
+     file was moved, renamed or deleted, or its provider revoked access. Pick the file again.
 
 3. **F-Droid build errors**:
    - Ensure all dependencies are compatible with F-Droid's build environment
