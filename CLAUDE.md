@@ -6,6 +6,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 DailyLog is a native Android app (Kotlin) for distraction-free journaling with customizable text shortcuts. Users select a markdown/text file, define shortcut buttons with templated text (including datetime patterns), and insert them at cursor position with one tap. Shortcuts are stored in a Room database; the log file and cursor position are persisted via SharedPreferences and the Android file system.
 
+## Privacy
+
+This repository is public, and this app holds a person's journal. Never commit anyone's own
+data: no journal text, no file names, no `content://` URIs, no accounts or emails from
+anyone's own setup. Tests, screenshots and sample data use made-up material only.
+
 ## Posting as madCode
 
 Claude Code posts from madCode's account, so anything it writes says so **at the top**, where
@@ -21,9 +27,10 @@ spells out.
 
 Nothing from the Claude GitHub App needs this: its author already says so.
 
-The same rule, and the rest of the shared ones, live in
-[claude-playground](https://github.com/madCode/claude-playground/blob/main/CLAUDE.md); a change
-to one belongs in the other.
+This rule, and the Privacy, Tests, Documentation and Pull requests sections below, are shared
+with the other projects in
+[claude-playground](https://github.com/madCode/claude-playground/blob/main/CLAUDE.md), whose
+root CLAUDE.md has the same rules for any project. A change to one belongs in the other too.
 
 ## Build & Test Commands
 
@@ -140,6 +147,46 @@ Review changed code for these, beyond the usual correctness pass:
   screens and dark theme.
 
 Give specific, actionable feedback.
+
+## Tests
+
+A test should be able to catch a plausible regression. Test behaviour, not structure, end to end
+where you can. Don't feed code inputs it can never receive, or write a test only to lift
+coverage. A test that waits for the screen or the database waits for the condition, not a fixed
+time. When a change has no behaviour to test, say so in the PR instead of inventing a test.
+
+## Documentation
+
+Docs are for people: keep them readable, current and short.
+
+- A change that alters behaviour updates README.md, or README-developer.md for anything about
+  building and releasing, in the same PR if they describe it.
+- Every few cycles, a documentation pass: check the docs against the code, fix what's stale, cut
+  what's grown long or become history.
+- Plain words over jargon, short sections, one idea per bullet.
+
+## Pull requests
+
+Several small PRs beat one large one. The description says what changed, how it was tested --
+the commands run and what they showed, rather than "tests pass" -- and what the review found.
+Merge only with CI green.
+
+Before opening a PR that changes behaviour, have a fresh-eyes subagent review the diff against
+the `## Code Review` list above. Point it at the risky parts:
+
+- The log file: a save cut short or run twice, the smart-save hash, the cursor index, and what
+  happens when the file or its `content://` permission has gone.
+- Shortcut import and export as untrusted input: a huge or malformed JSON or CSV, duplicate
+  labels, a cursor index out of range, datetime patterns that don't parse.
+- Rotation, and the app being killed and restored: what is on screen, open dialogs, and unsaved
+  text.
+- The on-screen keyboard, small screens, large font scale and dark theme.
+- Accessibility: TalkBack labels, touch targets.
+
+Ask for concrete findings only: file:line and a failure scenario, most severe first, no edits.
+Ask for bugs and gaps against what the change is for, not style or what might be nice. Verify
+each finding before acting on it, and say in the PR what the review found and what was fixed or
+deliberately left. Docs-, comment- and config-only changes can skip this.
 
 ## Library Choices
 
