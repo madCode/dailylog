@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.DocumentsContract
-import android.util.TypedValue
 import android.widget.PopupMenu
 import android.view.*
 import android.widget.Toast
@@ -54,8 +53,6 @@ class SettingsFragment(
         applySettingsInsets(view, binding.settingsToolbar)
         useDarkStatusBarIcons(requireActivity().window)
         
-        val value = TypedValue()
-        context?.theme?.resolveAttribute(R.attr.colorAccent, value, true)
         adapter = ShortcutListAdapter(
             removeCallback = { label -> viewModel.removeCallback(label) },
             updateShortcutPositions = { shortcuts ->
@@ -66,7 +63,6 @@ class SettingsFragment(
             editCallback = { shortcut ->
                 onEdit(shortcut)
             },
-            cursorColor = if (value.type == TypedValue.TYPE_INT_COLOR_RGB8 || value.type == TypedValue.TYPE_INT_COLOR_RGB4 || value.type == TypedValue.TYPE_INT_COLOR_ARGB4 || value.type == TypedValue.TYPE_INT_COLOR_ARGB8) value.data else -0x10000
         )
         shortcutsLiveData.observe(viewLifecycleOwner, Observer { shortcuts ->
             // Update the cached copy of the words in the adapter.

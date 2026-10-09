@@ -60,7 +60,6 @@
         android:layout_height="wrap_content"
         android:hint="@string/addText"
         app:errorEnabled="true"
-        app:helperText="@string/addTextDescription"
         app:layout_constraintBottom_toTopOf="@id/sliderGroup"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -93,7 +92,7 @@
             style="@style/SecondarySlider"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/cursorIndexExplanation"
+            android:contentDescription="@string/addCursor"
             android:stepSize="1"
             android:valueFrom="0" />
 
@@ -103,6 +102,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:importantForAccessibility="no"
             android:text="@string/addCursor" />
     </LinearLayout>
 
@@ -122,6 +122,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/isDateTime" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/dateTimeExplanation"
+            style="@style/TextAppearance.MaterialComponents.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/dateTimeExplanation" />
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton

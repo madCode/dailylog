@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.view.View
 import android.widget.EditText
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +19,8 @@ import com.app.dailylog.R
 import com.app.dailylog.repository.Shortcut
 import com.app.dailylog.repository.ShortcutType
 import com.app.dailylog.testutil.AppRobolectricTest
+import com.google.android.material.slider.Slider
+import com.google.android.material.textfield.TextInputLayout
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -121,6 +124,67 @@ class SettingsScreenTest : AppRobolectricTest() {
                 dialog.click(R.id.btnSaveShortcut)
                 assertEquals("one", activity.shortcuts().single { it.label == "First" }.value)
                 assertTrue(dialog.isAdded)
+                assertEquals(
+                    activity.getString(R.string.duplicateNameError),
+                    dialog.requireView().findViewById<TextInputLayout>(R.id.labelInputLayout).error.toString()
+                )
+            }
+        }
+    }
+
+    @Test
+    fun addDialog_rejectsEmptyName() {
+        openSettings().use { scenario ->
+            onView(withId(R.id.addShortcutButton)).perform(click())
+            scenario.onActivity { activity ->
+                val dialog = activity.dialog("fragment_add_shortcut")
+                dialog.type(R.id.textInput, "nameless")
+                dialog.click(R.id.btnSaveShortcut)
+                assertTrue(dialog.isAdded)
+                assertEquals(
+                    activity.getString(R.string.emptyNameError),
+                    dialog.requireView().findViewById<TextInputLayout>(R.id.labelInputLayout).error.toString()
+                )
+            }
+        }
+    }
+
+    @Test
+    fun addDialog_previewFollowsTextAndSlider() {
+        openSettings().use { scenario ->
+            onView(withId(R.id.addShortcutButton)).perform(click())
+            scenario.onActivity { activity ->
+                val dialog = activity.dialog("fragment_add_shortcut")
+                val preview = dialog.requireView().findViewById<TextView>(R.id.previewText)
+                val slider = dialog.requireView().findViewById<Slider>(R.id.cursorSlider)
+
+                dialog.type(R.id.textInput, "hello")
+                assertEquals("Preview\nhello|", preview.text.toString())
+
+                slider.value = 2f
+                assertEquals("Preview\nhe|llo", preview.text.toString())
+                assertEquals(activity.getString(R.string.previewDescription, "he", "llo"), preview.contentDescription)
+
+                slider.value = 0f
+                assertEquals("Preview\n|hello", preview.text.toString())
+
+                // Tokens are previewed as typed: the saved cursor index counts the raw text.
+                dialog.type(R.id.textInput, "{DATETIME: HH:mm}")
+                assertEquals("Preview\n{DATETIME: HH:mm}|", preview.text.toString())
+
+                dialog.type(R.id.textInput, "")
+                assertEquals("", preview.text.toString())
+            }
+        }
+    }
+
+    @Test
+    fun list_showsTextWithoutCursorMarker() {
+        openSettings().use { scenario ->
+            scenario.onActivity { activity ->
+                val list = activity.findViewById<RecyclerView>(R.id.recycler_view)
+                idleUntil { list.childCount == 2 }
+                assertEquals("one", list.getChildAt(0).findViewById<TextView>(R.id.text).text.toString())
             }
         }
     }
@@ -135,6 +199,10 @@ class SettingsScreenTest : AppRobolectricTest() {
                 idleUntil(500) { false }
                 val dialog = activity.dialog("fragment_edit")
                 assertEquals("First", dialog.requireView().findViewById<EditText>(R.id.labelInput).text.toString())
+                assertEquals(
+                    "Preview\n|one",
+                    dialog.requireView().findViewById<TextView>(R.id.previewText).text.toString()
+                )
                 dialog.type(R.id.textInput, "uno")
                 dialog.click(R.id.btnSaveShortcut)
                 assertEquals("uno", activity.shortcuts().single { it.label == "First" }.value)
