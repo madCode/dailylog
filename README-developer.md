@@ -7,7 +7,7 @@ This document provides instructions for setting up a development environment and
 - Android Studio (recommended) or command-line tools
 - JDK 21 / OpenJDK 21 (required for building)
 - Kotlin SDK 2.2.10 (as specified in build.gradle)
-- Android SDK with API level 36
+- Android SDK with API level 37
 - Gradle 8.0 or higher
 
 ## Setting Up Development Environment Using Android Studio
@@ -69,7 +69,7 @@ Download the latest version of Android Studio.
    defaultConfig {
        applicationId "com.app.dailylog"
        minSdkVersion 23
-       targetSdkVersion 36
+       targetSdkVersion 37
        versionCode 3001  // Increment this number
        versionName "3.0.1"  // Update to new semantic version
    }
