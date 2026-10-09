@@ -116,7 +116,10 @@ class SettingsViewModel(
             try {
                 this.exportFileUri?.let { repository.exportShortcutsAsJson(it) }
             } catch(ex: Exception) {
-                return Error("Error: ${ex.printStackTrace()}")
+                // printStackTrace() returns Unit, so this message used to read "Error:
+                // kotlin.Unit". message is null for some exceptions, hence the class name as a
+                // fallback: a type name is still something to search for, "null" is not.
+                return Error("Error: ${ex.message ?: ex.javaClass.simpleName}")
             }
         } else {
             return Error("Need OS of Oreo or greater to export to JSON")
