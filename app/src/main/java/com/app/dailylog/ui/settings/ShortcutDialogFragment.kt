@@ -7,6 +7,7 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
@@ -24,7 +25,7 @@ interface ShortcutDialogListener {
 
 open class ModifyShortcutDialogFragment(viewModel: ShortcutDialogViewModel): ShortcutDialogFragment(viewModel) {
     open var keepCursorValueAtMax = true // keep the cursor value at the max it can be
-    open var skipUniqueCheck = false
+    open val editedShortcutId: String? = null
     lateinit var binding: CreateNewShortcutBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,7 +67,7 @@ open class ModifyShortcutDialogFragment(viewModel: ShortcutDialogViewModel): Sho
                     keepCursorValueAtMax = true
                 }
                 updateCursorView(cursorSlider, string)
-                binding.previewText.text = getText(string, cursorSlider.value.toInt())
+                renderPreview(string, cursorSlider.value.toInt())
                 if (viewModel.isTextValid(string)) {
                     binding.textInputLayout.error = null
                 }
@@ -74,7 +75,7 @@ open class ModifyShortcutDialogFragment(viewModel: ShortcutDialogViewModel): Sho
         })
 
         cursorSlider.addOnChangeListener { _, value, _ ->
-            binding.previewText.text = getText(textInput.text.toString(), value.toInt())
+            renderPreview(textInput.text.toString(), value.toInt())
         }
 
         cursorSlider.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
@@ -109,24 +110,46 @@ open class ModifyShortcutDialogFragment(viewModel: ShortcutDialogViewModel): Sho
         }
     }
 
+    /** Shows [text] with a cursor marker at [cursorIndex]; DATETIME tokens stay unexpanded. */
+    private fun renderPreview(text: String, cursorIndex: Int) {
+        val preview = binding.previewText
+        if (text.isEmpty()) {
+            preview.text = ""
+            preview.contentDescription = null
+            return
+        }
+        val index = cursorIndex.coerceIn(0, text.length)
+        val title = getString(R.string.previewTitle)
+        preview.text = SpannableStringBuilder(title).apply {
+            setSpan(RelativeSizeSpan(0.7f), 0, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            append("\n")
+            append(getText(text, index))
+        }
+        // TalkBack would read the marker as "vertical bar", so say where the cursor is instead.
+        preview.contentDescription = getString(
+            R.string.previewDescription, text.substring(0, index), text.substring(index)
+        )
+    }
+
     fun validateView() {
         valid = true
         clearInvalidLabelMessage()
-        val label = binding.labelInput
+        val label = binding.labelInput.text.toString()
         val text = binding.textInput
-        val isLabelValid = viewModel.isLabelValid(label.text.toString(), skipUniqueCheck)
-        if (!isLabelValid) {
-            binding.labelInputLayout.error = "Label must be unique and cannot be empty"
+        if (!viewModel.isLabelValid(label, editedShortcutId)) {
+            alertOnInvalidLabel(label)
             valid = false
         }
         if (!viewModel.isTextValid(text.text.toString())) {
-            binding.textInputLayout.error = "Text cannot be empty"
+            binding.textInputLayout.error = getString(R.string.emptyTextError)
             valid = false
         }
     }
 
     override fun alertOnInvalidLabel(label: String) {
-        binding.labelInputLayout.error = "Label must be unique and cannot be empty"
+        binding.labelInputLayout.error = getString(
+            if (label.isEmpty()) R.string.emptyNameError else R.string.duplicateNameError
+        )
     }
 
     private fun clearInvalidLabelMessage() {

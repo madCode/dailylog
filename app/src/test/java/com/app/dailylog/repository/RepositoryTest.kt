@@ -155,7 +155,8 @@ class RepositoryTest {
     @Test
     fun updateShortcut_changesValue() = runBlocking {
         repository.addShortcut("a", "one", 0, ShortcutType.TEXT)
-        repository.updateShortcut("a", "uno", 2, 0, ShortcutType.DATETIME)
+        val id = shortcuts().single().id
+        repository.updateShortcut(id, "a", "uno", 2, 0, ShortcutType.DATETIME)
         val updated = shortcuts().single()
         assertEquals("uno", updated.value)
         assertEquals(2, updated.cursorIndex)
@@ -163,9 +164,17 @@ class RepositoryTest {
     }
 
     @Test
+    fun updateShortcut_renamesLabelKeepingId() = runBlocking {
+        repository.addShortcut("a", "one", 0, ShortcutType.TEXT)
+        val id = shortcuts().single().id
+        repository.updateShortcut(id, "renamed", "one", 0, 0, ShortcutType.TEXT)
+        assertEquals(listOf(id to "renamed"), shortcuts().map { it.id to it.label })
+    }
+
+    @Test
     fun removeShortcut_deletesIt() = runBlocking {
         repository.addShortcut("a", "one", 0, ShortcutType.TEXT)
-        repository.removeShortcut("a")
+        repository.removeShortcut(shortcuts().single().id)
         assertTrue(shortcuts().isEmpty())
     }
 
@@ -233,10 +242,11 @@ class RepositoryTest {
         repository.addShortcut("b", "{DATETIME: yyyy}", 0, ShortcutType.DATETIME)
         shortcuts()
         repository.exportShortcutsAsJson(Uri.fromFile(exportFile))
-        assertTrue(exportFile.readText().contains("\"schemaVersion\""))
+        val exported = exportFile.readText()
+        assertTrue(exported.contains("\"schemaVersion\""))
+        assertFalse(exported.contains("\"id\""))
 
-        repository.removeShortcut("a")
-        repository.removeShortcut("b")
+        shortcuts().forEach { repository.removeShortcut(it.id) }
         assertTrue(shortcuts().isEmpty())
 
         repository.importShortcutsFromJson(Uri.fromFile(exportFile))
@@ -251,7 +261,7 @@ class RepositoryTest {
         repository.addShortcut("a", "one, with comma", 3, ShortcutType.TEXT)
         shortcuts()
         repository.exportShortcuts(Uri.fromFile(exportFile))
-        repository.removeShortcut("a")
+        repository.removeShortcut(shortcuts().single().id)
         assertTrue(shortcuts().isEmpty())
 
         repository.importShortcuts(Uri.fromFile(exportFile))

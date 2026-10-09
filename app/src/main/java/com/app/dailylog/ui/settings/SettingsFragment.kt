@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.DocumentsContract
-import android.util.TypedValue
 import android.widget.PopupMenu
 import android.view.*
 import android.widget.Toast
@@ -19,12 +18,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.dailylog.R
 import com.app.dailylog.repository.Shortcut
 import com.app.dailylog.utils.DetermineBuild
+import android.os.Build
 import com.app.dailylog.utils.FileDisplayName
+import com.app.dailylog.utils.FileNameTemplate
 import com.app.dailylog.databinding.SettingsViewBinding
 
 class SettingsFragment(
     private val viewModel: SettingsViewModel,
-    private val openLogFileSettings: () -> Unit = {}
+    private val openLogFileSettings: () -> Unit = {},
+    private val openAppearanceSettings: () -> Unit = {},
 ) : Fragment(),
     AddShortcutDialogFragment.AddShortcutDialogListener,
     BulkAddShortcutsDialogFragment.BulkAddListener,
@@ -36,8 +38,11 @@ class SettingsFragment(
     private lateinit var binding: SettingsViewBinding
 
     companion object {
-        fun newInstance(viewModel: SettingsViewModel, openLogFileSettings: () -> Unit = {}) =
-            SettingsFragment(viewModel, openLogFileSettings)
+        fun newInstance(
+            viewModel: SettingsViewModel,
+            openLogFileSettings: () -> Unit = {},
+            openAppearanceSettings: () -> Unit = {},
+        ) = SettingsFragment(viewModel, openLogFileSettings, openAppearanceSettings)
     }
 
     override fun onCreateView(
@@ -54,10 +59,8 @@ class SettingsFragment(
         applySettingsInsets(view, binding.settingsToolbar)
         useDarkStatusBarIcons(requireActivity().window)
         
-        val value = TypedValue()
-        context?.theme?.resolveAttribute(R.attr.colorAccent, value, true)
         adapter = ShortcutListAdapter(
-            removeCallback = { label -> viewModel.removeCallback(label) },
+            removeCallback = { id -> viewModel.removeCallback(id) },
             updateShortcutPositions = { shortcuts ->
                 viewModel.updateShortcutPositions(
                     shortcuts
@@ -66,7 +69,6 @@ class SettingsFragment(
             editCallback = { shortcut ->
                 onEdit(shortcut)
             },
-            cursorColor = if (value.type == TypedValue.TYPE_INT_COLOR_RGB8 || value.type == TypedValue.TYPE_INT_COLOR_RGB4 || value.type == TypedValue.TYPE_INT_COLOR_ARGB4 || value.type == TypedValue.TYPE_INT_COLOR_ARGB8) value.data else -0x10000
         )
         shortcutsLiveData.observe(viewLifecycleOwner, Observer { shortcuts ->
             // Update the cached copy of the words in the adapter.
@@ -76,6 +78,7 @@ class SettingsFragment(
             }
         })
         renderLogFileRow()
+        renderAppearanceRow()
         renderShortcutList()
         binding.addShortcutButton.setOnClickListener {
             val addDialog: AddShortcutDialogFragment =
@@ -103,7 +106,8 @@ class SettingsFragment(
         super.onResume()
         useDarkStatusBarIcons(requireActivity().window)
         // The file can change on the sub-screen, so re-read it when we come back.
-        binding.logFileValue.text = FileDisplayName.of(requireContext(), viewModel.getFilename())
+        binding.logFileValue.text = logFileSummary()
+        binding.appearanceValue.text = appearanceSummary()
     }
 
     private val selectLegacyShortcutFileLauncher: ActivityResultLauncher<Intent> =
@@ -242,10 +246,26 @@ class SettingsFragment(
         restoreThemeStatusBarIcons(requireActivity().window)
     }
 
+    private fun renderAppearanceRow() {
+        binding.appearanceValue.text = appearanceSummary()
+        binding.appearanceRow.setOnClickListener { openAppearanceSettings() }
+    }
+
+    private fun appearanceSummary(): String =
+        viewModel.getEditorTextSize()?.toString() ?: getString(R.string.editor_text_size_default)
+
     private fun renderLogFileRow() {
-        binding.logFileValue.text = FileDisplayName.of(requireContext(), viewModel.getFilename())
+        binding.logFileValue.text = logFileSummary()
         binding.logFileRow.setOnClickListener { openLogFileSettings() }
     }
+
+    /** In dated mode the chosen file changes daily, so the row names today's file instead. */
+    private fun logFileSummary(): String =
+        if (viewModel.isDatedMode() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            FileNameTemplate.resolve(viewModel.getFileNameTemplate())
+        } else {
+            FileDisplayName.of(requireContext(), viewModel.getFilename())
+        }
 
     private fun renderShortcutList() {
         val recyclerView = binding.recyclerView
@@ -280,6 +300,7 @@ class SettingsFragment(
     }
 
     override fun onFinishEditShortcutDialog(
+        id: String,
         label: String,
         text: String,
         cursor: Int,
@@ -287,6 +308,7 @@ class SettingsFragment(
         type: String
     ) {
         viewModel.updateShortcut(
+            id,
             label,
             text,
             cursor,

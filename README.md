@@ -43,15 +43,15 @@ If you're using DailyLog, it's likely because you have a format you like to jour
 
 <img alt="Screen as described below" src="/README_screenshots/blank_settings_screen.png" height="500px"/>
 
-You'll see at the top the option to change the file you're working in, and under that a section labeled "Shortcuts" with a three dot menu next to it. At the bottom of the screen you'll see a big blue circle with a plus in it. Click the plus button.
+You'll see at the top the option to change the file you're working in, then an "Appearance" section for the editor's text size, and under that a section labeled "Shortcuts" with a three dot menu next to it. At the bottom of the screen you'll see a big blue circle with a plus in it. Click the plus button.
 
 <img alt="Shorcut creation dialog. Description below." src="/README_screenshots/empty_shortcut_create.png" height="500px"/>
 
 You'll see a few items on the screen:
-1. label: this is the "name" of the shortcut. I recommend something short, or even an emoji. Let's say you want a shortcut for "dinner", you might choose "d" or even 🥣 .
-2. text: this is the "value" of the shortcut, the longform of your label. In the dinner example, you might choose "- dinner: " to create a bullet point ready to capture what you had for dinner.
-3. cursor index: ignore this, it will be covered in [Cursor positioning](#cursor-positioning).
-4. "Contains datetime format" switch: ignore this as well, it'll be covered in [Shortcuts with timestamps](#shortcuts-with-timestamps)
+1. Name: this is the name on the shortcut's button. I recommend something short, or even an emoji. Let's say you want a shortcut for "dinner", you might choose "d" or even 🥣 .
+2. Text to insert: this is what the shortcut types into your log. In the dinner example, you might choose "- dinner: " to create a bullet point ready to capture what you had for dinner.
+3. Where the cursor ends up: ignore this, it will be covered in [Cursor positioning](#cursor-positioning).
+4. "Insert the date or time" switch: ignore this as well, it'll be covered in [Shortcuts with timestamps](#shortcuts-with-timestamps)
 
 Your screen now looks like this:
 
@@ -61,7 +61,7 @@ Hit the save button. We'll cover the other parts of this screen in the "Shortcut
 
 You'll now see your shortcut displayed in the shortcuts list:
 
-<img alt="The settings screen from before but now under the 'Shortcuts' heading there is your dinner shortcut. The label and text are there, with a | at the end to denote that we left the cursor index as the end." src="/README_screenshots/shortcut_list.png" height="500px"/>
+<img alt="The settings screen from before but now under the 'Shortcuts' heading there is your dinner shortcut. The name and text are there." src="/README_screenshots/shortcut_list.png" height="500px"/>
 
 Clicking on it will allow you to edit it. You'll also notice a gray x on the side to delete the shortcut, and the six gray dots on the left-hand side of the shortcut card. The dots denote that when there are multiple shortcuts, you can drag to reorder them. More in "Drag to reorder shortcuts".
 
@@ -86,7 +86,7 @@ Navigate back to the shortcut page and click on the dinner shortcut to edit it.
 
 <img alt="A screen filled out with all the info for dinner" src="/README_screenshots/edit_dinner.png" height="500px"/>
 
-See the pink slider labelled "cursor index"? Notice that it's slider marker is all the way at the end. Now start modifying the body of the shortcut to say "- dinner: food{ }, location{ }, people{ }". You'll already see that the cursor index slider is no longer at the end. If you look underneath the "Edit shortcut" title, you'll see the body of your text, with a pink line denoting where the cursor is.
+See the pink slider labelled "Where the cursor ends up"? Notice that its marker is all the way at the end. Now start modifying the body of the shortcut to say "- dinner: food{ }, location{ }, people{ }". You'll already see that the slider is no longer at the end. Under "Preview", beneath the "Edit shortcut" title, you'll see your text with a pink line where the cursor will be.
 
 <img alt="Screen as described above" src="/README_screenshots/edit_dinner_2.png" height="500px"/>
 
@@ -98,7 +98,7 @@ Now, when you use the shortcut, your cursor will automatically be exactly where 
 ## Shortcuts with timestamps
 It wouldn't be a journaling app without timestamps. DailyLog supports adding timestamp regexes in shortcuts. Let's say you want a shortcut that adds today's date as an H1 title in your markdown file. For example: "# 03 March 1970".
 
-Start by opening the "Create new shortcut" dialog. Let's make the label the calendar emoji: 📅, and then we need to fill in the text. DailyLog's format is: `{DATETIME: <whatever format you want>}`. So in our case that would look like "# {DATETIME: DD MMMM yyyy}". And make sure to toggle the "Contains datetime format" switch at the bottom like so:
+Start by opening the "Create new shortcut" dialog. Let's make the label the calendar emoji: 📅, and then we need to fill in the text. DailyLog's format is: `{DATETIME: <whatever format you want>}`. So in our case that would look like "# {DATETIME: DD MMMM yyyy}". And make sure to toggle the "Insert the date or time" switch at the bottom like so:
 
 <img alt="Screen as described above" src="/README_screenshots/datetime_example.png" height="500px"/>
 
@@ -106,20 +106,30 @@ Now if you hit the calendar shortcut, you get the date!
 
 A description of the available datetime patterns can be found in the [Java documentation of DateTimeFormatter](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns).
 
+## A new file each day
+If you'd rather keep one file per day, open settings and switch **Log file** from "One file" to "New file by date". Pick a folder once (for example `Documents/Journal`), and the app writes each day to its own file in that folder.
+
+The **File name** uses the same `{DATETIME: ...}` patterns as shortcuts, and can include folders. For example, `{DATETIME: yyyy}/{DATETIME: MM-dd}-journal.md` writes to `2026/10-03-journal.md`. Tap one of the dates under the name to change the date order but keep the rest of the name. Names can't contain `\ : * ? " < > |`, because phone storage renames them. The line below shows today's file.
+
+Each day starts with an empty log. The file, and any folders in its name, are only created the first time you save that day. If the app is still open at midnight, it switches to the new day's file the next time you come back to it. New file by date needs Android 8 or newer.
+
+## Editor text size
+Settings has an "Editor text size" slider (12 to 40). A size you pick stays the same whatever your phone's font size is; shortcuts and the settings screen still follow the phone. "Reset" goes back to following the phone's font size.
+
 ## Drag to reorder shortcuts
 When you have a list of shortcuts in the settings page, you can drag them around to reorder them. This will also change the order by which they appear in the shortcuts tray.
 ## Export shortcuts
 **New in version 3.1.0**: Version 3.1.0 switched to JSON-based shortcut exports compared to the previous CSV format. Until 3.2.0 you'll be able to import the legacy CSV format. We recommend you re-export any existing shortcuts to have a json-based backup.
 
-You can export your shortcuts to a JSON file by hitting the three-dot menu next to "Shortcuts" in the settings page.
+You can export your shortcuts to a JSON file by hitting the three-dot menu next to "Shortcuts" in the settings page and choosing "Back up shortcuts".
 
-<img alt="An options menu has popped up with three options: Bulk add shortcuts, Export shortcuts, Import Shortcuts Backup, Import Legacy Shortcuts Backup (csv)" src="/README_screenshots/three_dot_menu.png" height="500px"/>
+<img alt="An options menu has popped up with four options: Add several shortcuts, Back up shortcuts, Restore shortcuts, Restore an old CSV backup" src="/README_screenshots/three_dot_menu.png" height="500px"/>
 It will prompt you to select a place to create the JSON file.
 
 ## Import shortcuts
-This allows you to import shortcuts via a JSON file. The JSON file should contain your shortcuts in the proper format. If you want to make a JSON file from scratch, I recommend first making a few shortcuts in the app, exporting that file, and then looking at the file as you design your own.
+"Restore shortcuts" in the same menu imports shortcuts from a JSON file. The JSON file should contain your shortcuts in the proper format. If you want to make a JSON file from scratch, I recommend first making a few shortcuts in the app, exporting that file, and then looking at the file as you design your own.
 
-There is also an option to import from the legacy CSV format ("Import Legacy Shortcuts Backup (csv)") which will be removed in a future version.
+There is also an option to import from the legacy CSV format ("Restore an old CSV backup") which will be removed in a future version.
 ## Bulk add shortcuts
 The other option is to use the bulk add feature. This shows you a text box and allows you to type in values. You don't need to wrap everything in quotes, but you do still need to follow the label, text, cursorIndex, shortcutType order.
 

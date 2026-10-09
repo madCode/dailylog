@@ -1,8 +1,5 @@
 package com.app.dailylog.ui.settings
 
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +14,7 @@ import com.google.android.material.card.MaterialCardView
 /**
  * adopted from https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-b9456d2b1aaf
  */
-class ShortcutListAdapter(private var removeCallback: (String) -> Unit, private var updateShortcutPositions: (List<Shortcut>) -> Unit, private var editCallback: (Shortcut) -> Unit, private var cursorColor: Int) : RecyclerView.Adapter<ShortcutListAdapter.ItemViewHolder>(),
+class ShortcutListAdapter(private var removeCallback: (String) -> Unit, private var updateShortcutPositions: (List<Shortcut>) -> Unit, private var editCallback: (Shortcut) -> Unit) : RecyclerView.Adapter<ShortcutListAdapter.ItemViewHolder>(),
     ShortcutTouchHelperAdapter {
 
     var items = emptyList<Shortcut>()
@@ -39,28 +36,10 @@ class ShortcutListAdapter(private var removeCallback: (String) -> Unit, private 
         notifyDataSetChanged()
     }
 
-    private fun getText(text: String, cursorIndex: Int): SpannableStringBuilder {
-        if (text.isEmpty()) {
-            return SpannableStringBuilder("")
-        }
-        val firstHalf = text.subSequence(0, cursorIndex).toString()
-        val secondHalf = text.subSequence(cursorIndex, text.length).toString()
-        val result = SpannableStringBuilder("$firstHalf|$secondHalf")
-        val start = firstHalf.length
-        val end = start + 1
-        result.setSpan(
-            ForegroundColorSpan(cursorColor),
-            start,
-            end,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        return result
-    }
-
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val shortcut: Shortcut = items[position]
         holder.label.text = shortcut.label
-        holder.text.text = getText(shortcut.value, shortcut.cursorIndex)
+        holder.text.text = shortcut.value
         holder.removeButton.setOnClickListener { onDelete(shortcut) }
         holder.itemView.setOnClickListener { editCallback(shortcut) }
     }
@@ -82,7 +61,7 @@ class ShortcutListAdapter(private var removeCallback: (String) -> Unit, private 
 
     override fun onItemDismiss(position: Int) {
         val item = items[position]
-        removeCallback(item.label)
+        removeCallback(item.id)
         notifyItemRemoved(position)
     }
 
