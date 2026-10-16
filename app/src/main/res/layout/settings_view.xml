@@ -33,14 +33,14 @@
 
         <TextView
             android:id="@+id/logFileRowTitle"
-            style="@style/TextHeadline"
+            style="@style/TextItemTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/file_settings_title" />
 
         <TextView
             android:id="@+id/logFileValue"
-            style="@style/TextAppearance.MaterialComponents.Subtitle1"
+            style="@style/TextItemDetail"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
@@ -48,7 +48,6 @@
             android:ellipsize="start"
             android:gravity="end"
             android:singleLine="true"
-            android:textColor="?android:attr/textColorSecondary"
             tools:text="really really really long/path/to/journal.md" />
 
         <ImageView
@@ -75,14 +74,14 @@
 
         <TextView
             android:id="@+id/appearanceRowTitle"
-            style="@style/TextHeadline"
+            style="@style/TextItemTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/appearanceTitle" />
 
         <TextView
             android:id="@+id/appearanceValue"
-            style="@style/TextAppearance.MaterialComponents.Subtitle1"
+            style="@style/TextItemDetail"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
@@ -90,7 +89,6 @@
             android:ellipsize="end"
             android:gravity="end"
             android:singleLine="true"
-            android:textColor="?android:attr/textColorSecondary"
             tools:text="Default" />
 
         <ImageView
