@@ -45,11 +45,12 @@
         <item name="android:textStyle">normal</item>
     </style>
 
-    <!-- Type scale for Settings lists: section headers use TextHeadline (20sp), an item's name
-         TextItemTitle (16sp) and its detail TextItemDetail or TextCaption (14sp). -->
+    <!-- Type scale for Settings: every section title (File, Appearance, Shortcuts) uses
+         TextHeadline (20sp), a shortcut's name TextItemTitle (16sp), and details TextItemDetail
+         or TextCaption (14sp). -->
     <style name="TextItemTitle" parent="TextAppearance.MaterialComponents.Subtitle1">
-        <item name="fontFamily">sans-serif-medium</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:fontFamily">sans-serif</item>
     </style>
 
     <style name="TextItemDetail" parent="TextAppearance.MaterialComponents.Body2">

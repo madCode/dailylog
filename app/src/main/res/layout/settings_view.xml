@@ -33,7 +33,7 @@
 
         <TextView
             android:id="@+id/logFileRowTitle"
-            style="@style/TextItemTitle"
+            style="@style/TextHeadline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/file_settings_title" />
@@ -74,7 +74,7 @@
 
         <TextView
             android:id="@+id/appearanceRowTitle"
-            style="@style/TextItemTitle"
+            style="@style/TextHeadline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/appearanceTitle" />
@@ -108,9 +108,7 @@
         android:background="?android:attr/listDivider"
         app:layout_constraintTop_toBottomOf="@id/appearanceRow" />
 
-    <!-- Kept as the headline it has always been: the section is the screen's subject,
-         not a label on a settings block.
-         Its overflow stays with it rather than moving to the toolbar: every item in that menu
+    <!-- Its overflow stays with it rather than moving to the toolbar: every item in that menu
          acts on the shortcut list, and a screen-level bar would imply it covers the file settings
          too. -->
     <TextView
