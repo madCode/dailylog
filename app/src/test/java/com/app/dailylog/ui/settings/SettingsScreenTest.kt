@@ -282,6 +282,13 @@ class SettingsScreenTest : AppRobolectricTest() {
 
     private fun DialogFragment.addButton() = requireView().findViewById<Button>(R.id.btnSaveBulkShortcut)
 
+    private fun DialogFragment.rowCount() = requireView().findViewById<LinearLayout>(R.id.bulkRows).childCount
+
+    private fun MainActivity.labelsBecome(expected: List<String>): List<String> {
+        idleUntil { repository.getAllShortcuts().value.orEmpty().map { it.label } == expected }
+        return repository.getAllShortcuts().value.orEmpty().map { it.label }
+    }
+
     @Test
     fun bulkAdd_addsFilledRowsWithCursorAtEnd() {
         openSettings().use { scenario ->
@@ -296,8 +303,8 @@ class SettingsScreenTest : AppRobolectricTest() {
                 dialog.click(R.id.btnSaveBulkShortcut)
 
                 assertFalse(dialog.isAdded)
+                assertEquals(listOf("First", "Second", "Third", "Date"), activity.labelsBecome(listOf("First", "Second", "Third", "Date")))
                 val added = activity.shortcuts().associateBy { it.label }
-                assertEquals(listOf("First", "Second", "Third", "Date"), activity.shortcuts().map { it.label })
                 assertEquals("- [ ] three".length, added.getValue("Third").cursorIndex)
                 assertEquals(ShortcutType.TEXT, added.getValue("Third").type)
                 assertEquals(ShortcutType.DATETIME, added.getValue("Date").type)
@@ -310,7 +317,8 @@ class SettingsScreenTest : AppRobolectricTest() {
         openSettings().use { scenario ->
             scenario.onActivity { activity ->
                 val dialog = activity.openBulkAdd()
-                dialog.fillRow(0, "First", "again")
+                // A keyboard suggestion's trailing space doesn't make the name new.
+                dialog.fillRow(0, "First ", "again")
                 assertEquals(context.getString(R.string.duplicateNameError), dialog.rowError(0, R.id.rowLabelLayout))
                 assertFalse(dialog.addButton().isEnabled)
 
@@ -323,6 +331,11 @@ class SettingsScreenTest : AppRobolectricTest() {
 
                 dialog.row(1).findViewById<View>(R.id.removeRowButton).performClick()
                 assertTrue(dialog.addButton().isEnabled)
+
+                // Removing the last row leaves an empty one to type into.
+                dialog.row(0).findViewById<View>(R.id.removeRowButton).performClick()
+                assertEquals(1, dialog.rowCount())
+                assertEquals("", dialog.row(0).findViewById<EditText>(R.id.rowLabel).text.toString())
             }
         }
     }
@@ -343,6 +356,29 @@ class SettingsScreenTest : AppRobolectricTest() {
                 assertTrue(dialog.isAdded)
                 assertEquals(context.getString(R.string.emptyTextError), dialog.rowError(1, R.id.rowTextLayout))
                 assertEquals(listOf("First", "Second"), activity.shortcuts().map { it.label })
+
+                // A row added after the tap isn't flagged while it's being typed.
+                dialog.click(R.id.btnAddRow)
+                dialog.row(2).findViewById<EditText>(R.id.rowLabel).setText("Fifth")
+                assertEquals(null, dialog.rowError(2, R.id.rowTextLayout))
+            }
+        }
+    }
+
+    @Test
+    fun bulkAdd_aLoneHalfFilledRowCanBeTappedToSeeWhatsMissing() {
+        openSettings().use { scenario ->
+            scenario.onActivity { activity ->
+                val dialog = activity.openBulkAdd()
+                assertFalse(dialog.addButton().isEnabled)
+                dialog.fillRow(0, "Third", "")
+                assertTrue(dialog.addButton().isEnabled)
+
+                dialog.click(R.id.btnSaveBulkShortcut)
+
+                assertTrue(dialog.isAdded)
+                assertEquals(context.getString(R.string.emptyTextError), dialog.rowError(0, R.id.rowTextLayout))
+                assertFalse(dialog.addButton().isEnabled)
             }
         }
     }
@@ -361,10 +397,13 @@ class SettingsScreenTest : AppRobolectricTest() {
                 idleUntil { (activity.supportFragmentManager.findFragmentById(R.id.container) as? SettingsFragment)
                     ?.childFragmentManager?.findFragmentByTag("fragment_bulk_add")?.view != null }
                 val dialog = activity.dialog("fragment_bulk_add")
+                assertEquals(2, dialog.rowCount())
                 assertEquals("Fourth", dialog.row(1).findViewById<EditText>(R.id.rowLabel).text.toString())
                 assertEquals("four", dialog.row(1).findViewById<EditText>(R.id.rowText).text.toString())
+                assertEquals("Add 2", dialog.addButton().text.toString())
                 dialog.click(R.id.btnSaveBulkShortcut)
-                assertEquals(listOf("First", "Second", "Third", "Fourth"), activity.shortcuts().map { it.label })
+                val expected = listOf("First", "Second", "Third", "Fourth")
+                assertEquals(expected, activity.labelsBecome(expected))
             }
         }
     }
