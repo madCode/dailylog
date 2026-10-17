@@ -6,7 +6,7 @@ DailyLog enables you to rapid log with customizable shortcuts. Tired of trying t
      alt="Get it on F-Droid"
      height="80">](https://f-droid.org/packages/com.app.dailylog/)
 
-Or download the latest APK from the [Releases Section](https://github.com/madCode/dailylog/releases/latest).
+Or download the latest APK from the [Releases Section](https://github.com/Seafloor-Studio/dailylog/releases/latest).
 
 Initially designed as a rapid logging system for journaling, DailyLog allows you to quickly add info to a text file with customizable button shortcuts. Here's how it works:
 
@@ -134,6 +134,9 @@ There is also an option to import from the legacy CSV format ("Restore an old CS
 The other option is to use the bulk add feature. This shows you a text box and allows you to type in values. You don't need to wrap everything in quotes, but you do still need to follow the label, text, cursorIndex, shortcutType order.
 
 If a shortcut's text contains a comma, wrap the text in quotes, e.g. `Greeting,"hello, world",5,TEXT`. Labels can't contain commas in bulk add; use the single add dialog for those.
+
+# Privacy
+DailyLog has no accounts, ads, analytics or crash reporting, declares no Android permissions, and contains no networking code. The full [privacy policy](docs/PRIVACY.md) says what it keeps and where.
 
 # Known Issues
 ## I can't edit the file I selected! When I edit and hit save, all my edits disappear!

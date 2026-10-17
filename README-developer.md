@@ -16,7 +16,7 @@ Download the latest version of Android Studio.
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/madCode/dailylog.git
+   git clone https://github.com/Seafloor-Studio/dailylog.git
    cd dailylog
    ```
 
@@ -88,7 +88,7 @@ Download the latest version of Android Studio.
    - **Important:** F-Droid requires an APK and Google Play requires an AAB, so the workflow builds both in one Gradle run and attaches both. Because it is one run with one `signingConfig`, they carry the same signature. F-Droid's metadata names `app-release.apk` exactly, so don't rename that asset.
    - **Play app signing:** Play only *distributes* with this keystore if it was uploaded as the app signing key when the app was created in Play Console. If Play generated its own key instead, the Play build and the F-Droid build have different signatures and a user cannot move between them without reinstalling.
 
-4. **Add release notes and publish**: once the workflow completes, a draft release will be waiting on the [Releases page](https://github.com/madCode/dailylog/releases). Edit it to add a title and description/changelog, then publish it.
+4. **Add release notes and publish**: once the workflow completes, a draft release will be waiting on the [Releases page](https://github.com/Seafloor-Studio/dailylog/releases). Edit it to add a title and description/changelog, then publish it.
 
 ### Part 2: Ensuring a Successful F-Droid Release
 
