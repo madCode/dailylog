@@ -6,7 +6,7 @@ DailyLog enables you to rapid log with customizable shortcuts. Tired of trying t
      alt="Get it on F-Droid"
      height="80">](https://f-droid.org/packages/com.app.dailylog/)
 
-Or download the latest APK from the [Releases Section](https://github.com/madCode/dailylog/releases/latest).
+Or download the latest APK from the [Releases Section](https://github.com/Seafloor-Studio/dailylog/releases/latest).
 
 Initially designed as a rapid logging system for journaling, DailyLog allows you to quickly add info to a text file with customizable button shortcuts. Here's how it works:
 

@@ -16,7 +16,7 @@ Download the latest version of Android Studio.
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/madCode/dailylog.git
+   git clone https://github.com/Seafloor-Studio/dailylog.git
    cd dailylog
    ```
 
@@ -87,7 +87,7 @@ Download the latest version of Android Studio.
    - **Note:** The four keystore secrets must be configured in the repository (see setup step 6 above) before this will work.
    - **Important:** F-Droid requires APKs, not App Bundles — the workflow is already configured to produce an APK.
 
-4. **Add release notes and publish**: once the workflow completes, a draft release will be waiting on the [Releases page](https://github.com/madCode/dailylog/releases). Edit it to add a title and description/changelog, then publish it.
+4. **Add release notes and publish**: once the workflow completes, a draft release will be waiting on the [Releases page](https://github.com/Seafloor-Studio/dailylog/releases). Edit it to add a title and description/changelog, then publish it.
 
 ### Part 2: Ensuring a Successful F-Droid Release
 
