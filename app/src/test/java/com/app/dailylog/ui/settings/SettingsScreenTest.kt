@@ -23,6 +23,7 @@ import com.app.dailylog.repository.ShortcutType
 import com.app.dailylog.testutil.AppRobolectricTest
 import com.google.android.material.slider.Slider
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -402,8 +403,11 @@ class SettingsScreenTest : AppRobolectricTest() {
                 assertEquals("four", dialog.row(1).findViewById<EditText>(R.id.rowText).text.toString())
                 assertEquals("Add 2", dialog.addButton().text.toString())
                 dialog.click(R.id.btnSaveBulkShortcut)
-                val expected = listOf("First", "Second", "Third", "Fourth")
-                assertEquals(expected, activity.labelsBecome(expected))
+                // The recreated activity's repository has no observer (the view model kept the
+                // old one), so ask the database rather than its LiveData.
+                val saved = { label: String -> runBlocking { activity.repository.shortcutDao.labelExistsSuspend(label) } }
+                assertTrue(idleUntil { saved("Third") && saved("Fourth") })
+                assertFalse(dialog.isAdded)
             }
         }
     }
