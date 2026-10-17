@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_weight="2"
-        android:hint="@string/addALabel">
+        android:hint="@string/addALabel"
+        app:errorIconDrawable="@null">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/rowLabel"

@@ -1,5 +1,6 @@
 package com.app.dailylog.ui.settings
 
+import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.view.*
@@ -73,6 +74,12 @@ class BulkAddShortcutsDialogFragment(viewModel: ShortcutDialogViewModel) : Short
         refresh()
     }
 
+    override fun onStart() {
+        super.onStart()
+        // The rows share their width by weight, which a wrap-content dialog would squeeze.
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         val entries = entries()
@@ -98,6 +105,8 @@ class BulkAddShortcutsDialogFragment(viewModel: ShortcutDialogViewModel) : Short
         // Every row's fields share IDs, so Android can't restore them; onSaveInstanceState does.
         row.rowLabel.isSaveEnabled = false
         row.rowText.isSaveEnabled = false
+        // The text is monospace, but its label and errors should match the name field's.
+        row.rowTextLayout.typeface = Typeface.DEFAULT
         row.rowLabel.setText(name)
         row.rowText.setText(text)
         row.rowLabel.doAfterTextChanged { refresh() }
@@ -146,7 +155,10 @@ class BulkAddShortcutsDialogFragment(viewModel: ShortcutDialogViewModel) : Short
         }
         binding.btnSaveBulkShortcut.text =
             if (complete > 0) getString(R.string.bulk_add_count, complete) else getString(R.string.bulk_add_none)
-        binding.btnSaveBulkShortcut.isEnabled = started && !mistakes
+        val enabled = started && !mistakes
+        binding.btnSaveBulkShortcut.isEnabled = enabled
+        // SecondaryButton's tint has no disabled colour, so fade it to show it can't be tapped.
+        binding.btnSaveBulkShortcut.alpha = if (enabled) 1f else 0.38f
         return !mistakes
     }
 
