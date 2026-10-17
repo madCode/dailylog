@@ -44,12 +44,8 @@ class SettingsViewModel(
         repository.updateShortcut(id, label, text, cursor, position, type)
     }
 
-    fun bulkAddShortcuts(shortcutsData: List<Array<String>>) = viewModelScope.launch(dispatcher) {
-        try {
-            repository.bulkAddShortcuts(shortcutsData)
-        } catch (ex: Exception) {
-            ex.message?.let { showToastOnActivity(it) }
-        }
+    fun addShortcuts(rows: List<Pair<String, String>>) = viewModelScope.launch(dispatcher) {
+        repository.addShortcuts(rows)
     }
 
     fun addShortcut(label: String, text: String, cursor: Int, type: String) = viewModelScope.launch(dispatcher) {

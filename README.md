@@ -130,10 +130,10 @@ It will prompt you to select a place to create the JSON file.
 "Restore shortcuts" in the same menu imports shortcuts from a JSON file. The JSON file should contain your shortcuts in the proper format. If you want to make a JSON file from scratch, I recommend first making a few shortcuts in the app, exporting that file, and then looking at the file as you design your own.
 
 There is also an option to import from the legacy CSV format ("Restore an old CSV backup") which will be removed in a future version.
-## Bulk add shortcuts
-The other option is to use the bulk add feature. This shows you a text box and allows you to type in values. You don't need to wrap everything in quotes, but you do still need to follow the label, text, cursorIndex, shortcutType order.
+## Add several shortcuts
+Touch and hold +, or choose "Add several shortcuts" from the three-dot menu, to add a batch at once. Each row has a name and the text to insert; "Add a row" gives you another, and ✕ removes one. Empty rows are skipped.
 
-If a shortcut's text contains a comma, wrap the text in quotes, e.g. `Greeting,"hello, world",5,TEXT`. Labels can't contain commas in bulk add; use the single add dialog for those.
+Each shortcut puts the cursor after its text, and inserts the date wherever its text has `{DATETIME: yyyy-MM-dd}`. To place the cursor elsewhere, edit the shortcut afterwards.
 
 # Known Issues
 ## I can't edit the file I selected! When I edit and hit save, all my edits disappear!

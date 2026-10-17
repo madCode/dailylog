@@ -4,7 +4,9 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Lifecycle
@@ -261,18 +263,108 @@ class SettingsScreenTest : AppRobolectricTest() {
         }
     }
 
+    private fun MainActivity.openBulkAdd(): DialogFragment {
+        findViewById<View>(R.id.addShortcutButton).performLongClick()
+        idleUntil(500) { false }
+        return dialog("fragment_bulk_add")
+    }
+
+    private fun DialogFragment.row(index: Int): View =
+        requireView().findViewById<LinearLayout>(R.id.bulkRows).getChildAt(index)
+
+    private fun DialogFragment.fillRow(index: Int, name: String, text: String) {
+        row(index).findViewById<EditText>(R.id.rowLabel).setText(name)
+        row(index).findViewById<EditText>(R.id.rowText).setText(text)
+    }
+
+    private fun DialogFragment.rowError(index: Int, layout: Int) =
+        row(index).findViewById<TextInputLayout>(layout).error?.toString()
+
+    private fun DialogFragment.addButton() = requireView().findViewById<Button>(R.id.btnSaveBulkShortcut)
+
     @Test
-    fun bulkAdd_addsValidLines() {
+    fun bulkAdd_addsFilledRowsWithCursorAtEnd() {
         openSettings().use { scenario ->
             scenario.onActivity { activity ->
-                activity.findViewById<View>(R.id.addShortcutButton).performLongClick()
-                idleUntil(500) { false }
-                val dialog = activity.dialog("fragment_bulk_add")
-                dialog.type(R.id.bulkInput, "Third,three,0,TEXT\nFourth,four,2,TEXT")
+                val dialog = activity.openBulkAdd()
+                dialog.fillRow(0, "Third", "- [ ] three")
+                dialog.click(R.id.btnAddRow)
+                dialog.fillRow(1, "Date", "## {DATETIME: yyyy-MM-dd}")
+                dialog.click(R.id.btnAddRow)
+                assertEquals("Add 2", dialog.addButton().text.toString())
+
                 dialog.click(R.id.btnSaveBulkShortcut)
-                val added = activity.shortcuts().associate { it.label to it.value }
-                assertEquals("three", added["Third"])
-                assertEquals("four", added["Fourth"])
+
+                assertFalse(dialog.isAdded)
+                val added = activity.shortcuts().associateBy { it.label }
+                assertEquals(listOf("First", "Second", "Third", "Date"), activity.shortcuts().map { it.label })
+                assertEquals("- [ ] three".length, added.getValue("Third").cursorIndex)
+                assertEquals(ShortcutType.TEXT, added.getValue("Third").type)
+                assertEquals(ShortcutType.DATETIME, added.getValue("Date").type)
+            }
+        }
+    }
+
+    @Test
+    fun bulkAdd_aTakenOrRepeatedNameIsMarkedAndBlocksAdd() {
+        openSettings().use { scenario ->
+            scenario.onActivity { activity ->
+                val dialog = activity.openBulkAdd()
+                dialog.fillRow(0, "First", "again")
+                assertEquals(context.getString(R.string.duplicateNameError), dialog.rowError(0, R.id.rowLabelLayout))
+                assertFalse(dialog.addButton().isEnabled)
+
+                dialog.fillRow(0, "Third", "three")
+                dialog.click(R.id.btnAddRow)
+                dialog.fillRow(1, "Third", "also three")
+                assertEquals(null, dialog.rowError(0, R.id.rowLabelLayout))
+                assertEquals(context.getString(R.string.duplicateRowError), dialog.rowError(1, R.id.rowLabelLayout))
+                assertFalse(dialog.addButton().isEnabled)
+
+                dialog.row(1).findViewById<View>(R.id.removeRowButton).performClick()
+                assertTrue(dialog.addButton().isEnabled)
+            }
+        }
+    }
+
+    @Test
+    fun bulkAdd_aHalfFilledRowIsFlaggedOnAddAndNothingIsSaved() {
+        openSettings().use { scenario ->
+            scenario.onActivity { activity ->
+                val dialog = activity.openBulkAdd()
+                dialog.fillRow(0, "Third", "three")
+                dialog.click(R.id.btnAddRow)
+                dialog.fillRow(1, "Fourth", "")
+                // Not flagged while it's still being typed.
+                assertEquals(null, dialog.rowError(1, R.id.rowTextLayout))
+
+                dialog.click(R.id.btnSaveBulkShortcut)
+
+                assertTrue(dialog.isAdded)
+                assertEquals(context.getString(R.string.emptyTextError), dialog.rowError(1, R.id.rowTextLayout))
+                assertEquals(listOf("First", "Second"), activity.shortcuts().map { it.label })
+            }
+        }
+    }
+
+    @Test
+    fun bulkAdd_rowsSurviveRotation() {
+        openSettings().use { scenario ->
+            scenario.onActivity { activity ->
+                val dialog = activity.openBulkAdd()
+                dialog.fillRow(0, "Third", "three")
+                dialog.click(R.id.btnAddRow)
+                dialog.fillRow(1, "Fourth", "four")
+            }
+            scenario.recreate()
+            scenario.onActivity { activity ->
+                idleUntil { (activity.supportFragmentManager.findFragmentById(R.id.container) as? SettingsFragment)
+                    ?.childFragmentManager?.findFragmentByTag("fragment_bulk_add")?.view != null }
+                val dialog = activity.dialog("fragment_bulk_add")
+                assertEquals("Fourth", dialog.row(1).findViewById<EditText>(R.id.rowLabel).text.toString())
+                assertEquals("four", dialog.row(1).findViewById<EditText>(R.id.rowText).text.toString())
+                dialog.click(R.id.btnSaveBulkShortcut)
+                assertEquals(listOf("First", "Second", "Third", "Fourth"), activity.shortcuts().map { it.label })
             }
         }
     }
