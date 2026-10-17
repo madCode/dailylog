@@ -86,12 +86,12 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun `test repository called when bulkAddShortcuts called`(): Unit = runBlocking {
+    fun `test repository called when addShortcuts called`(): Unit = runBlocking {
         `when`(buildMock.isOreoOrGreater()).thenReturn(false)
         settingsViewModel = SettingsViewModel(repository, buildMock, { _: String -> }, testDispatcher)
-        val shortcut = listOf(arrayOf("hello,hello,1,TEXT"))
-        settingsViewModel!!.bulkAddShortcuts(shortcut)
-        verify(repository).bulkAddShortcuts(shortcut)
+        val rows = listOf("hello" to "hello")
+        settingsViewModel!!.addShortcuts(rows)
+        verify(repository).addShortcuts(rows)
     }
 
     @Test
