@@ -10,18 +10,22 @@ code: there is nothing in the app that can reach the internet.
 ## Where your writing goes
 
 Your log is a plain text file you create or pick yourself, wherever you
-keep it. The app writes to it through the `content://` URI Android gives it
-when you choose the file — or the folder, if you let the app name files for
-you — and keeps that access with `takePersistableUriPermission` so it can
-write again next time. It can reach nothing else on your phone.
+keep it. If you choose dated files instead, you pick a folder and the app
+writes one file per day inside it, named from a template you set.
+
+Either way the app reaches it through the `content://` URI Android gives it
+when you choose that file or folder, and keeps the access with
+`takePersistableUriPermission` so it can write again next time. It can
+reach nothing else on your phone.
 
 ## What the app keeps
 
 On your phone, and nowhere else:
 
 - **Your shortcuts,** in a small database inside the app.
-- **Your settings:** which file or folder you chose, the file-name
-  template, text size and appearance.
+- **Your settings:** which file or folder you chose, whether you use dated
+  files, the file-name template, text size, appearance, and where your
+  cursor was in the log.
 
 Uninstalling the app deletes both. Your log file is yours and stays where
 you put it.
