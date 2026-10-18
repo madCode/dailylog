@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   release:
-    # Only to attach the APK to the release it drafts.
+    # Only to attach the APK and AAB to the release it drafts.
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -33,13 +33,17 @@ jobs:
           # would take the signing key with it.
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > "$RUNNER_TEMP/release.jks"
 
-      - name: Build signed release APK
+      - name: Build signed release APK and AAB
         env:
           KEYSTORE_PATH: ${{ runner.temp }}/release.jks
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew assembleRelease
+        # One Gradle run, one signingConfig, so the AAB for Play carries the same signature as
+        # the APK F-Droid verifies against AllowedAPKSigningKeys. Play only distributes with
+        # that key if this keystore was uploaded as the app signing key when the app was
+        # created; otherwise Play signs with its own and the two builds diverge.
+        run: ./gradlew assembleRelease bundleRelease
 
       - name: Draft the GitHub release
         # gh rather than a third-party action: this is the one step holding a token that can
@@ -51,7 +55,13 @@ jobs:
         run: |
           tag="$GITHUB_REF_NAME"
           apk=app/build/outputs/apk/release/app-release.apk
+          aab=app/build/outputs/bundle/release/app-release.aab
+          # F-Droid's Binaries URL names app-release.apk exactly, so a missing or renamed
+          # asset breaks its verification quietly. Fail here instead.
+          for f in "$apk" "$aab"; do
+            [ -f "$f" ] || { echo "::error::expected build output missing: $f"; exit 1; }
+          done
           code=$(sed -n 's/^ *versionCode \([0-9]*\)$/\1/p' app/build.gradle)
           notes="fastlane/metadata/android/en-US/changelogs/$code.txt"
           if [ -f "$notes" ]; then notes_flag=(--notes-file "$notes"); else notes_flag=(--notes "DailyLog ${tag#v}"); fi
-          gh release create "$tag" "$apk" --draft --verify-tag --title "DailyLog ${tag#v}" "${notes_flag[@]}"
+          gh release create "$tag" "$apk" "$aab" --draft --verify-tag --title "DailyLog ${tag#v}" "${notes_flag[@]}"
