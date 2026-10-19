@@ -92,10 +92,12 @@ jobs:
         emulator-boot-timeout: 900
         pre-emulator-launch-script: .github/scripts/record-emulator-logcat.sh
         disable-animations: false
+        # The runner runs each line on its own and stops the emulator after the last, so the
+        # failure report shares the test line to see the emulator as the tests left it.
         script: |
           .github/scripts/wait-for-emulator-unlock.sh
           for s in window_animation_scale transition_animation_scale animator_duration_scale; do adb shell settings put global $s 0.0; done
-          ./gradlew connectedDebugAndroidTest
+          ./gradlew connectedDebugAndroidTest || .github/scripts/print-emulator-failure.sh
 
     # Espresso saves a screenshot when a view check fails, which shows what had focus.
     - name: Upload emulator logcat and failure screenshots
