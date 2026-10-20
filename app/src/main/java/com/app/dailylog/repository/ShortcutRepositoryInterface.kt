@@ -1,6 +1,7 @@
 package com.app.dailylog.repository
 
 import androidx.lifecycle.LiveData
+import com.app.dailylog.utils.FileNameTemplate
 
 interface ShortcutRepositoryInterface {
     val shortcutDao: ShortcutDao
@@ -61,6 +62,23 @@ interface ShortcutRepositoryInterface {
         }
         shortcutDao.addAll(*results.toTypedArray())
         return true
+    }
+
+    /**
+     * Adds shortcuts from bulk add's rows of name and text, after the existing ones. Each puts the
+     * cursor after its text, and is a date shortcut when its text holds a {DATETIME: …} token.
+     * Rows with a name that's taken or a blank field are skipped.
+     */
+    suspend fun addShortcuts(rows: List<Pair<String, String>>) {
+        val start = nextShortcutPosition()
+        val shortcuts = rows
+            .filter { (label, text) -> label.isNotEmpty() && text.isNotEmpty() && !shortcutDao.labelExistsSuspend(label) }
+            .distinctBy { it.first }
+            .mapIndexed { index, (label, text) ->
+                val type = if (FileNameTemplate.DATETIME_TOKEN.containsMatchIn(text)) ShortcutType.DATETIME else ShortcutType.TEXT
+                Shortcut(label = label, value = text, cursorIndex = text.length, position = start + index, type = type)
+            }
+        shortcutDao.addAll(*shortcuts.toTypedArray())
     }
 
     private fun nextShortcutPosition(): Int {

@@ -295,8 +295,8 @@ class SettingsFragment(
         )
     }
 
-    override fun onBulkAddShortcuts(info: List<Array<String>>) {
-        viewModel.bulkAddShortcuts(info)
+    override fun onBulkAddShortcuts(rows: List<Pair<String, String>>) {
+        viewModel.addShortcuts(rows)
     }
 
     override fun onFinishEditShortcutDialog(
